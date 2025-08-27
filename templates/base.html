@@ -20,22 +20,19 @@
   {# Page-level CSS #}
   {% block extra_css %}{% endblock %}
 </head>
-<body>
 
+<body class="{% block body_class %}{% endblock %}">
   <div class="super_container">
 
-    {# Header #}
     {% include "partials/header.html" %}
 
     <main role="main">
       {% block content %}{% endblock %}
     </main>
 
-    {# Footer #}
     {% include "partials/footer.html" %}
   </div>
 
-  {# Lead modal available on all pages #}
   {% include "partials/lead_modal.html" %}
   {% include "partials/contact_widget.html" %}
 
@@ -50,7 +47,7 @@
   <script src="{% static 'plugins/parallax-js-master/parallax.min.js' %}"></script>
   <script src="{% static 'js/custom.js' %}"></script>
 
-  {# Page-level JS #}
+  
   {% block extra_js %}{% endblock %}
 
   {# Optional: Google Analytics #}

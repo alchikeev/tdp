@@ -9,23 +9,15 @@
 
 {% block content %}
 
-  <!-- HERO -->
-  <section class="t-hero t-hero--detail">
-    <div class="t-hero__bg"
-         style="background-image:url('{% if tour.cover %}{{ tour.cover.url }}{% else %}{% static "images/travello.jpg" %}{% endif %}')"></div>
-    <div class="container t-hero__content">
-      <h1 class="t-hero__title">{{ tour.title }}</h1>
-      <p class="t-hero__sub">
-        {% if tour.location %}<i class="fa fa-map-marker"></i> {{ tour.location }} · {% endif %}
-        {% if tour.duration %}<i class="fa fa-clock-o"></i> {{ tour.duration }}{% endif %}
-      </p>
-      <div class="t-hero__cta">
-        <button type="button" class="btn-hero open-lead-modal"
-                data-cta="Tour Detail — Hero"
-                data-related_type="tour" data-related_id="{{ tour.id }}">Записаться</button>
-      </div>
-    </div>
-  </section>
+  {# СЛАЙД-ГЕРОЙ ДЛЯ ДЕТАЛЬНОЙ #}
+  {% include 'partials/slide.html' with
+     title=tour.title
+     subtitle=tour.location|default:"Пхукет"
+     bg='images/home_slider.jpg'
+     modifier='slide--inner'
+     cta_text='Записаться'
+     cta_data='Inner Hero — Tour Detail'
+  %}
 
   <section class="t-detail">
     <div class="container">
@@ -33,7 +25,6 @@
 
         <!-- Основная колонка -->
         <div class="col-lg-8 col-xl-9">
-          <!-- Галерея -->
           {% if gallery_images %}
             <div class="t-gallery owl-carousel owl-theme mb-4">
               {% for img in gallery_images %}
@@ -48,19 +39,16 @@
             </div>
           {% endif %}
 
-          <!-- Краткое описание -->
           {% if tour.short_desc %}
             <p class="lead">{{ tour.short_desc }}</p>
           {% endif %}
 
-          <!-- Полное описание -->
           {% if tour.description %}
             <div class="t-prose">
               {{ tour.description|safe }}
             </div>
           {% endif %}
 
-          <!-- Что включено/не включено -->
           <div class="row g-3 my-4">
             {% if tour.included %}
               <div class="col-md-6">
@@ -80,7 +68,6 @@
             {% endif %}
           </div>
 
-          <!-- Вложения -->
           {% if attachments %}
             <div class="t-attach my-4">
               <div class="t-attach__title"><i class="fa fa-paperclip"></i> Материалы</div>
@@ -96,7 +83,6 @@
             </div>
           {% endif %}
 
-          <!-- Теги -->
           {% if tour.tags.all %}
             <div class="t-tags">
               {% for tg in tour.tags.all %}
@@ -105,7 +91,6 @@
             </div>
           {% endif %}
 
-          <!-- Похожие туры -->
           {% if related_tours %}
             <div class="t-related mt-5">
               <div class="t-related__title">Похожие туры</div>
@@ -142,8 +127,6 @@
 
         <!-- Сайдбар -->
         <aside class="col-lg-4 col-xl-3 t-aside">
-
-          <!-- Виджет цены/заказа -->
           <div class="t-widget t-widget--sticky">
             <div class="t-pricebox">
               <div class="t-pricebox__row">
@@ -175,7 +158,6 @@
             </div>
           </div>
 
-          <!-- Категория -->
           {% if tour.category %}
             <div class="t-aside__box">
               <div class="t-aside__title">Категория</div>
@@ -183,14 +165,12 @@
             </div>
           {% endif %}
 
-          <!-- Полезная информация -->
           {% if tour.info %}
             <div class="t-aside__box">
               <div class="t-aside__title">Полезно знать</div>
               <div class="t-aside__text">{{ tour.info|linebreaks }}</div>
             </div>
           {% endif %}
-
         </aside>
 
       </div>
@@ -200,18 +180,14 @@
 {% endblock %}
 
 {% block extra_js %}
-  <!-- Если нужна инициализация OwlCarousel для галереи -->
   <script>
     (function() {
       var $ = window.jQuery || null;
       if (!$ || !$.fn || !$.fn.owlCarousel) return;
+      var gal = document.querySelector('.t-gallery');
+      if (!gal) return;
       $('.t-gallery').owlCarousel({
-        items: 1,
-        loop: true,
-        dots: true,
-        nav: false,
-        autoplay: true,
-        autoplayTimeout: 5000
+        items: 1, loop: true, dots: true, nav: false, autoplay: true, autoplayTimeout: 5000
       });
     })();
   </script>

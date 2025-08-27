@@ -10,3 +10,4 @@ urlpatterns = [
     path("tag/<slug:slug>/", views.tour_list_by_tag, name="by_tag"),
     path("<slug:slug>/", views.tour_detail, name="detail"),
 ]
+

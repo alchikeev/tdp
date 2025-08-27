@@ -1,4 +1,4 @@
-# ОС и IDE
+# OS / IDE
 .DS_Store
 Thumbs.db
 .idea/
@@ -38,17 +38,11 @@ logs/
 .env.local
 .env.*.local
 
-# Node (если вдруг появится фронт-сборка)
+# Node (если появится фронт)
 node_modules/
 npm-debug.log*
 yarn.lock
 pnpm-lock.yaml
-
-# Тесты/репорты
-coverage.xml
-htmlcov/
-.coverage
-.tox/
 
 # Mac
 __MACOSX/

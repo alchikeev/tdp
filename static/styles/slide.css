@@ -1,0 +1,22 @@
+/* Универсальный слайд использует старые стили .home.
+   Мы лишь добавляем модификаторы для внутренних страниц. */
+.slide { /* просто маркерный класс */ }
+
+.slide--inner .hero-title { font-size: 36px; line-height: 1.2; }
+.slide--inner .hero-sub   { font-size: 16px; opacity: .9; }
+
+/* Можно сделать слайд чуть ниже, чем на главной (если на главной он сильно высокий): */
+.slide--inner .home_slider_container { min-height: 320px; }
+@media (min-width: 992px) {
+  .slide--inner .home_slider_container { min-height: 420px; }
+}
+
+/* Если на внутренних нужна лёгкая затемняющая подложка, чтобы текст читался */
+.slide--inner .background_image::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35));
+}
+.slide--inner .hero-title,
+.slide--inner .hero-sub,
+.slide--inner .btn-hero { color: #fff; }

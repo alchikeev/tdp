@@ -11,23 +11,37 @@
 
 {% block content %}
 
-  <!-- HERO -->
-  <section class="t-hero">
-    <div class="t-hero__bg" style="background-image:url('{% static 'images/home_slider.jpg' %}')"></div>
-    <div class="container t-hero__content">
-      <h1 class="t-hero__title">
-        {% if active_category %}Экскурсии: {{ active_category.name }}
-        {% elif active_tag %}Экскурсии по тегу: #{{ active_tag.name }}
-        {% else %}Экскурсии на Пхукете{% endif %}
-      </h1>
-      <p class="t-hero__sub">Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут.</p>
-      <div class="t-hero__cta">
-        <button type="button" class="btn-hero open-lead-modal" data-cta="Tours — Герой">Оставить заявку</button>
-      </div>
-    </div>
-  </section>
+  {# ===== SLIDE-HERO ===== #}
+  {% if active_category %}
+    {% include "partials/slide.html" with
+      title="Экскурсии: "|add:active_category.name
+      subtitle="Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут."
+      bg="images/home_slider.jpg"
+      modifier="slide--inner"
+      cta_text="Оставить заявку"
+      cta_data="Inner Hero — Экскурсии" %}
+  {% elif active_tag %}
+    {% include "partials/slide.html" with
+      title="Экскурсии по тегу: #"|add:active_tag.name
+      subtitle="Все предложения по этому тегу."
+      bg="images/home_slider.jpg"
+      modifier="slide--inner"
+      cta_text="Оставить заявку"
+      cta_data="Inner Hero — Экскурсии (тег)" %}
+  {% else %}
+    {% include "partials/slide.html" with
+      title="Экскурсии на Пхукете"
+      subtitle="Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут."
+      bg="images/home_slider.jpg"
+      modifier="slide--inner"
+      cta_text="Оставить заявку"
+      cta_data="Inner Hero — Экскурсии (все)" %}
+  {% endif %}
 
-  <!-- ФИЛЬТРЫ -->
+
+
+
+  {# ===== ФИЛЬТРЫ ===== #}
   <section class="t-filters">
     <div class="container">
       <form class="t-filters__form" method="get" action="{% url 'tours:list' %}">
@@ -71,12 +85,11 @@
     </div>
   </section>
 
-  <!-- КОНТЕНТ 2-колонки -->
+  {# ===== КОНТЕНТ ===== #}
   <section class="t-grid">
     <div class="container">
       <div class="row">
 
-        <!-- ЛЕВАЯ КОЛОНКА: карточки -->
         <div class="col-lg-8 col-xl-9">
           <div class="row g-3">
             {% for t in tours %}
@@ -169,7 +182,6 @@
           {% endif %}
         </div>
 
-        <!-- ПРАВАЯ КОЛОНКА: сайдбар -->
         <aside class="col-lg-4 col-xl-3 t-aside">
           {% if categories %}
             <div class="t-aside__box">
@@ -225,5 +237,5 @@
 {% endblock %}
 
 {% block extra_js %}
-  {# при необходимости можно добавить специфичный JS для каталога #}
+  {# специфичный JS при необходимости #}
 {% endblock %}
