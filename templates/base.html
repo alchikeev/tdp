@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{% block title %}Thai Dream Phuket{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Туры и экскурсии на Пхукете{% endblock %}">
+
+  {# === Global CSS === #}
+  <link rel="stylesheet" href="{% static 'styles/bootstrap4/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/OwlCarousel2-2.1/animate.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/main_styles.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/responsive.css' %}">
+
+  {# Page-level CSS #}
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <div class="super_container">
+
+    {# Header #}
+    {% include "partials/header.html" %}
+
+    <main role="main">
+      {% block content %}{% endblock %}
+    </main>
+
+    {# Footer #}
+    {% include "partials/footer.html" %}
+  </div>
+
+  {# Lead modal available on all pages #}
+  {% include "partials/lead_modal.html" %}
+  {% include "partials/contact_widget.html" %}
+
+  {# === Global JS === #}
+  <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+  <script src="{% static 'styles/bootstrap4/popper.js' %}"></script>
+  <script src="{% static 'styles/bootstrap4/bootstrap.min.js' %}"></script>
+  <script src="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.js' %}"></script>
+  <script src="{% static 'plugins/Isotope/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'plugins/scrollTo/jquery.scrollTo.min.js' %}"></script>
+  <script src="{% static 'plugins/easing/easing.js' %}"></script>
+  <script src="{% static 'plugins/parallax-js-master/parallax.min.js' %}"></script>
+  <script src="{% static 'js/custom.js' %}"></script>
+
+  {# Page-level JS #}
+  {% block extra_js %}{% endblock %}
+
+  {# Optional: Google Analytics #}
+  {# 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-X"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-XXXXXXX-X');
+  </script>
+  #}
+</body>
+</html>

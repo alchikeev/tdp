@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}
+  {% if active_category %}Экскурсии: {{ active_category.name }} — {% elif active_tag %}Экскурсии по тегу: #{{ active_tag.name }} — {% endif %}Экскурсии на Пхукете
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
+{% endblock %}
+
+{% block content %}
+
+  <!-- HERO -->
+  <section class="t-hero">
+    <div class="t-hero__bg" style="background-image:url('{% static 'images/home_slider.jpg' %}')"></div>
+    <div class="container t-hero__content">
+      <h1 class="t-hero__title">
+        {% if active_category %}Экскурсии: {{ active_category.name }}
+        {% elif active_tag %}Экскурсии по тегу: #{{ active_tag.name }}
+        {% else %}Экскурсии на Пхукете{% endif %}
+      </h1>
+      <p class="t-hero__sub">Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут.</p>
+      <div class="t-hero__cta">
+        <button type="button" class="btn-hero open-lead-modal" data-cta="Tours — Герой">Оставить заявку</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФИЛЬТРЫ -->
+  <section class="t-filters">
+    <div class="container">
+      <form class="t-filters__form" method="get" action="{% url 'tours:list' %}">
+        <div class="t-filters__row">
+          <div class="t-filters__search">
+            <i class="fa fa-search"></i>
+            <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Поиск по названию, месту, описанию">
+          </div>
+          <div class="t-filters__price">
+            <label>Цена, ฿</label>
+            <input type="number" name="price_min" value="{{ request.GET.price_min }}" min="0" placeholder="от">
+            <span>—</span>
+            <input type="number" name="price_max" value="{{ request.GET.price_max }}" min="0" placeholder="до">
+          </div>
+          <div class="t-filters__sort">
+            <label>Сортировка</label>
+            <select name="sort" onchange="this.form.submit()">
+              <option value="" {% if not request.GET.sort %}selected{% endif %}>По популярности</option>
+              <option value="price_asc"  {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Цена ↑</option>
+              <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Цена ↓</option>
+              <option value="newest"     {% if request.GET.sort == 'newest' %}selected{% endif %}>Сначала новые</option>
+            </select>
+          </div>
+          <div class="t-filters__submit">
+            <button class="order_btn" type="submit">Показать</button>
+          </div>
+        </div>
+
+        {% if categories %}
+          <div class="t-filters__pills">
+            <a href="{% url 'tours:list' %}" class="pill {% if not active_category %}is-active{% endif %}">Все</a>
+            {% for c in categories %}
+              <a href="{% url 'tours:by_category' slug=c.slug %}"
+                 class="pill {% if active_category and active_category.id == c.id %}is-active{% endif %}">
+                {{ c.name }}{% if c.items %}<span class="pill__count">{{ c.items }}</span>{% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </section>
+
+  <!-- КОНТЕНТ 2-колонки -->
+  <section class="t-grid">
+    <div class="container">
+      <div class="row">
+
+        <!-- ЛЕВАЯ КОЛОНКА: карточки -->
+        <div class="col-lg-8 col-xl-9">
+          <div class="row g-3">
+            {% for t in tours %}
+              <div class="col-12 col-sm-6 col-xl-4 d-flex">
+                <article class="t-card h-100">
+                  <div class="t-card__cover">
+                    {% if t.cover %}
+                      <img class="t-card__img" src="{{ t.cover.url }}" alt="{{ t.title }}" loading="lazy">
+                    {% else %}
+                      <img class="t-card__img" src="{% static 'images/travello.jpg' %}" alt="{{ t.title }}" loading="lazy">
+                    {% endif %}
+                    {% if t.has_discount %}<span class="badge badge--disc">Скидка</span>{% endif %}
+                    {% if t.is_popular %}<span class="badge badge--hit">Хит</span>{% endif %}
+                  </div>
+
+                  <div class="t-card__body">
+                    <a href="{{ t.get_absolute_url }}" class="t-card__title">{{ t.title }}</a>
+                    {% if t.short_desc %}<p class="t-card__desc">{{ t.short_desc }}</p>{% endif %}
+
+                    <div class="t-card__meta">
+                      {% if t.duration %}<span><i class="fa fa-clock-o"></i> {{ t.duration }}</span>{% endif %}
+                      {% if t.location %}<span><i class="fa fa-map-marker"></i> {{ t.location }}</span>{% endif %}
+                    </div>
+
+                    <div class="t-card__price">
+                      <div class="t-card__price-line">
+                        <span>Взрослый</span>
+                        <div class="t-price">
+                          {% if t.price_old_adult and t.price_old_adult > t.price_adult %}
+                            <s class="t-price__old">{{ t.price_old_adult|floatformat:0|intcomma }}฿</s>
+                          {% endif %}
+                          <strong class="t-price__new">{{ t.price_adult|floatformat:0|intcomma }}฿</strong>
+                        </div>
+                      </div>
+                      {% if t.price_child %}
+                      <div class="t-card__price-line">
+                        <span>Детский</span>
+                        <div class="t-price">
+                          {% if t.price_old_child and t.price_old_child > t.price_child %}
+                            <s class="t-price__old">{{ t.price_old_child|floatformat:0|intcomma }}฿</s>
+                          {% endif %}
+                          <strong class="t-price__new">{{ t.price_child|floatformat:0|intcomma }}฿</strong>
+                        </div>
+                      </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="t-card__footer">
+                      <div class="t-rating">
+                        <i class="fa fa-star"></i>
+                        <span>{{ t.rating|default:"4.9" }}</span>
+                        {% if t.reviews_count %}<span class="t-rev">({{ t.reviews_count }})</span>{% endif %}
+                      </div>
+                      <div class="t-actions">
+                        <a href="{{ t.get_absolute_url }}" class="btn-more">Подробнее</a>
+                        <button class="order_btn open-lead-modal"
+                                data-cta="Tours — {{ t.title }}"
+                                data-related_type="tour"
+                                data-related_id="{{ t.id }}">Заказать</button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            {% empty %}
+              <div class="col-12">
+                <p class="text-center text-muted my-5">По заданным фильтрам ничего не найдено.</p>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if page_obj and page_obj.paginator.num_pages > 1 %}
+            <nav class="t-pagination" aria-label="Навигация по страницам">
+              <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+                  </li>
+                {% endif %}
+                <li class="page-item disabled">
+                  <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                </li>
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперёд »</a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          {% endif %}
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА: сайдбар -->
+        <aside class="col-lg-4 col-xl-3 t-aside">
+          {% if categories %}
+            <div class="t-aside__box">
+              <div class="t-aside__title">Категории</div>
+              <ul class="t-aside__list">
+                {% for c in categories %}
+                  <li>
+                    <a href="{% url 'tours:by_category' slug=c.slug %}">{{ c.name }}</a>
+                    {% if c.items %}<span>{{ c.items }}</span>{% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if tags %}
+            <div class="t-aside__box">
+              <div class="t-aside__title">Теги</div>
+              <div class="t-aside__tags">
+                {% for tg in tags %}
+                  <a href="{% url 'tours:by_tag' slug=tg.slug %}">#{{ tg.name }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if popular_tours %}
+            <div class="t-aside__box">
+              <div class="t-aside__title">Популярные</div>
+              <ul class="t-aside__popular">
+                {% for p in popular_tours %}
+                  <li>
+                    <a href="{{ p.get_absolute_url }}">
+                      {% if p.cover %}
+                        <img src="{{ p.cover.url }}" alt="{{ p.title }}" loading="lazy">
+                      {% endif %}
+                      <span class="t">
+                        {% if p.title|length > 38 %}{{ p.title|slice:":38" }}…{% else %}{{ p.title }}{% endif %}
+                      </span>
+                      <span class="pr">{{ p.price_adult|floatformat:0|intcomma }}฿</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block extra_js %}
+  {# при необходимости можно добавить специфичный JS для каталога #}
+{% endblock %}

@@ -1,0 +1,127 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles/lead_modal.css' %}">
+
+<div id="lead-modal" class="lead-modal" aria-hidden="true">
+  <div class="lm-overlay" data-close></div>
+
+  <div class="lm-card" role="dialog" aria-modal="true" aria-labelledby="lmTitle">
+    <button type="button" class="lm-close" aria-label="Close" data-close>×</button>
+
+    <div class="lm-hero">
+      <i class="fa fa-bolt" aria-hidden="true"></i>
+    </div>
+
+    <h3 id="lmTitle" class="lm-title">Оставьте заявку</h3>
+    <p class="lm-sub">Перезвоним в WhatsApp/Telegram в течение 10–15 минут.</p>
+
+    <form method="post" action="{% url 'core:lead_create' %}" id="leadForm" class="lm-form" novalidate>
+        {% csrf_token %}
+      <!-- скрытые поля -->
+      <input type="hidden" name="source_page" id="lmSource">
+      <input type="hidden" name="cta" id="lmCta">
+      <!-- honeypot -->
+      <input type="text" name="website" class="lm-hp" autocomplete="off" tabindex="-1">
+
+      <div class="lm-field">
+        <input type="text" name="fullname" class="lm-input" placeholder="Имя" required>
+      </div>
+
+      <div class="lm-field">
+        <input type="tel" name="phone" class="lm-input"
+               placeholder="Номер телефона (WhatsApp/Telegram)"
+               inputmode="tel" pattern="[\d\+\-\s\(\)]{8,18}" required>
+      </div>
+
+      <button class="lm-btn" type="submit">Отправить заявку</button>
+      <button class="lm-link" type="button" data-close>Не сейчас</button>
+
+      <p class="lm-legal">
+        Нажимая кнопку, вы соглашаетесь с обработкой данных.
+        <a href="/privacy" target="_blank" rel="noopener">Политика конфиденциальности</a>
+      </p>
+    </form>
+
+    <div class="lm-success" hidden>
+      <h4>Спасибо! Заявка отправлена</h4>
+      <p>Мы свяжемся с вами в ближайшее время.</p>
+      <button class="lm-btn" data-close>Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const modal   = document.getElementById('lead-modal');
+  if (!modal) return;
+
+  const form    = modal.querySelector('#leadForm');
+  const success = modal.querySelector('.lm-success');
+  const src     = modal.querySelector('#lmSource');
+  const ctaEl   = modal.querySelector('#lmCta');
+
+  // источник страницы
+  src.value = window.location.href;
+
+  function openLeadModal(ctaText){
+    if (ctaText) ctaEl.value = ctaText;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    setTimeout(() => {
+      const first = form.querySelector('input[name="fullname"]');
+      if (first) first.focus();
+    }, 40);
+  }
+  function closeLeadModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    success.hidden = true;
+    form.hidden = false;
+    form.reset();
+    src.value = window.location.href;
+  }
+
+  // Делаем функцию доступной глобально (на всякий случай)
+  window.openLeadModal  = openLeadModal;
+  window.closeLeadModal = closeLeadModal;
+
+  // Делегирование: ловим клики по ЛЮБОЙ .open-lead-modal (даже если она добавится позже)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.open-lead-modal');
+    if (!btn) return;
+    e.preventDefault(); // чтобы не прыгал якорь
+    const label = btn.dataset.cta || btn.textContent.trim();
+    openLeadModal(label);
+  }, true);
+
+  // Закрытие
+  modal.querySelectorAll('[data-close]').forEach(el => {
+    el.addEventListener('click', closeLeadModal);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeLeadModal();
+  });
+
+  // Отправка AJAX
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // honeypot
+    if (form.website && form.website.value) { closeLeadModal(); return; }
+
+    const fd   = new FormData(form);
+    const csrf = form.querySelector('input[name=csrfmiddlewaretoken]').value;
+
+    try{
+      const r = await fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: {'X-Requested-With':'XMLHttpRequest','X-CSRFToken': csrf}
+      });
+      if (!r.ok) throw new Error();
+      form.hidden = true;
+      success.hidden = false;
+    }catch(_){
+      alert('Не удалось отправить. Напишите нам в WhatsApp/Telegram, пожалуйста.');
+    }
+  });
+})();
+</script>

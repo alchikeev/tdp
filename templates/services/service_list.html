@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Услуги{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h1 class="mb-3">
+    {% if active_category %}Услуги: {{ active_category.name }}
+    {% elif active_tag %}Услуги по тегу: #{{ active_tag.name }}
+    {% else %}Услуги{% endif %}
+  </h1>
+
+  <div class="row">
+    {% for s in services %}
+      <div class="col-md-4 mb-4">
+        <a href="{{ s.get_absolute_url }}" class="card h-100 text-decoration-none">
+          {% if s.cover %}
+            <img src="{{ s.cover.url }}" class="card-img-top" alt="{{ s.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ s.title }}</h5>
+            {% if s.short_desc %}<p class="card-text">{{ s.short_desc|truncatechars:140 }}</p>{% endif %}
+            <div class="small text-muted">
+              {% if s.price_child %}Дети: {{ s.price_child|floatformat:0 }} сом · {% endif %}
+              Взрослые: {{ s.price_adult|floatformat:0 }} сом
+            </div>
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <div class="col-12"><p>Пока нет услуг.</p></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

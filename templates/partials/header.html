@@ -1,0 +1,94 @@
+{% load static %}
+{% include "partials/lead_modal.html" %}
+<header class="header">
+<link rel="stylesheet" type="text/css" href="{% static 'styles/header.css' %}">
+<div class="container">
+	<div class="header_content">
+	<div class="header_content_inner">
+		<!-- ЛЕВАЯ ЗОНА -->
+		<div class="logo_wrapper">
+		<div class="logo">
+			<a href="/"><img src="{% static 'images/logo.png' %}" alt="{{ site_settings.site_name|default:'Thai Dream Phuket' }}"></a>
+		</div>
+		<div class="thai">
+        	<a href="/">{{ site_settings.site_name|default:"Thai Dream Phuket" }}</a>
+        </div>
+		</div>
+
+		<!-- ЦЕНТР (МЕНЮ) -->
+		<nav class="main_nav">
+		<ul>
+			<li class="active"><a href="/">Главная</a></li>
+			<li><a href="{% url 'tours:list' %}">Экскурсии</a></li>
+			<li><a href="{% url 'services:list' %}">Услуги</a></li>
+			<li><a href="/accounts/contact">Цены</a></li>
+			<li><a href="/accounts/contact">Отзывы</a></li>
+		</ul>
+		</nav>
+
+		<!-- ПРАВАЯ ЗОНА -->
+		<div class="header_right">
+          <div class="socials">
+            {% if site_settings.telegram %}
+              <a class="soc tg" href="{{ site_settings.telegram }}" target="_blank" rel="noreferrer"><i class="fa fa-telegram"></i></a>
+            {% endif %}
+            {% if site_settings.whatsapp %}
+              <a class="soc wa" href="{{ site_settings.whatsapp }}" target="_blank" rel="noreferrer"><i class="fa fa-whatsapp"></i></a>
+            {% endif %}
+            {% if site_settings.instagram %}
+              <a class="soc ig" href="{{ site_settings.instagram }}" target="_blank" rel="noreferrer"><i class="fa fa-instagram"></i></a>
+            {% endif %}
+          </div>
+
+		
+		<a
+			class="order_btn open-lead-modal"
+			data-cta="Header — Заказать"
+			href="javascript:void(0)"
+			role="button"
+			aria-controls="lead-modal">ЗАКАЗАТЬ
+		</a>
+		
+		<div class="hamburger"><i class="fa fa-bars" aria-hidden="true"></i></div>
+		</div>
+
+	</div>
+	</div>
+</div>
+
+</header>
+
+<!-- Overlay -->
+<div class="menu_overlay"></div>
+
+<!-- Menu -->
+<div class="menu">
+  <div class="menu_header">
+    <div class="menu_logo">
+      <a href="/">{{ site_settings.site_name|default:"Thai Dream Phuket" }}</a>
+    </div>
+    <div class="menu_close_container">
+      <div class="menu_close"><div></div><div></div></div>
+    </div>
+  </div>
+
+  <div class="menu_content">
+    <ul>
+      <li class="active"><a href="/">Главная</a></li>
+      <li><a href="{% url 'tours:list' %}">Экскурсии</a></li>
+      <li><a href="{% url 'services:list' %}">Услуги</a></li>
+      <li><a href="/accounts/contact">Цены</a></li>
+      <li><a href="/accounts/contact">Отзывы</a></li>
+    </ul>
+  </div>
+
+  <div class="menu_social">
+    {% if site_settings.phone %}
+      <div class="menu_phone">Наш номер: {{ site_settings.phone }}</div>
+    {% endif %}
+  </div>
+</div>
+
+<script src="{% static 'js/menu.js' %}"></script>
+
+	

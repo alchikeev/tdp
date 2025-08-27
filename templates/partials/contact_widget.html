@@ -1,0 +1,47 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles/contact_widget.css' %}">
+<div id="contact-widget" class="contact-widget" aria-live="polite">
+  <button class="cw-btn" id="cwBtn" aria-haspopup="true" aria-expanded="false" aria-controls="cwPopup">
+    <span class="cw-dot"></span>
+    <i class="cw-icon fa fa-whatsapp" aria-hidden="true"></i>
+    <span class="cw-label">Свяжитесь<br>с нами</span>
+  </button>
+
+  <div class="cw-popup" id="cwPopup" role="menu" aria-label="Выбор мессенджера">
+    <a class="cw-item cw-wa" href="https://wa.me/{{ WA|default:'+66891234567'|urlencode }}" target="_blank" rel="noopener" role="menuitem">
+      <i class="fa fa-whatsapp" aria-hidden="true"></i> Whatsapp
+    </a>
+    <a class="cw-item cw-tg" href="https://t.me/{{ TG|default:'ThaiDreamPhuket' }}" target="_blank" rel="noopener" role="menuitem">
+      <i class="fa fa-telegram" aria-hidden="true"></i> Telegram
+    </a>
+  </div>
+</div>
+
+<script>
+(() => {
+  const btn = document.getElementById('cwBtn');
+  const popup = document.getElementById('cwPopup');
+  const icon = btn.querySelector('.cw-icon');
+  const classes = ['fa-whatsapp','fa-telegram'];
+  let i = 0;
+
+  // смена иконки каждые 2.5с
+  setInterval(() => {
+    icon.classList.remove(classes[i]);
+    i = (i + 1) % classes.length;
+    icon.classList.add(classes[i]);
+  }, 2500);
+
+  const setOpen = (open) => {
+    const val = open ?? !popup.classList.contains('open');
+    popup.classList.toggle('open', val);
+    btn.setAttribute('aria-expanded', String(val));
+  };
+
+  btn.addEventListener('click', () => setOpen());
+  document.addEventListener('click', (e) => {
+    if (!btn.contains(e.target) && !popup.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+})();
+</script>

@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}{{ tour.title }} — Экскурсии на Пхукете{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/tour-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+  <!-- HERO -->
+  <section class="t-hero t-hero--detail">
+    <div class="t-hero__bg"
+         style="background-image:url('{% if tour.cover %}{{ tour.cover.url }}{% else %}{% static "images/travello.jpg" %}{% endif %}')"></div>
+    <div class="container t-hero__content">
+      <h1 class="t-hero__title">{{ tour.title }}</h1>
+      <p class="t-hero__sub">
+        {% if tour.location %}<i class="fa fa-map-marker"></i> {{ tour.location }} · {% endif %}
+        {% if tour.duration %}<i class="fa fa-clock-o"></i> {{ tour.duration }}{% endif %}
+      </p>
+      <div class="t-hero__cta">
+        <button type="button" class="btn-hero open-lead-modal"
+                data-cta="Tour Detail — Hero"
+                data-related_type="tour" data-related_id="{{ tour.id }}">Записаться</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="t-detail">
+    <div class="container">
+      <div class="row">
+
+        <!-- Основная колонка -->
+        <div class="col-lg-8 col-xl-9">
+          <!-- Галерея -->
+          {% if gallery_images %}
+            <div class="t-gallery owl-carousel owl-theme mb-4">
+              {% for img in gallery_images %}
+                <div class="item">
+                  <img src="{{ img.image.url }}" alt="{{ tour.title }} — фото {{ forloop.counter }}" loading="lazy">
+                </div>
+              {% endfor %}
+            </div>
+          {% elif tour.cover %}
+            <div class="mb-4">
+              <img class="w-100 rounded" src="{{ tour.cover.url }}" alt="{{ tour.title }}">
+            </div>
+          {% endif %}
+
+          <!-- Краткое описание -->
+          {% if tour.short_desc %}
+            <p class="lead">{{ tour.short_desc }}</p>
+          {% endif %}
+
+          <!-- Полное описание -->
+          {% if tour.description %}
+            <div class="t-prose">
+              {{ tour.description|safe }}
+            </div>
+          {% endif %}
+
+          <!-- Что включено/не включено -->
+          <div class="row g-3 my-4">
+            {% if tour.included %}
+              <div class="col-md-6">
+                <div class="t-box">
+                  <div class="t-box__title"><i class="fa fa-check-circle"></i> Включено</div>
+                  <div class="t-box__content">{{ tour.included|linebreaks }}</div>
+                </div>
+              </div>
+            {% endif %}
+            {% if tour.excluded %}
+              <div class="col-md-6">
+                <div class="t-box t-box--muted">
+                  <div class="t-box__title"><i class="fa fa-times-circle"></i> Не включено</div>
+                  <div class="t-box__content">{{ tour.excluded|linebreaks }}</div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Вложения -->
+          {% if attachments %}
+            <div class="t-attach my-4">
+              <div class="t-attach__title"><i class="fa fa-paperclip"></i> Материалы</div>
+              <ul class="t-attach__list">
+                {% for a in attachments %}
+                  <li>
+                    <a href="{{ a.file.url }}" target="_blank" rel="noopener">
+                      <i class="fa fa-file-o"></i> {{ a.title|default:a.filename }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <!-- Теги -->
+          {% if tour.tags.all %}
+            <div class="t-tags">
+              {% for tg in tour.tags.all %}
+                <a class="t-tag" href="{% url 'tours:by_tag' slug=tg.slug %}">#{{ tg.name }}</a>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Похожие туры -->
+          {% if related_tours %}
+            <div class="t-related mt-5">
+              <div class="t-related__title">Похожие туры</div>
+              <div class="row g-3">
+                {% for r in related_tours %}
+                  <div class="col-12 col-sm-6 col-xl-4 d-flex">
+                    <article class="t-card h-100">
+                      <div class="t-card__cover">
+                        {% if r.cover %}
+                          <img class="t-card__img" src="{{ r.cover.url }}" alt="{{ r.title }}" loading="lazy">
+                        {% else %}
+                          <img class="t-card__img" src="{% static 'images/travello.jpg' %}" alt="{{ r.title }}" loading="lazy">
+                        {% endif %}
+                      </div>
+                      <div class="t-card__body">
+                        <a href="{{ r.get_absolute_url }}" class="t-card__title">{{ r.title }}</a>
+                        <div class="t-card__price">
+                          <strong class="t-price__new">{{ r.price_adult|floatformat:0|intcomma }}฿</strong>
+                        </div>
+                        <div class="t-actions">
+                          <a href="{{ r.get_absolute_url }}" class="btn-more">Подробнее</a>
+                          <button class="order_btn open-lead-modal"
+                                  data-cta="Related — {{ r.title }}"
+                                  data-related_type="tour" data-related_id="{{ r.id }}">Заказать</button>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Сайдбар -->
+        <aside class="col-lg-4 col-xl-3 t-aside">
+
+          <!-- Виджет цены/заказа -->
+          <div class="t-widget t-widget--sticky">
+            <div class="t-pricebox">
+              <div class="t-pricebox__row">
+                <span>Взрослый</span>
+                <div class="t-price">
+                  {% if tour.price_old_adult and tour.price_old_adult > tour.price_adult %}
+                    <s class="t-price__old">{{ tour.price_old_adult|floatformat:0|intcomma }}฿</s>
+                  {% endif %}
+                  <strong class="t-price__new">{{ tour.price_adult|floatformat:0|intcomma }}฿</strong>
+                </div>
+              </div>
+              {% if tour.price_child %}
+                <div class="t-pricebox__row">
+                  <span>Детский</span>
+                  <div class="t-price">
+                    {% if tour.price_old_child and tour.price_old_child > tour.price_child %}
+                      <s class="t-price__old">{{ tour.price_old_child|floatformat:0|intcomma }}฿</s>
+                    {% endif %}
+                    <strong class="t-price__new">{{ tour.price_child|floatformat:0|intcomma }}฿</strong>
+                  </div>
+                </div>
+              {% endif %}
+              {% if tour.note_price %}
+                <div class="t-pricebox__note">{{ tour.note_price|linebreaks }}</div>
+              {% endif %}
+              <button class="order_btn w-100 open-lead-modal"
+                      data-cta="Tour Detail — Sidebar"
+                      data-related_type="tour" data-related_id="{{ tour.id }}">Оставить заявку</button>
+            </div>
+          </div>
+
+          <!-- Категория -->
+          {% if tour.category %}
+            <div class="t-aside__box">
+              <div class="t-aside__title">Категория</div>
+              <p><a href="{% url 'tours:by_category' slug=tour.category.slug %}">{{ tour.category.name }}</a></p>
+            </div>
+          {% endif %}
+
+          <!-- Полезная информация -->
+          {% if tour.info %}
+            <div class="t-aside__box">
+              <div class="t-aside__title">Полезно знать</div>
+              <div class="t-aside__text">{{ tour.info|linebreaks }}</div>
+            </div>
+          {% endif %}
+
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block extra_js %}
+  <!-- Если нужна инициализация OwlCarousel для галереи -->
+  <script>
+    (function() {
+      var $ = window.jQuery || null;
+      if (!$ || !$.fn || !$.fn.owlCarousel) return;
+      $('.t-gallery').owlCarousel({
+        items: 1,
+        loop: true,
+        dots: true,
+        nav: false,
+        autoplay: true,
+        autoplayTimeout: 5000
+      });
+    })();
+  </script>
+{% endblock %}

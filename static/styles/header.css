@@ -1,0 +1,188 @@
+/******** Header базовое ********/
+.header { position:fixed; top:0; left:0; width:100%; z-index:100; transition:all 200ms ease; }
+.header_content{ width:100%; height:148px; display:flex; align-items:center; transition:all 200ms ease; }
+.header.scrolled{ background:rgba(24,24,24,.6); }
+.header.scrolled .header_content{ height:90px; }
+
+/* Центровка зон: слева (лого), по центру (меню), справа (соц+кнопка) */
+.header_content_inner{
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* left | center | right */
+  align-items: center;
+  column-gap: 24px;
+  width:100%;
+  height:100%;
+}
+
+/* Лого + название */
+.logo_wrapper{ display:flex; align-items:center; gap:12px; }
+.logo img{ height:70px; width:auto; display:block; transition:height .2s; }
+.header.scrolled .logo img{ height:48px; }
+.thai a{ font-family:'Oswald',sans-serif; font-size:26px; font-weight:500; color:#fff; line-height:1; text-decoration:none; }
+
+/* Меню по центру */
+.main_nav{ justify-self:center; }
+.main_nav ul{ display:flex; align-items:center; gap:40px; margin:0; padding:0; list-style:none; }
+.main_nav ul li{ position:relative; display:flex; align-items:center; }
+.main_nav ul li a{
+  display:inline-flex; align-items:center; line-height:1;
+  font-family:'Oswald',sans-serif; font-size:16px; font-weight:400;
+  color:#fff; text-decoration:none; white-space:nowrap;
+}
+
+/* Правая панель: соцсети + кнопка */
+.header_right{ justify-self:end; display:flex; align-items:center; gap:18px; }
+
+/* Соц-иконки */
+.socials{ display:flex; align-items:center; gap:14px; }
+.socials .soc{
+  width:36px; height:36px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1.5px solid #fff; color:#fff; text-decoration:none; opacity:.95;
+  transition:all .2s ease;
+}
+.socials .soc:hover{ transform:translateY(-1px); opacity:1; background:#fff; color:#111; }
+
+/* Брендовые hover-цвета (по желанию) */
+.socials .tg:hover{ background:#229ED9; border-color:#229ED9; color:#fff; }
+.socials .wa:hover{ background:#25D366; border-color:#25D366; color:#fff; }
+.socials .ig:hover{ background:#fff; border-color:#fff; color:#111; }
+
+/* Кнопка "Заказать" справа */
+.order_btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 18px; border-radius:8px;
+  border:2px solid #fff; color:#fff; text-decoration:none; font-weight:600;
+  letter-spacing:.3px; text-transform:uppercase; font-size:13px;
+  background:transparent; transition:all .2s ease;
+}
+.order_btn:hover{ background:#fff; color:#111; transform:translateY(-1px); }
+
+/* Гамбургер: скрыть на десктопе */
+.hamburger{ display:none; }
+.hamburger i{ font-size:20px; color:rgba(255,255,255,.85); }
+
+/* Сжатие при прокрутке */
+.header.scrolled .header_content_inner{ height:100%; }
+
+/* ===== Адаптив ===== */
+@media (max-width: 1200px){
+  .main_nav ul{ gap:28px; }
+  .logo img{ height:60px; }
+  .thai a{ font-size:22px; }
+  .order_btn{ height:38px; padding:0 16px; }
+}
+@media (max-width: 992px){
+  .main_nav{ display:none; }          /* на мобиле прячем меню */
+  .order_btn{ display:none; }         /* и большую кнопку */
+  .hamburger{ display:block; }        /* показываем бургер */
+  .socials .soc{ width:32px; height:32px; }
+}
+
+
+/*********************************
+4. Menu (mobile drawer right)
+*********************************/
+
+/* переменная высоты шапки: подкорректируй при желании */
+:root { --header-height-mobile: 90px; }
+
+/* само меню: под шапкой, занимает 70% ширины, выезжает справа */
+.menu{
+  position: fixed;
+  top: var(--header-height-mobile);
+  right: -70%;
+  width: 70%;
+  height: calc(100vh - var(--header-height-mobile));
+  background: #fff;
+  transition: right .3s ease;
+  z-index: 99;              /* ниже шапки (шапка у тебя z-index:100) */
+  overflow-y: auto;
+  box-shadow: -4px 0 20px rgba(0,0,0,.2);
+}
+.menu.active{ right: 0; }
+
+/* оверлей тоже под шапкой и ниже её по z-index */
+.menu_overlay{
+  position: fixed;
+  top: var(--header-height-mobile);
+  left: 0;
+  width: 100%;
+  height: calc(100vh - var(--header-height-mobile));
+  background: rgba(0,0,0,.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s ease, visibility .3s ease;
+  z-index: 98;              /* ниже шапки, выше контента */
+}
+.menu_overlay.active{
+  opacity: 1;
+  visibility: visible;
+}
+
+/* шапка меню внутри выдвижной панели */
+.menu_header{
+  width: 100%;
+  height: 64px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.menu_logo a{
+  font-family: 'Oswald', sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: #111;
+  text-decoration: none;
+}
+
+/* крестик */
+.menu_close_container{
+  position: relative;
+  width: 22px;
+  height: 22px;
+  transform: rotate(45deg);
+  cursor: pointer;
+}
+.menu_close{ width: 100%; height: 100%; }
+.menu_close div{
+  position: absolute;
+  left: 0; top: 10px;
+  width: 100%; height: 2px;
+  background: #333;
+  transition: background .2s ease;
+}
+.menu_close div:last-of-type{ transform: rotate(90deg); }
+.menu_close_container:hover div{ background:#937c6f; }
+
+/* пункты */
+.menu_content{ padding: 20px; }
+.menu_content ul{ list-style:none; margin:0; padding:0; }
+.menu_content ul li{ margin-bottom:16px; }
+.menu_content ul li a{
+  font-size: 22px;
+  font-weight: 500;
+  font-family: 'Oswald', sans-serif;
+  color:#111; text-decoration:none;
+  transition: color .2s ease;
+}
+.menu_content ul li a:hover{ color:#937c6f; }
+
+/* низ панели */
+.menu_social{
+  padding: 16px 20px 24px;
+  border-top: 1px solid #eee;
+}
+.menu_phone{
+  font-family:'Oswald',sans-serif;
+  font-size:16px; font-weight:500; color:#555;
+}
+
+/* блокируем прокрутку фона при открытом меню */
+body.menu-open{ overflow: hidden; }
+
+/* десктоп — по желанию можно скрыть выдвижное меню */
+@media (min-width: 993px){
+  .menu, .menu_overlay{ display:none; }
+}

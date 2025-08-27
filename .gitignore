@@ -1,0 +1,54 @@
+# ОС и IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.code-workspace
+
+# Python / venv
+venv/
+ENV/
+env/
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+dist/
+build/
+.cache/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Django
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+uploads/
+logs/
+*.log
+
+# ENV
+.env
+.env.local
+.env.*.local
+
+# Node (если вдруг появится фронт-сборка)
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Тесты/репорты
+coverage.xml
+htmlcov/
+.coverage
+.tox/
+
+# Mac
+__MACOSX/

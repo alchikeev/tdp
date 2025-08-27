@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Экскурсии: {{ category.name }} — Пхукет{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
+{% endblock %}
+
+{% block content %}
+  <!-- Можно переиспользовать тот же блок-герой -->
+  <section class="t-hero">
+    <div class="t-hero__bg" style="background-image:url('{% static 'images/home_slider.jpg' %}')"></div>
+    <div class="container t-hero__content">
+      <h1 class="t-hero__title">Экскурсии: {{ category.name }}</h1>
+      <p class="t-hero__sub">Подберите экскурсию по категории и оставьте заявку — перезвоним за 10–15 минут.</p>
+      <div class="t-hero__cta">
+        <button type="button" class="btn-hero open-lead-modal" data-cta="Category — Hero">Оставить заявку</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Список (тот же грид, что и в tour_list.html) -->
+  <section class="t-grid">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-8 col-xl-9">
+          <div class="row g-3">
+            {% for t in tours %}
+              <div class="col-12 col-sm-6 col-xl-4 d-flex">
+                <article class="t-card h-100">
+                  <div class="t-card__cover">
+                    {% if t.cover %}
+                      <img class="t-card__img" src="{{ t.cover.url }}" alt="{{ t.title }}" loading="lazy">
+                    {% else %}
+                      <img class="t-card__img" src="{% static 'images/travello.jpg' %}" alt="{{ t.title }}" loading="lazy">
+                    {% endif %}
+                  </div>
+                  <div class="t-card__body">
+                    <a href="{{ t.get_absolute_url }}" class="t-card__title">{{ t.title }}</a>
+                    {% if t.short_desc %}<p class="t-card__desc">{{ t.short_desc }}</p>{% endif %}
+                    <div class="t-card__price">
+                      <strong class="t-price__new">{{ t.price_adult|floatformat:0|intcomma }}฿</strong>
+                    </div>
+                    <div class="t-actions">
+                      <a href="{{ t.get_absolute_url }}" class="btn-more">Подробнее</a>
+                      <button class="order_btn open-lead-modal"
+                              data-cta="Category — {{ t.title }}"
+                              data-related_type="tour" data-related_id="{{ t.id }}">Заказать</button>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            {% empty %}
+              <div class="col-12">
+                <p class="text-center text-muted my-5">В этой категории пока нет туров.</p>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if page_obj and page_obj.paginator.num_pages > 1 %}
+            <nav class="t-pagination" aria-label="Навигация по страницам">
+              <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">« Назад</a></li>
+                {% endif %}
+                <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+                {% if page_obj.has_next %}
+                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперёд »</a></li>
+                {% endif %}
+              </ul>
+            </nav>
+          {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="col-lg-4 col-xl-3 t-aside">
+          {% if categories %}
+            <div class="t-aside__box">
+              <div class="t-aside__title">Категории</div>
+              <ul class="t-aside__list">
+                {% for c in categories %}
+                  <li>
+                    <a href="{% url 'tours:by_category' slug=c.slug %}"
+                       class="{% if category.id == c.id %}is-active{% endif %}">
+                      {{ c.name }}
+                    </a>
+                    {% if c.items %}<span>{{ c.items }}</span>{% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </aside>
+
+      </div>
+    </div>
+  </section>
+{% endblock %}

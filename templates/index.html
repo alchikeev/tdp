@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная — Thai Dream Phuket{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+  <!-- Home / Hero -->
+  <section class="home">
+    <div class="home_slider_container">
+      <div class="background_image" style="background-image:url({% static 'images/home_slider.jpg' %})"></div>
+
+      <div class="home_slider_content_container">
+        <div class="hero">
+          <div class="hero-left">
+            <h1 class="hero-title">Туры и экскурсии на Пхукете</h1>
+            <p class="hero-sub">Лучшие туры на Пхукете по выгодным ценам. Оставьте заявку и получите консультацию.</p>
+            <div class="hero-cta">
+              <button class="btn-hero open-lead-modal" data-cta="Hero — Оставить заявку" type="button">Оставить заявку</button>
+            </div>
+          </div>
+
+          <!-- Парящие облака справа (desktop) -->
+          <div class="hero-clouds">
+            <div class="cloud c1" data-w="wide">
+              <i class="icon fa fa-id-card-o"></i>
+              <span>Лицензия TAT</span>
+            </div>
+            <div class="cloud c2">
+              <i class="icon fa fa-shield"></i>
+              <span>Страховка включена</span>
+            </div>
+            <div class="cloud c3">
+              <i class="icon fa fa-star"></i>
+              <span>4.9/5 — 3 000+ отзывов</span>
+            </div>
+            <div class="cloud c4">
+              <i class="icon fa fa-bus"></i>
+              <span>Трансфер от двери</span>
+            </div>
+            <div class="cloud c5">
+              <i class="icon fa fa-child"></i>
+              <span>Детям скидки</span>
+            </div>
+          </div>
+
+          <!-- Угловая плашка -->
+          <button class="hero-corner left open-lead-modal" data-cta="Hero — Верхняя левая" type="button">
+            Оставить заявку
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intro -->
+  <section class="intro">
+    <div class="intro_background" style="background-image:url({% static 'images/intro.png' %})"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="intro_container">
+            <div class="row">
+              <div class="col-lg-4 intro_col">
+                <div class="intro_item d-flex flex-row align-items-end justify-content-start">
+                  <div class="intro_icon"><img src="{% static 'images/beach.svg' %}" alt=""></div>
+                  <div class="intro_content">
+                    <div class="intro_title">Top Destinations</div>
+                    <div class="intro_subtitle"><p>Nulla pretium tincidunt felis, nec.</p></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 intro_col">
+                <div class="intro_item d-flex flex-row align-items-end justify-content-start">
+                  <div class="intro_icon"><img src="{% static 'images/wallet.svg' %}" alt=""></div>
+                  <div class="intro_content">
+                    <div class="intro_title">The Best Prices</div>
+                    <div class="intro_subtitle"><p>Sollicitudin mauris lobortis in.</p></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 intro_col">
+                <div class="intro_item d-flex flex-row align-items-end justify-content-start">
+                  <div class="intro_icon"><img src="{% static 'images/suitcase.svg' %}" alt=""></div>
+                  <div class="intro_content">
+                    <div class="intro_title">Amazing Services</div>
+                    <div class="intro_subtitle"><p>Nulla pretium tincidunt felis, nec.</p></div>
+                  </div>
+                </div>
+              </div>
+            </div><!-- /.row -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tours grid on homepage -->
+  <section class="container my-5">
+    <div class="row">
+      {% for t in tours %}
+        <div class="col-md-4 mb-4">
+          <a href="{{ t.get_absolute_url }}" class="card h-100 text-decoration-none">
+            {% if t.cover %}
+              <img src="{{ t.cover.url }}" class="card-img-top" alt="{{ t.title }}">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ t.title }}</h5>
+              {% if t.short_desc %}
+                <p class="card-text">{{ t.short_desc|truncatechars:120 }}</p>
+              {% endif %}
+              <div class="small text-muted">
+                Взрослые: {{ t.price_adult|floatformat:0 }} сом
+                {% if t.price_child %} · Дети: {{ t.price_child|floatformat:0 }} сом{% endif %}
+              </div>
+            </div>
+          </a>
+        </div>
+      {% empty %}
+        <div class="col-12"><p>Пока нет туров.</p></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials" id="testimonials">
+    <div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/testimonials.jpg' %}" data-speed="0.8"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <div class="section_subtitle">simply amazing places</div>
+          <div class="section_title"><h2>Testimonials</h2></div>
+        </div>
+      </div>
+      <div class="row testimonials_row">
+        <div class="col">
+          <div class="testimonials_slider_container">
+            <div class="owl-carousel owl-theme testimonials_slider">
+              <div class="owl-item text-center">
+                <div class="testimonial">Lorem ipsum dolor sit amet...</div>
+                <div class="testimonial_author">
+                  <div class="testimonial_author_content d-flex flex-row align-items-end justify-content-start">
+                    <div>john turner,</div>
+                    <div>client</div>
+                  </div>
+                </div>
+              </div>
+              <!-- ... другие слайды ... -->
+            </div><!-- /.owl-carousel -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="test_nav">
+      <ul class="d-flex flex-column align-items-end justify-content-end">
+        <li><a href="#">City Breaks Clients<span>01</span></a></li>
+        <li><a href="#">Cruises Clients<span>02</span></a></li>
+        <li><a href="#">All Inclusive Clients<span>03</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- News -->
+  <section class="news" id="news">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-8">
+          <div class="news_container">
+
+            <div class="news_post d-flex flex-md-row flex-column align-items-start justify-content-start">
+              <div class="news_post_image"><img src="{% static 'images/news_1.jpg' %}" alt=""></div>
+              <div class="news_post_content">
+                <div class="news_post_date d-flex flex-row align-items-end justify-content-start">
+                  <div>02</div>
+                  <div>june</div>
+                </div>
+                <div class="news_post_title"><a href="#">Best tips to travel light</a></div>
+                <div class="news_post_category">
+                  <ul><li><a href="#">lifestyle & Thai Dream Phuket</a></li></ul>
+                </div>
+                <div class="news_post_text">
+                  <p>Pellentesque sit amet elementum...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ... ещё посты ... -->
+
+          </div>
+        </div>
+
+        <div class="col-xl-4">
+          <div class="travello">
+            <div class="background_image" style="background-image:url({% static 'images/travello.jpg' %})"></div>
+            <div class="travello_content">
+              <div class="travello_content_inner"></div>
+            </div>
+            <div class="travello_container">
+              <a href="#">
+                <div class="d-flex flex-column align-items-center justify-content-end">
+                  <span class="travello_title">Get a 20% Discount</span>
+                  <span class="travello_subtitle">Buy Your Vacation Online Now</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block extra_js %}
+  {# Google Analytics example (replace ID) #}
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-23581568-13');
+  </script> -->
+{% endblock %}

@@ -1,0 +1,386 @@
+/*********************************
+index.css  — HERO (обложка)
+*********************************/
+
+/* Брендовые цвета */
+:root{
+  --brand: #FF7A1A;      /* трендовый оранжевый (под логотип) */
+  --brand-600:#E76700;   /* темнее — ховеры/тени */
+}
+
+/* Блок «Home» */
+.home{ width:100%; height:min(90vh, 860px); }
+
+/* Слайдер-фон и затемнение для читабельности текста */
+.home_slider_container{ position:relative; width:100%; height:100%; }
+.home_slider_container::before{
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(80% 100% at 50% 20%, rgba(0,0,0,.18), rgba(0,0,0,.50));
+  z-index:0;
+}
+.background_image{ position:absolute; inset:0; background-size:cover; background-position:center; }
+
+/* Центровка контента поверх фона */
+.home_slider_content_container{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  z-index:1;
+  padding-top:80px;                    /* под фикс-хедер на десктопе */
+}
+
+/* Сетка героя */
+.hero{
+  position:relative;
+  width:min(1200px,96%);
+  margin:auto;
+  display:grid; grid-template-columns:1.1fr .9fr;
+  gap:36px; align-items:center;
+  color:#fff;
+}
+
+/* Заголовок и подзаголовок */
+.hero-title{
+  margin:0 0 10px;
+  font-size:clamp(40px, 7vw, 86px);
+  line-height:1.05; font-weight:500; color:#fff;
+  text-shadow:0 4px 24px rgba(0,0,0,.55), 0 1px 1px rgba(0,0,0,.35);
+  word-break:normal; overflow-wrap:break-word;
+}
+.hero-sub{
+  margin:0 0 22px;
+  color:rgba(255,255,255,.96);
+  font-size:clamp(16px, 2.2vw, 22px);
+  text-shadow:0 2px 10px rgba(0,0,0,.45);
+  margin-top: 24px;
+}
+
+/* CTA-кнопки */
+.hero-cta{
+  display:flex; 
+  flex-wrap:wrap; gap:120px; 
+  width: 100%;
+  margin-bottom:18px;
+  margin-top: 36px;
+}
+.btn-hero{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:12px 20px; border-radius:999px;
+  background: #FF7A1A; color:#fff; text-decoration:none;
+  font-weight:700; letter-spacing:.2px; border:2px solid transparent;
+  box-shadow:0 10px 26px rgba(231,103,0,.38);
+  transition:transform .2s ease, box-shadow .2s ease;
+  animation:floaty 3s ease-in-out infinite;
+}
+.btn-hero:hover{ transform:translateY(-2px); box-shadow:0 14px 34px rgba(231,103,0,.52); }
+
+/* Преимущества */
+.hero-trust{
+  display:flex; flex-direction:column; gap:12px;
+  padding:14px 16px; width: min(360px, 32vw);
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:16px; backdrop-filter: blur(3px);
+  list-style:none; margin:0; color:#f2f2f2; font-size:16px;
+  text-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.hero-trust li{ display:flex; align-items:center; gap:12px; }
+.hero-trust i{
+  font-size:22px; width:32px; height:32px; display:grid; place-items:center;
+  color:#fff; filter: drop-shadow(0 2px 6px rgba(0,0,0,.4));
+  animation:icon-breath 2.8s ease-in-out infinite;
+}
+@keyframes icon-breath{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+/* Десктоп */
+@media (min-width: 993px){
+  .hero-right{ display:flex; flex-direction:column; align-items:flex-end; gap:16px; }
+}
+
+/* Мобилка */
+@media (max-width: 992px){
+  .hero-right{ align-items:flex-start; }
+  .hero-trust{
+    width:100%; padding:12px; gap:10px; margin-top:8px;
+    flex-direction:row; flex-wrap:wrap; justify-content:center;
+    background:rgba(255,255,255,.14);
+  }
+  .hero-trust li{ flex:1 1 calc(50% - 12px); justify-content:center; }
+}
+
+/* Прячем ненужное */
+.hero-video, .hero-cards{ display:none !important; }
+
+/* Бейдж */
+.hero-badge{
+  position:absolute; right:24px; bottom:24px;
+  min-width:320px; max-width:36vw; height:auto;
+  padding:14px 18px;
+  background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.14));
+  color:#fff; border-radius:16px;
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 10px 30px rgba(0,0,0,.28);
+  font-weight:800; text-align:center;
+}
+.hero-badge.rotating span{
+  position:absolute; inset:0; display:flex;
+  align-items:center; justify-content:center; padding:0 10px;
+  opacity:0; font-size:18px; text-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.hero-badge.rotating span:nth-child(1){ animation:rotateBadge 9s infinite; }
+.hero-badge.rotating span:nth-child(2){ animation:rotateBadge 9s 3s infinite; }
+.hero-badge.rotating span:nth-child(3){ animation:rotateBadge 9s 6s infinite; }
+
+.hero-corner{ display:none !important; }
+
+@keyframes rotateBadge{
+  0%{opacity:0; transform:translateY(6px)}
+  5%,30%{opacity:1; transform:translateY(0)}
+  35%,100%{opacity:0; transform:translateY(-6px)}
+}
+@keyframes floaty{
+  0%,100%{ transform:translateY(0); box-shadow:0 10px 26px rgba(231,103,0,.38) }
+  50%{ transform:translateY(-4px); box-shadow:0 16px 34px rgba(231,103,0,.52) }
+}
+@keyframes icon-breath{
+  0%,100%{ transform:scale(1); opacity:1 }
+  50%{ transform:scale(1.08); opacity:.95 }
+}
+
+/*********************************
+Адаптив
+*********************************/
+
+/* Планшеты и ниже */
+@media (max-width: 992px){
+  .home_slider_content_container{ padding-top:56px; }
+  .hero{
+    grid-template-columns:1fr; gap:18px;
+    width:min(820px, 92%);
+  }
+  .hero-trust{
+    position:static; transform:none;
+    width:100%; padding:12px; gap:10px; margin-top:8px;
+    flex-direction:row; flex-wrap:wrap; justify-content:center;
+    background:rgba(255,255,255,.14);
+  }
+  .hero-trust li{ gap:10px; font-size:15px; }
+  .hero-trust i{ font-size:20px; width:28px; height:28px; }
+  .hero-badge{ right:16px; bottom:16px; min-width:280px; padding:12px 14px; }
+}
+
+/* Телефоны */
+@media (max-width: 560px){
+  .home_slider_content_container{ padding-top:12px!important; }
+  .hero{ gap:16px; text-align:center; }
+  .hero-title, .hero-sub{ text-align:center; }
+  .hero{ margin-top: 0 !important; }
+  .hero-title{ margin-top: 0 !important; }
+  .hero-cta{ width:100%; }
+  .btn-hero{
+    width:100%; padding:14px 18px;
+    font-size:16px;
+  }
+  .hero-trust{
+    margin-top:6px; padding:10px 12px;
+    gap:8px; justify-content:center;
+  }
+  .hero-trust li{ flex:1 1 calc(50% - 12px); justify-content:center; }
+  .hero-badge{
+    left:50%; right:auto; transform:translateX(-50%);
+    bottom:14px; width:90%; min-width:0; max-width:600px;
+  }
+}
+
+/* CTA на больших экранах */
+@media (min-width: 993px){
+  .hero-cta{ gap: 20px; }
+  .btn-hero{
+    padding: 16px 128px;
+    font-size: 18px;
+    min-width: 280px;
+  }
+}
+@media (min-width: 562px){
+  .btn-hero{ padding: 18px 128px; font-size: 20px; min-width: 320px; }
+}
+@media (min-width: 1400px){
+  .btn-hero{ padding: 18px 128px; font-size: 20px; min-width: 320px; }
+}
+
+
+
+
+/* ============================
+   HERO Clouds — outline style (fixed)
+   ============================ */
+
+.hero-clouds{
+  position:absolute;
+  right: clamp(12px, 2vw, 24px);
+  top: 8%;                             /* старт облаков ≈ 40% высоты героя */
+  width: min(46%, 620px);
+  height: 52%;                         /* блок по высоте ≈ 40–92% от героя */
+  z-index: 2;
+  margin-top: 70px;
+}
+
+/* одно облако */
+.cloud{
+  position:absolute;                   /* теперь абсолютное позиционирование */
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  padding:48px 26px 18px;              /* место под иконку */
+  min-width:220px;
+  width:max-content;                   /* ширина от текста */
+  max-width:44ch;
+  line-height:1.12;
+  pointer-events:auto;
+  filter: drop-shadow(0 14px 24px rgba(0,0,0,.16));
+}
+
+/* фоновая форма облака: ТОЛЬКО полупрозрачная белая заливка */
+.cloud::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+
+  /* цвет заливки облака */
+  background-color: rgba(255,255,255,0.30);
+
+  /* маска по форме облака (та же кривая, что была в SVG) */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 600' preserveAspectRatio='none'%3E%3Cpath d='M80 340 C110 270 210 250 280 270 C300 205 390 175 470 205 C520 145 640 155 690 205 C740 170 835 185 835 255 C900 255 940 305 940 360 C940 415 900 455 845 460 C825 520 705 530 610 505 C540 560 420 560 345 515 C265 540 175 520 150 475 C95 460 70 400 80 340 Z' fill='white'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 600' preserveAspectRatio='none'%3E%3Cpath d='M80 340 C110 270 210 250 280 270 C300 205 390 175 470 205 C520 145 640 155 690 205 C740 170 835 185 835 255 C900 255 940 305 940 360 C940 415 900 455 845 460 C825 520 705 530 610 505 C540 560 420 560 345 515 C265 540 175 520 150 475 C95 460 70 400 80 340 Z' fill='white'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+
+  /* теперь блюр будет только внутри маски (никакого прямоугольника) */
+  backdrop-filter: blur(1.6px);
+  -webkit-backdrop-filter: blur(1.6px);
+}
+
+/* цвет бренда для иконок/текста */
+:root{ --brand:#656565; }
+
+.cloud .icon{
+  font-size: clamp(40px, 3.6vw, 58px);
+  line-height:1;
+  color: var(--brand);
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.15));
+  margin-top:-14px;
+}
+.cloud span{
+  font-family:"Manrope", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight:700;
+  font-size: clamp(16px, 1.12vw, 18px);
+  color: var(--brand);
+  white-space:nowrap;
+  text-shadow:0 1px 0 rgba(255,255,255,.6);
+}
+
+/* компактная раскладка — облака ближе друг к другу */
+.hero-clouds .c1{ top:  -80%; right:50%; transform: scale(0.96); }
+.hero-clouds .c2{ top: -60%; right: 13%; transform: scale(1.12); }
+.hero-clouds .c3{ top: -10%; right:22%;  transform: scale(0.94); }
+.hero-clouds .c4{ top: 55%; right: 45%; transform: scale(0.98); }
+.hero-clouds .c5{ top: 35%; right: 0%; transform: scale(0.90); }
+
+/* лёгкое «плавание» без столкновений */
+.cloud{ animation: cloudFloat var(--t,20s) ease-in-out var(--d,0s) infinite alternate; }
+@keyframes cloudFloat{
+  0%   { transform: translate(0,0)        scale(var(--s,1)); }
+  50%  { transform: translate(6px,-6px)   scale(var(--s,1)); }
+  100% { transform: translate(-6px,6px)   scale(var(--s,1)); }
+}
+
+/* скрыть на мобилке */
+@media (max-width: 992px){
+  .hero-clouds{ display:none !important; }
+}
+/* одно облако — переменные для формы и анимации */
+.cloud{
+  position:absolute;
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  padding:48px 26px 18px;
+  min-width:220px;
+  width:max-content;
+  max-width:44ch;
+  line-height:1.12;
+  pointer-events:auto;
+  filter: drop-shadow(0 14px 24px rgba(0,0,0,.16));
+
+  /* === пер-облака (можно переопределять на .c1..c5) === */
+  --fill: .30;          /* прозрачность заливки (0..1) */
+  --shape-sx: 1.5;        /* масштаб формы по X (1 = 100%) */
+  --shape-sy: 1;        /* масштаб формы по Y */
+  --shape-x: 50%;       /* позиция формы по X (center) */
+  --shape-y: 50%;       /* позиция формы по Y */
+
+  --dx: 8px;            /* амплитуда по X (px, знак = направление) */
+  --dy: -8px;           /* амплитуда по Y */
+  --rot: .25deg;        /* амплитуда поворота */
+  --dur: 20s;           /* длительность анимации */
+  --delay: 0s;          /* задержка старта */
+  --scale: 1;           /* общий scale элемента (если нужно) */
+
+  animation: cloudFloat var(--dur) ease-in-out var(--delay) infinite alternate;
+  transform: scale(var(--scale));
+}
+
+/* фон облака: ТОЛЬКО белая заливка по форме + блюр ВНУТРИ формы */
+.cloud::before{
+  content:"";
+  position:absolute; inset:0; z-index:-1;
+
+  /* заливка и её прозрачность */
+  background-color: rgba(255,255,255,var(--fill));
+
+  /* маска по форме облака — именно она задаёт «фон-облако» */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 600' preserveAspectRatio='none'%3E%3Cpath d='M80 340 C110 270 210 250 280 270 C300 205 390 175 470 205 C520 145 640 155 690 205 C740 170 835 185 835 255 C900 255 940 305 940 360 C940 415 900 455 845 460 C825 520 705 530 610 505 C540 560 420 560 345 515 C265 540 175 520 150 475 C95 460 70 400 80 340 Z' fill='white'/%3E%3C/svg%3E") no-repeat var(--shape-x) var(--shape-y) / calc(100% * var(--shape-sx)) calc(100% * var(--shape-sy));
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 600' preserveAspectRatio='none'%3E%3Cpath d='M80 340 C110 270 210 250 280 270 C300 205 390 175 470 205 C520 145 640 155 690 205 C740 170 835 185 835 255 C900 255 940 305 940 360 C940 415 900 455 845 460 C825 520 705 530 610 505 C540 560 420 560 345 515 C265 540 175 520 150 475 C95 460 70 400 80 340 Z' fill='white'/%3E%3C/svg%3E") no-repeat var(--shape-x) var(--shape-y) / calc(100% * var(--shape-sx)) calc(100% * var(--shape-sy));
+
+  backdrop-filter: blur(1.6px);
+  -webkit-backdrop-filter: blur(1.6px);
+}
+
+/* «хаотичное» плавание с переменными амплитуд/скорости/направления */
+@keyframes cloudFloat{
+  0%   { transform: translate(0,0) rotate(0deg) scale(var(--scale)); }
+  50%  { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(var(--scale)); }
+  100% { transform: translate(calc(var(--dx)*-1), calc(var(--dy)*-1)) rotate(calc(var(--rot)*-1)) scale(var(--scale)); }
+}
+
+/* компактная раскладка — позиции + индивидуальные настройки */
+.hero-clouds .c1{
+  top:-80%; right:55%;
+  --shape-sx: 1.15; --shape-sy: 1.90;   /* размер фона-облака */
+  --dx: 20px; --dy: -8px; --rot: .25deg;
+  --dur: 10s; --delay: .2s; --scale: 0.96;
+}
+.hero-clouds .c2{
+  top:-60%; right:5%;
+  --shape-sx: 1.18; --shape-sy: 1.90;
+  --dx: -12px; --dy: 9px; --rot: -.3deg; /* другое направление (знаки) */
+  --dur: 22s; --delay: .6s; --scale: 1.12;
+}
+.hero-clouds .c3{
+  top:-10%; right:45%;
+  --shape-sx: 1.15; --shape-sy: 1.90;
+  --dx: 8px; --dy: 7px; --rot: .2deg;
+  --dur: 20s; --delay: .1s; --scale: 0.94;
+}
+.hero-clouds .c4{
+  top:55%; right:35%;
+  --shape-sx: 1.16; --shape-sy: 1.90;
+  --dx: -9px; --dy: -7px; --rot: -.22deg;
+  --dur: 18s; --delay: .8s; --scale: 0.98;
+}
+.hero-clouds .c5{
+  top:15%; right:0%;
+  --shape-sx: 1.12; --shape-sy: 1.90;
+  --dx: 30px; --dy: -6px; --rot: .28deg;
+  --dur: 23s; --delay: .3s; --scale: 0.90;
+}

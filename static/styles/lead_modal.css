@@ -1,0 +1,77 @@
+/* === Lead Modal === */
+.lead-modal{ position:fixed; inset:0; z-index:10000; display:none; }
+.lead-modal.open{ display:block; }
+
+.lm-overlay{
+  position:absolute; inset:0; backdrop-filter: blur(3px);
+  background: rgba(0,0,0,.25);
+}
+
+.lm-card{
+  --lm-bg: #E9FBEF;       /* фон карточки */
+  --lm-main: #0a8f3d;     /* бренд-зелёный */
+  --lm-dark: #0e5f2b;     /* тёмный зелёный для кнопки */
+  --lm-radius: 26px;      /* скругления */
+  position: absolute; left:50%; top:50%;
+  transform: translate(-50%,-50%) scale(.98);
+  width: min(92vw, 520px);
+  background: var(--lm-bg);
+  border-radius: var(--lm-radius);
+  box-shadow: 0 30px 80px rgba(0,0,0,.35);
+  padding: 28px 26px 24px;
+  animation: lm-in .18s ease-out forwards;
+}
+@keyframes lm-in{ to{ transform: translate(-50%,-50%) scale(1); } }
+
+.lm-close{
+  position:absolute; right:14px; top:14px; width:34px; height:34px;
+  border-radius:50%; border:0; cursor:pointer;
+  background: rgba(0,0,0,.08); color:#234; font-size:20px; line-height:1;
+}
+
+.lm-hero{
+  width:74px; height:74px; border-radius:18px;
+  background: #CFF3DB;
+  display:grid; place-items:center; color:#0a8f3d; font-size:34px;
+  margin-bottom:14px;
+}
+.lm-title{
+  font-family:'Oswald',sans-serif; font-size:34px; color:#224; margin:0 0 6px;
+}
+.lm-sub{ color:#466; margin:0 0 16px; }
+
+.lm-form{ margin-top:8px; }
+.lm-field{ margin-bottom:12px; }
+.lm-input{
+  width:100%; height:48px; padding:0 14px;
+  background:#fff; border:1px solid #b9dec8; border-radius:12px;
+  font-size:16px; outline:none; transition: box-shadow .15s,border-color .15s;
+}
+.lm-input:focus{ border-color:#92d5ae; box-shadow:0 0 0 4px rgba(10,143,61,.12); }
+
+.lm-btn{
+  width:100%; height:50px; border:0; cursor:pointer;
+  border-radius:14px; background: var(--lm-dark); color:#fff;
+  font-weight:700; letter-spacing:.2px;
+  box-shadow: 0 10px 24px rgba(14,95,43,.35);
+  transition: transform .06s ease, filter .2s ease;
+}
+.lm-btn:hover{ filter: brightness(1.05); }
+.lm-btn:active{ transform: translateY(1px); }
+
+.lm-link{
+  margin:10px auto 0; display:block; background:transparent; border:0;
+  color:#466; text-decoration:underline; cursor:pointer;
+}
+
+.lm-legal{ font-size:12px; color:#567; margin:10px 0 0; }
+.lm-legal a{ color:#2b7a4b; }
+
+.lm-success{ text-align:center; padding-top:10px; }
+.lm-success h4{ margin:0 0 8px; color:#224; }
+.lm-hp{ display:none; } /* honeypot */
+
+@media (max-width: 420px){
+  .lm-card{ padding:22px 18px; border-radius:22px; }
+  .lm-title{ font-size:28px; }
+}
