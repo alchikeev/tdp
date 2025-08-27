@@ -8,17 +8,26 @@
 {% endblock %}
 
 {% block content %}
-  <!-- Можно переиспользовать тот же блок-герой -->
-  <section class="t-hero">
-    <div class="t-hero__bg" style="background-image:url('{% static 'images/home_slider.jpg' %}')"></div>
-    <div class="container t-hero__content">
-      <h1 class="t-hero__title">Экскурсии: {{ category.name }}</h1>
-      <p class="t-hero__sub">Подберите экскурсию по категории и оставьте заявку — перезвоним за 10–15 минут.</p>
-      <div class="t-hero__cta">
-        <button type="button" class="btn-hero open-lead-modal" data-cta="Category — Hero">Оставить заявку</button>
+{# ===== SLIDE-HERO (inline) ===== #}
+<section class="home slide slide--inner">
+  <div class="home_slider_container">
+    <div class="background_image" style="background-image:url({% static 'images/home_slider.jpg' %})"></div>
+    <div class="home_slider_content_container">
+      <div class="hero">
+        <div class="hero-left">
+          <h1 class="hero-title">Экскурсии: {{ category.name }}</h1>
+          <p class="hero-sub">Выберите тур по этой категории.</p>
+          <div class="hero-cta">
+            <button class="btn-hero open-lead-modal"
+                    data-cta="Inner Hero — Category"
+                    type="button">Оставить заявку</button>
+          </div>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- Список (тот же грид, что и в tour_list.html) -->
   <section class="t-grid">

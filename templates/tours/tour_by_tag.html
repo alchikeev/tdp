@@ -8,16 +8,26 @@
 {% endblock %}
 
 {% block content %}
-  <section class="t-hero">
-    <div class="t-hero__bg" style="background-image:url('{% static 'images/home_slider.jpg' %}')"></div>
-    <div class="container t-hero__content">
-      <h1 class="t-hero__title">Экскурсии по тегу: #{{ tag.name }}</h1>
-      <p class="t-hero__sub">Смотрите все предложения, помеченные этим тегом.</p>
-      <div class="t-hero__cta">
-        <button type="button" class="btn-hero open-lead-modal" data-cta="Tag — Hero">Оставить заявку</button>
+{# ===== SLIDE-HERO (inline) ===== #}
+<section class="home slide slide--inner">
+  <div class="home_slider_container">
+    <div class="background_image" style="background-image:url({% static 'images/home_slider.jpg' %})"></div>
+    <div class="home_slider_content_container">
+      <div class="hero">
+        <div class="hero-left">
+          <h1 class="hero-title">Экскурсии по тегу: #{{ tag.name }}</h1>
+          <p class="hero-sub">Все предложения, помеченные этим тегом.</p>
+          <div class="hero-cta">
+            <button class="btn-hero open-lead-modal"
+                    data-cta="Inner Hero — Tag"
+                    type="button">Оставить заявку</button>
+          </div>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <section class="t-grid">
     <div class="container">

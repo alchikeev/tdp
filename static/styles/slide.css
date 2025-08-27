@@ -1,22 +1,165 @@
-/* Универсальный слайд использует старые стили .home.
-   Мы лишь добавляем модификаторы для внутренних страниц. */
-.slide { /* просто маркерный класс */ }
+/* ===== ВНУТРЕННИЕ СЛАЙДЫ (АДАПТИВ) ===== */
 
-.slide--inner .hero-title { font-size: 36px; line-height: 1.2; }
-.slide--inner .hero-sub   { font-size: 16px; opacity: .9; }
+/* базовые переменные (подгони под реальную высоту шапки) */
+:root { --header-h: 120px; }
 
-/* Можно сделать слайд чуть ниже, чем на главной (если на главной он сильно высокий): */
-.slide--inner .home_slider_container { min-height: 320px; }
-@media (min-width: 992px) {
-  .slide--inner .home_slider_container { min-height: 420px; }
+/* ultra-wide можно сделать чуть компактнее шапку */
+@media (min-width: 1600px){ :root { --header-h: 150px; } }
+@media (max-width: 1199.98px){ :root { --header-h: 150px; } }
+@media (max-width: 991.98px){  :root { --header-h: 150px; } }
+@media (max-width: 767.98px){  :root { --header-h: 150px; } }
+@media (max-width: 575.98px){  :root { --header-h: 150px; } }
+@media (max-width: 399.98px){  :root { --header-h: 150px; } }
+
+/* контейнер слайда */
+.slide--inner .home_slider_container{
+  position: relative;
+  min-height: clamp(240px, 45vh, 460px);
 }
 
-/* Если на внутренних нужна лёгкая затемняющая подложка, чтобы текст читался */
-.slide--inner .background_image::after {
-  content: "";
-  position: absolute; inset: 0;
+/* точнее измеряем на мобильных, где 100vh плавает из-за браузерных панелей */
+@supports (height: 1svh){
+  .slide--inner .home_slider_container{ min-height: clamp(240px, 45svh, 480px); }
+}
+
+/* фон – сохраняем верх */
+.slide--inner .background_image{
+  position: absolute;
+  inset: 0;
+  background-position: center top !important;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* лёгкое затемнение */
+.slide--inner .background_image::after{
+  content:"";
+  position:absolute; inset:0;
   background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35));
 }
-.slide--inner .hero-title,
-.slide--inner .hero-sub,
-.slide--inner .btn-hero { color: #fff; }
+
+/* слой контента */
+.slide--inner .home_slider_content_container{
+  position: relative;
+  z-index: 1;
+  height: 100%;
+}
+
+/* сетка: слева текст, справа кнопка */
+.slide--inner .hero--inner{
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.slide--inner .hero__grid{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  height: 100%;
+  /* отступ под шапку + небольшой запас */
+  padding: calc(var(--header-h) + 12px) 0 22px;
+}
+
+/* типографика */
+.slide--inner .hero-left{
+  color:#fff;
+  max-width: 820px;
+}
+
+.slide--inner .hero-title{
+  margin:0 0 8px;
+  color:#fff;
+  font-weight:800;
+  font-size: clamp(22px, 4.2vw, 40px);
+  line-height:1.15;
+}
+
+.slide--inner .hero-sub{
+  margin:0;
+  color:#fff;
+  opacity:.95;
+  font-size: clamp(14px, 2.2vw, 16px);
+}
+
+/* кнопка справа */
+.slide--inner .hero-right{ display:flex; align-items:flex-end; }
+
+.slide--inner .btn-hero{
+  display:inline-flex;
+  align-items:center; justify-content:center;
+  padding:12px 22px;
+  border-radius:14px;
+  font-weight:700;
+  background:transparent;
+  color:#fff;
+  border:2px solid rgba(255,255,255,.85);
+  transition: background .2s ease, color .2s ease, border-color .2s ease, transform .15s ease;
+}
+.slide--inner .btn-hero:hover{ background:#fff; color:#111; border-color:#fff; }
+.slide--inner .btn-hero:active{ transform: translateY(1px); }
+
+/* ====== Брейкпоинты ====== */
+
+/* ≥ 1600px — немного уменьшаем визуальную высоту, чтобы не «давило» */
+@media (min-width: 1600px){
+  .slide--inner .home_slider_container{ min-height: clamp(260px, 40vh, 480px); }
+  .slide--inner .background_image::after{ background: linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.28)); }
+}
+
+/* XL (≥1200) — десктоп по умолчанию уже ок; можно немного увеличить заголовок */
+@media (min-width: 1200px) and (max-width: 1599.98px){
+  .slide--inner .hero-title{ font-size: clamp(24px, 3.5vw, 42px); }
+}
+
+/* LG (992–1199) */
+@media (max-width: 1199.98px){
+  .slide--inner .home_slider_container{ min-height: clamp(240px, 44vh, 440px); }
+}
+
+/* MD (768–991) — компактнее текст, чуть больше высота, чтобы сетка «дышала» */
+@media (max-width: 991.98px){
+  .slide--inner .home_slider_container{ min-height: clamp(260px, 46vh, 460px); }
+  .slide--inner .hero__grid{ gap: 20px; padding: calc(var(--header-h) + 10px) 0 18px; }
+  .slide--inner .btn-hero{ padding:11px 20px; }
+}
+
+/* SM (576–767) — кнопка остаётся справа, но всё меньше */
+@media (max-width: 767.98px){
+  .slide--inner .home_slider_container{ min-height: clamp(250px, 44vh, 420px); }
+  .slide--inner .hero-title{ font-size: clamp(20px, 5vw, 32px); }
+  .slide--inner .hero-sub{   font-size: clamp(13px, 2.6vw, 15px); }
+  .slide--inner .btn-hero{ padding:10px 18px; border-radius:12px; }
+}
+
+/* XS (≤575) — стекаем в колонку, кнопка на всю ширину */
+@media (max-width: 575.98px){
+  .slide--inner .hero__grid{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: calc(var(--header-h) + 8px) 0 16px;
+  }
+  .slide--inner .hero-right{ width:100%; }
+  .slide--inner .btn-hero{ width:100%; text-align:center; }
+}
+
+/* XXS (≤360) — ещё компактнее */
+@media (max-width: 359.98px){
+  .slide--inner .home_slider_container{ min-height: 240px; }
+  .slide--inner .hero-title{ font-size: 20px; }
+  .slide--inner .hero-sub{ font-size: 13px; }
+  .slide--inner .btn-hero{ padding:10px 16px; border-radius:10px; }
+}
+
+
+/* Шапка на внутренних: не оверлейная */
+.has-inner-hero .site-header{
+  position: sticky;
+  top: 0;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+}
+.has-inner-hero .site-header a{ color:#111; }

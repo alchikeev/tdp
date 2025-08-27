@@ -9,15 +9,26 @@
 
 {% block content %}
 
-  {# СЛАЙД-ГЕРОЙ ДЛЯ ДЕТАЛЬНОЙ #}
-  {% include 'partials/slide.html' with
-     title=tour.title
-     subtitle=tour.location|default:"Пхукет"
-     bg='images/home_slider.jpg'
-     modifier='slide--inner'
-     cta_text='Записаться'
-     cta_data='Inner Hero — Tour Detail'
-  %}
+{# ===== SLIDE-HERO (inline) ===== #}
+<section class="home slide slide--inner">
+  <div class="home_slider_container">
+    <div class="background_image" style="background-image:url({% if tour.cover %}{{ tour.cover.url }}{% else %}{% static 'images/home_slider.jpg' %}{% endif %})"></div>
+    <div class="home_slider_content_container">
+      <div class="hero">
+        <div class="hero-left">
+          <h1 class="hero-title">{{ tour.title }}</h1>
+          <p class="hero-sub">{{ tour.location|default:"Пхукет" }}</p>
+          <div class="hero-cta">
+            <button class="btn-hero open-lead-modal"
+                    data-cta="Inner Hero — Tour Detail"
+                    data-related_type="tour" data-related_id="{{ tour.id }}"
+                    type="button">Записаться</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
   <section class="t-detail">
     <div class="container">

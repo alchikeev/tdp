@@ -1,20 +1,7 @@
 {% load static %}
 
-{# 
-  Использование:
-  {% include 'partials/slide.html' with
-      title='Экскурсии на Пхукете'
-      subtitle='Подберите тур и оставьте заявку — перезвоним за 10–15 минут.'
-      bg='images/tours_hero.jpg'
-      modifier='slide--inner'
-      cta_text='Оставить заявку'
-      cta_data='Inner Hero — Экскурсии'
-  %}
-#}
-{% block extra_css %}
-  <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
-{% endblock %}
 
+{# Переиспользуемый слайд-герой для внутренних страниц и, при желании, главной #}
 <section class="home slide {% if modifier %}{{ modifier }}{% endif %}">
   <div class="home_slider_container">
     <div class="background_image" style="background-image:url({% static bg %})"></div>
@@ -22,8 +9,26 @@
     <div class="home_slider_content_container">
       <div class="hero">
         <div class="hero-left">
-          <h1 class="hero-title">{{ title }}</h1>
-          {% if subtitle %}<p class="hero-sub">{{ subtitle }}</p>{% endif %}
+
+          <h1 class="hero-title">
+            {# Если явно передали title — используем его, иначе строим из контекста #}
+            {% if title %}
+              {{ title }}
+            {% elif active_category %}
+              Экскурсии: {{ active_category.name }}
+            {% elif active_tag %}
+              Экскурсии по тегу: #{{ active_tag.name }}
+            {% else %}
+              Экскурсии на Пхукете
+            {% endif %}
+          </h1>
+
+          {% if subtitle %}
+            <p class="hero-sub">{{ subtitle }}</p>
+          {% else %}
+            <p class="hero-sub">Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут.</p>
+          {% endif %}
+
           {% if cta_text %}
             <div class="hero-cta">
               <button class="btn-hero open-lead-modal"
@@ -32,17 +37,6 @@
             </div>
           {% endif %}
         </div>
-
-        {# При желании можно добавить облака/бейджи, оставил выключенными #}
-        {# 
-        <div class="hero-clouds">
-          <div class="cloud c1"><i class="icon fa fa-id-card-o"></i><span>Лицензия TAT</span></div>
-          <div class="cloud c2"><i class="icon fa fa-shield"></i><span>Страховка</span></div>
-        </div>
-        #}
-
-        {# Опциональная угловая кнопка #}
-        {# <button class="hero-corner left open-lead-modal" data-cta="Hero — Inner" type="button">Оставить заявку</button> #}
       </div>
     </div>
   </div>

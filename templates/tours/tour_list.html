@@ -7,36 +7,43 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
 {% endblock %}
+
+{% block body_class %}has-inner-hero{% endblock %}
 
 {% block content %}
 
-  {# ===== SLIDE-HERO ===== #}
-  {% if active_category %}
-    {% include "partials/slide.html" with
-      title="Экскурсии: "|add:active_category.name
-      subtitle="Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут."
-      bg="images/home_slider.jpg"
-      modifier="slide--inner"
-      cta_text="Оставить заявку"
-      cta_data="Inner Hero — Экскурсии" %}
-  {% elif active_tag %}
-    {% include "partials/slide.html" with
-      title="Экскурсии по тегу: #"|add:active_tag.name
-      subtitle="Все предложения по этому тегу."
-      bg="images/home_slider.jpg"
-      modifier="slide--inner"
-      cta_text="Оставить заявку"
-      cta_data="Inner Hero — Экскурсии (тег)" %}
-  {% else %}
-    {% include "partials/slide.html" with
-      title="Экскурсии на Пхукете"
-      subtitle="Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут."
-      bg="images/home_slider.jpg"
-      modifier="slide--inner"
-      cta_text="Оставить заявку"
-      cta_data="Inner Hero — Экскурсии (все)" %}
-  {% endif %}
+{# ===== SLIDE-HERO (inline) ===== #}
+<section class="home slide slide--inner">
+  <div class="home_slider_container">
+    <div class="background_image"
+         style="background-image:url({% static 'images/home_slider.jpg' %})"></div>
+
+    <div class="home_slider_content_container">
+      <div class="hero hero--inner">
+        <div class="container hero__grid">
+          <div class="hero-left">
+            <h1 class="hero-title">
+              {% if active_category %}Экскурсии: {{ active_category.name }}
+              {% elif active_tag %}Экскурсии по тегу: #{{ active_tag.name }}
+              {% else %}Экскурсии на Пхукете{% endif %}
+            </h1>
+            <p class="hero-sub">
+              Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут.
+            </p>
+          </div>
+
+          <div class="hero-right">
+            <button class="btn-hero open-lead-modal"
+                    data-cta="Inner Hero — Экскурсии"
+                    type="button">Оставить заявку</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
 
