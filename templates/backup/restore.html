@@ -1,0 +1,14 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+  <h1>Восстановление из архива</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+      <label for="archive">Выберите файл архива (TDP_YYYYMMDD.zip)</label><br>
+      <input type="file" name="archive" id="archive" required>
+    </div>
+    <div style="margin-top:12px;">
+      <button class="default" type="submit">Загрузить и восстановить</button>
+    </div>
+  </form>
+{% endblock %}

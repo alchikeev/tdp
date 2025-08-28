@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "services",
     "reviews",
     "prices",
+    "backup",
 ]
 
 # ===== middleware =====

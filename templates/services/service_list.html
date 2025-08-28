@@ -37,6 +37,51 @@
 
 <div class="container my-4">
 
+  {# ===== ФИЛЬТРЫ (по образцу tours) ===== #}
+  <section class="t-filters">
+    <div class="container">
+      <form class="t-filters__form" method="get" action="{% url 'services:list' %}">
+        <div class="t-filters__Row">
+          <div class="t-filters__search">
+            <i class="fa fa-search"></i>
+            <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Поиск по названию, описанию">
+          </div>
+          <div class="t-filters__price">
+            <label>Цена,</label>
+            <input type="number" name="price_min" value="{{ request.GET.price_min }}" min="0" placeholder="от">
+            <span>—</span>
+            <input type="number" name="price_max" value="{{ request.GET.price_max }}" min="0" placeholder="до">
+          </div>
+          <div class="t-filters__sort">
+            <label>Сортировка</label>
+            <select name="sort" onchange="this.form.submit()">
+              <option value="" {% if not request.GET.sort %}selected{% endif %}>По умолчанию</option>
+              <option value="price_asc"  {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Цена ↑</option>
+              <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Цена ↓</option>
+              <option value="newest"     {% if request.GET.sort == 'newest' %}selected{% endif %}>Сначала новые</option>
+            </select>
+          </div>
+          <div class="t-filters__submit">
+            <button class="order_btn" type="submit">Показать</button>
+          </div>
+        </div>
+
+        {% if categories %}
+          <div class="t-filters__pills">
+            <a href="{% url 'services:list' %}" class="pill {% if not active_category %}is-active{% endif %}">Все</a>
+            {% for c in categories %}
+              <a href="{% url 'services:by_category' slug=c.slug %}"
+                 class="pill {% if active_category and active_category.id == c.id %}is-active{% endif %}">
+                {{ c.name }}{% if c.items %}<span class="pill__count">{{ c.items }}</span>{% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </section>
+
+
   <div class="row">
     <div class="col-lg-8 col-xl-9">
       <div class="row">

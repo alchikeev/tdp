@@ -112,10 +112,16 @@
 .slide--inner .btn-hero{
   display:inline-flex; align-items:center; justify-content:center;
   padding:12px 22px; border-radius:14px; font-weight:700;
-  background:transparent; color:#fff; border:2px solid rgba(255,255,255,.85);
-  transition: background .2s ease, color .2s ease, border-color .2s ease, transform .15s ease;
+  /* фирменный оранжевый фон + белый текст; если переменная не объявлена, используется запасной HEX */
+  background: var(--brand-600, #E76700); color:#fff; border:2px solid var(--brand-600, #E76700);
+  box-shadow:0 10px 26px rgba(231,103,0,.38);
+  transition: background .18s ease, color .18s ease, border-color .18s ease, transform .12s ease, box-shadow .18s ease;
 }
-.slide--inner .btn-hero:hover{ background:#fff; color:#111; border-color:#fff; }
+.slide--inner .btn-hero:hover{
+  /* при наведении — инверсия: белый фон, оранжевый текст */
+  background:#fff; color:var(--brand-600, #E76700); border-color:#fff;
+  box-shadow: 0 14px 34px rgba(231,103,0,.22); transform: translateY(-2px);
+}
 .slide--inner .btn-hero:active{ transform: translateY(1px); }
 
 @media (max-width: 991.98px){

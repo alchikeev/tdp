@@ -7,6 +7,7 @@ from core.views import home
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # backup admin UI is integrated via admin changelist for the Backup proxy model
     path("", home, name="home"),
     path("api/", include(("core.urls", "core"), namespace="core")),
     path("tours/", include(("tours.urls", "tours"), namespace="tours")),

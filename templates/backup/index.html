@@ -1,0 +1,9 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+  <h1>Резервное копирование</h1>
+  <p>Создать резервную копию или восстановить данные из архива.</p>
+  <div style="display:flex; gap:12px; margin-top:18px;">
+    <a class="button" href="{% url 'backup:download' %}">Скачать резервную копию</a>
+    <a class="button" href="{% url 'backup:restore' %}">Восстановить из архива</a>
+  </div>
+{% endblock %}

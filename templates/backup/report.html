@@ -1,0 +1,6 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+  <h1>Отчет восстановления</h1>
+  <pre>{{ report|safe }}</pre>
+  <p><a href="{% url 'admin:index' %}">Вернуться в админку</a></p>
+{% endblock %}
