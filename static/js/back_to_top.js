@@ -6,7 +6,7 @@
 
   const THRESHOLD_DESKTOP = 300;
   const THRESHOLD_MOBILE = 200;
-  const GAP = 16; // gap between chat FAB and this button
+  const GAP = 0; // gap between chat FAB and this button
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -29,19 +29,34 @@
   }
 
   function adjustPositionForChat() {
-    // try known chat selectors
+    // Mirror chat FAB: detect chat element and place this button on the opposite side
     const chat = document.querySelector('#chatFab, .cw-btn, .contact-widget, [data-role="chat-fab"], .chat-fab');
     let bottom = 88; // default
+    let right = 16;
+    let sizeW = 48, sizeH = 48;
     if (window.innerWidth <= 375) bottom = 80;
     if (chat) {
       const rect = chat.getBoundingClientRect();
-      // chat is fixed relative to viewport; compute its height
-      const chatHeight = rect.height || 56;
-      bottom = (window.innerHeight - rect.top) + GAP; // distance from bottom
-      // clamp minimal
-      if (bottom < 64) bottom = 64;
+      const chatBottom = window.innerHeight - rect.bottom; // distance from viewport bottom to chat bottom
+      // prefer using chat's bottom offset if available
+      bottom = chatBottom + GAP;
+      // mirror side: if chat is on left half, place this on right; otherwise place on left
+      const isLeft = rect.left < (window.innerWidth / 2);
+      if (isLeft) {
+        right = 16; // keep default right margin
+      } else {
+        // if chat is on right, position this button on left so they don't overlap
+        right = (window.innerWidth - rect.right) + GAP; // use right offset
+      }
+      // match size to chat
+      sizeW = Math.round(rect.width) || sizeW;
+      sizeH = Math.round(rect.height) || sizeH;
     }
+
     btn.style.bottom = `${bottom}px`;
+    btn.style.right = `${right}px`;
+    btn.style.width = `${sizeW}px`;
+    btn.style.height = `${sizeH}px`;
   }
 
   function avoidFooterOverlap() {
@@ -74,7 +89,6 @@
   const onScrollOrResize = () => {
     updateVisibility();
     adjustPositionForChat();
-    avoidFooterOverlap();
   };
 
   window.addEventListener('scroll', onScrollOrResize, { passive: true });

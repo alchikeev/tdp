@@ -2,11 +2,12 @@
 .back-to-top {
   position: fixed;
   right: 16px;
-  bottom: 88px; /* default, will be adjusted by JS if chat exists */
+  bottom: calc(22px + env(safe-area-inset-bottom)); /* default, will be adjusted by JS if chat exists */
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #FF8A00;
+  /* 60% opacity background */
+  background: rgba(255,138,0,0.6);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -20,7 +21,7 @@
   z-index: 1000;
 }
 
-.back-to-top svg { width: 24px; height: 24px; }
+.back-to-top svg { width: 60%; height: 60%; display:block; }
 
 .back-to-top.is-visible {
   opacity: 1;
@@ -40,7 +41,7 @@
 }
 
 @media (max-width: 375px) {
-  .back-to-top { right: 12px; bottom: 80px; width: 44px; height: 44px; }
+  .back-to-top { right: 12px; bottom: calc(80px + env(safe-area-inset-bottom)); width: 44px; height: 44px; }
   .back-to-top svg { width: 20px; height: 20px; }
 }
 
