@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Прайс — Экскурсии и Услуги{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+{% endblock %}
+
+{% block body_class %}has-inner-hero{% endblock %}
+
+{% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
+
+{% block content %}
+
+<section class="home slide slide--inner">
+  <div class="home_slider_container">
+    <div class="background_image" style="background-image:url({% static 'images/home_slider.jpg' %})"></div>
+    <div class="home_slider_content_container">
+      <div class="hero hero--inner">
+        <div class="container hero__grid">
+          <div class="hero-left">
+            <h1 class="hero-title">Прайс</h1>
+            <p class="hero-sub">Актуальные основные цены на экскурсии и услуги.</p>
+          </div>
+          <div class="hero-right"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container my-4">
+  <div class="row">
+    <div class="col-lg-8 col-xl-9">
+      {% if price_pdf %}
+        <div class="mb-4">
+          <div class="alert alert-secondary d-flex align-items-center" role="alert">
+            <div class="me-3">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v10" stroke="#333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11l4 4 4-4" stroke="#333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div><strong>Скачать актуальный прайс (PDF)</strong></div>
+              <div class="small text-muted">{{ price_pdf.name }} — загружено {{ price_pdf.uploaded_at|date:'d.m.Y H:i' }}</div>
+            </div>
+            <div class="ms-auto">
+              <a href="{{ price_pdf.file.url }}" class="btn btn-primary" download>Скачать PDF</a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      <h2>Экскурсии</h2>
+      <div class="row g-3 mb-4">
+        {% for t in tours %}
+          <div class="col-12 col-sm-6 col-xl-4">
+            <div class="t-card">
+              <div class="t-card__body">
+                <a class="t-card__title" href="{{ t.get_absolute_url }}">{{ t.title }}</a>
+                <div class="t-card__price mt-2">
+                  <strong class="t-price__new">{{ t.price_adult|floatformat:0|intcomma }}฿</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p>Пока нет туров.</p>
+        {% endfor %}
+      </div>
+
+      <h2>Услуги</h2>
+      <div class="row g-3">
+        {% for s in services %}
+          <div class="col-12 col-sm-6 col-xl-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <a href="{{ s.get_absolute_url }}" class="h5 d-block">{{ s.title }}</a>
+                <div class="small text-muted mt-2">Цена: {{ s.price_adult|floatformat:0 }} сом</div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p>Пока нет услуг.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="col-lg-4 col-xl-3 t-aside">
+      {% if categories_tours %}
+        <div class="t-aside__box">
+          <div class="t-aside__title">Категории — Экскурсии</div>
+          <ul class="t-aside__list">
+            {% for c in categories_tours %}
+              <li><a href="{% url 'tours:by_category' slug=c.slug %}">{{ c.name }}{% if c.items %} <span class="text-muted">({{ c.items }})</span>{% endif %}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if categories_services %}
+        <div class="t-aside__box">
+          <div class="t-aside__title">Категории — Услуги</div>
+          <ul class="t-aside__list">
+            {% for c in categories_services %}
+              <li><a href="{% url 'services:by_category' slug=c.slug %}">{{ c.name }}{% if c.items %} <span class="text-muted">({{ c.items }})</span>{% endif %}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if popular_tours %}
+        <div class="t-aside__box">
+          <div class="t-aside__title">Популярные — Экскурсии</div>
+          <ul class="t-aside__popular">
+            {% for p in popular_tours %}
+              <li>
+                <a href="{{ p.get_absolute_url }}">{% if p.cover %}<img src="{{ p.cover.url }}" alt="{{ p.title }}">{% endif %} {{ p.title }}</a>
+                <div class="small text-muted">{{ p.price_adult|floatformat:0 }}</div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if popular_services %}
+        <div class="t-aside__box">
+          <div class="t-aside__title">Популярные — Услуги</div>
+          <ul class="t-aside__popular">
+            {% for p in popular_services %}
+              <li>
+                <a href="{{ p.get_absolute_url }}">{% if p.cover %}<img src="{{ p.cover.url }}" alt="{{ p.title }}">{% endif %} {{ p.title }}</a>
+                <div class="small text-muted">{{ p.price_adult|floatformat:0 }}</div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if tags %}
+        <div class="t-aside__box">
+          <div class="t-aside__title">Теги</div>
+          <div class="t-aside__tags">
+            {% for tg in tags %}
+              <a href="{% url 'tours:by_tag' slug=tg.slug %}">#{{ tg.name }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </aside>
+  </div>
+</div>
+
+{% endblock %}

@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'travello',
     'accounts',
     'reviews',
+    'prices',
     # позже добавим:
     # 'core', 'tours', 'services', 'reviews',
 ]

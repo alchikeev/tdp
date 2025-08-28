@@ -21,7 +21,7 @@
 			<li class="active"><a href="/">Главная</a></li>
 			<li><a href="{% url 'tours:list' %}">Экскурсии</a></li>
 			<li><a href="{% url 'services:list' %}">Услуги</a></li>
-			<li><a href="/accounts/contact">Цены</a></li>
+      <li><a href="{% url 'prices:list' %}">Цены</a></li>
 			<li><a href="{% url 'reviews:list' %}">Отзывы</a></li>
 		</ul>
 		</nav>
@@ -77,7 +77,7 @@
       <li class="active"><a href="/">Главная</a></li>
       <li><a href="{% url 'tours:list' %}">Экскурсии</a></li>
       <li><a href="{% url 'services:list' %}">Услуги</a></li>
-      <li><a href="/accounts/contact">Цены</a></li>
+  <li><a href="{% url 'prices:list' %}">Цены</a></li>
       <li><a href="{% url 'reviews:list' %}">Отзывы</a></li>
     </ul>
   </div>

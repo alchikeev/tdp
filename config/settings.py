@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "tours",
     "services",
     "reviews",
+    "prices",
 ]
 
 # ===== middleware =====

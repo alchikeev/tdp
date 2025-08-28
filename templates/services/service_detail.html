@@ -3,6 +3,7 @@
 {% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
 {% endblock %}
 {% block body_class %}has-inner-hero{% endblock %}
 
@@ -15,16 +16,19 @@
     <div class="background_image" style="background-image: url('{% if service.cover %}{{ service.cover.url }}{% else %}{% static "images/home_slider.jpg" %}{% endif %}');"></div>
     <div class="home_slider_content_container">
       <div class="hero hero--inner">
-        <div class="hero-left">
-          <h1 class="hero-title">{{ service.title }}</h1>
-          {% if service.location %}<p class="hero-sub">{{ service.location }}</p>{% endif %}
-        </div>
-        <div class="hero-right">
-          <button class="btn-hero open-lead-modal"
-                  data-cta="Inner Hero — Service Detail"
-                  data-related_type="service"
-                  data-related_id="{{ service.id }}"
-                  type="button">Оставить заявку</button>
+        <div class="container hero__grid">
+          <div class="hero-left">
+            <h1 class="hero-title">{{ service.title }}</h1>
+            {% if service.location %}<p class="hero-sub">{{ service.location }}</p>{% endif %}
+          </div>
+
+          <div class="hero-right">
+            <button class="btn-hero open-lead-modal"
+                    data-cta="Inner Hero — Service Detail"
+                    data-related_type="service"
+                    data-related_id="{{ service.id }}"
+                    type="button">Оставить заявку</button>
+          </div>
         </div>
       </div>
     </div>
@@ -59,9 +63,9 @@
       {% if service.location %}<div class="text-muted mb-2">Локация: {{ service.location }}</div>{% endif %}
 
       <div class="my-3">
-        <strong>Стоимость:</strong><br>
-        Взрослые: {{ service.price_adult|floatformat:0 }} сом
-        {% if service.price_child %}<br>Дети: {{ service.price_child|floatformat:0 }} сом{% endif %}
+  <strong>Стоимость:</strong><br>
+  Цена: {{ service.price_adult|floatformat:0 }} сом
+  {% if service.price_child %}<br>Дополнительные услуги: {{ service.price_child|floatformat:0 }} сом{% elif service.price_extra %}<br>Дополнительные услуги: {{ service.price_extra|floatformat:0 }} сом{% endif %}
       </div>
 
       <div class="mb-3">

@@ -72,6 +72,16 @@ class Tour(models.Model):
         validators=[MinValueValidator(Decimal("0"))],
     )
 
+    # Дополнительные услуги: отдельная цена для опций/доплат
+    price_extra = models.DecimalField(
+        "Цена дополнительных услуг",
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(Decimal("0"))],
+    )
+
     price_old_adult = models.DecimalField(
         "Старая цена (взрослый)",
         max_digits=10,

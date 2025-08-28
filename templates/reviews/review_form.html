@@ -1,32 +1,65 @@
 {% extends "base.html" %}
+{% load static %}
+{% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
+{% endblock %}
+{% block body_class %}has-inner-hero{% endblock %}
 {% block title %}Оставить отзыв{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <h1>Оставить отзыв</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="form-group">
-            {{ form.name.label_tag }}
-            {{ form.name }}
-            {{ form.name.errors }}
+
+<section class="home slide slide--inner">
+    <div class="home_slider_container">
+        <div class="background_image" style="background-image: url('{% static "images/home_slider.jpg" %}');"></div>
+        <div class="home_slider_content_container">
+            <div class="hero hero--inner">
+                <div class="container hero__grid">
+                    <div class="hero-left">
+                        <h1 class="hero-title">Оставить отзыв</h1>
+                        <p class="hero-sub">Расскажите о вашем опыте — мы публикуем отзывы после модерации.</p>
+                    </div>
+                    <div class="hero-right">
+                        <!-- пусто или можно добавить CTA -->
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            {{ form.email.label_tag }}
-            {{ form.email }}
-            {{ form.email.errors }}
+    </div>
+</section>
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="form-group">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                        {{ form.name.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.image.label_tag }}
+                        {{ form.image }}
+                        {{ form.image.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.message.label_tag }}
+                        {{ form.message }}
+                        {{ form.message.errors }}
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Отправить</button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            {{ form.image.label_tag }}
-            {{ form.image }}
-            {{ form.image.errors }}
-        </div>
-        <div class="form-group">
-            {{ form.message.label_tag }}
-            {{ form.message }}
-            {{ form.message.errors }}
-        </div>
-        <button type="submit" class="btn btn-primary mt-2">Отправить</button>
-    </form>
+    </div>
 </div>
+
 {% endblock %}

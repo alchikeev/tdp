@@ -171,9 +171,15 @@ def tour_detail(request, slug):
         .order_by("-is_popular", "-created_at")[:6]
     )
 
+    # Данные сайдбара
+    categories, tags, popular = _sidebar_context()
+
     ctx = {
         "tour": tour,
         "related_tours": related,
+        "categories": categories,
+        "tags": tags,
+        "popular_tours": popular,
         # Если используешь галерею/вложения через GenericFK — можно добавить:
         # "gallery_images": gallery_images,
         # "attachments": attachments,

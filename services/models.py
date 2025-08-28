@@ -17,6 +17,8 @@ class Service(models.Model):
     # цены как у туров (взрослый/детский)
     price_adult  = models.DecimalField(max_digits=10, decimal_places=2)
     price_child  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # Дополнительные услуги — отдельная цена для опций
+    price_extra  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     cover        = models.ImageField(upload_to='services/covers/', blank=True, null=True)
     is_active    = models.BooleanField(default=True)

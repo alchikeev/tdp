@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% load static humanize %}
 
+{% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
 {% block title %}{{ tour.title }} — Экскурсии на Пхукете{% endblock %}
 
 {% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
   <link rel="stylesheet" href="{% static 'styles/tour-detail.css' %}">
 {% endblock %}
+{% block body_class %}has-inner-hero{% endblock %}
 
 {% block content %}
 
@@ -14,11 +18,14 @@
   <div class="home_slider_container">
     <div class="background_image" style="background-image:url({% if tour.cover %}{{ tour.cover.url }}{% else %}{% static 'images/home_slider.jpg' %}{% endif %})"></div>
     <div class="home_slider_content_container">
-      <div class="hero">
-        <div class="hero-left">
-          <h1 class="hero-title">{{ tour.title }}</h1>
-          <p class="hero-sub">{{ tour.location|default:"Пхукет" }}</p>
-          <div class="hero-cta">
+      <div class="hero hero--inner">
+        <div class="container hero__grid">
+          <div class="hero-left">
+            <h1 class="hero-title">{{ tour.title }}</h1>
+            <p class="hero-sub">{{ tour.location|default:"Пхукет" }}</p>
+          </div>
+
+          <div class="hero-right">
             <button class="btn-hero open-lead-modal"
                     data-cta="Inner Hero — Tour Detail"
                     data-related_type="tour" data-related_id="{{ tour.id }}"
@@ -141,7 +148,7 @@
           <div class="t-widget t-widget--sticky">
             <div class="t-pricebox">
               <div class="t-pricebox__row">
-                <span>Взрослый</span>
+                <span>Цена</span>
                 <div class="t-price">
                   {% if tour.price_old_adult and tour.price_old_adult > tour.price_adult %}
                     <s class="t-price__old">{{ tour.price_old_adult|floatformat:0|intcomma }}฿</s>
@@ -151,12 +158,20 @@
               </div>
               {% if tour.price_child %}
                 <div class="t-pricebox__row">
-                  <span>Детский</span>
+                  <span>Дети</span>
                   <div class="t-price">
                     {% if tour.price_old_child and tour.price_old_child > tour.price_child %}
                       <s class="t-price__old">{{ tour.price_old_child|floatformat:0|intcomma }}฿</s>
                     {% endif %}
                     <strong class="t-price__new">{{ tour.price_child|floatformat:0|intcomma }}฿</strong>
+                  </div>
+                </div>
+              {% endif %}
+              {% if tour.price_extra %}
+                <div class="t-pricebox__row">
+                  <span>Дополнительные услуги</span>
+                  <div class="t-price">
+                    <strong class="t-price__new">{{ tour.price_extra|floatformat:0|intcomma }}฿</strong>
                   </div>
                 </div>
               {% endif %}

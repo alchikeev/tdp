@@ -36,32 +36,70 @@
 </section>
 
 <div class="container my-4">
-  <h1 class="mb-3">
-    {% if active_category %}Услуги: {{ active_category.name }}
-    {% elif active_tag %}Услуги по тегу: #{{ active_tag.name }}
-    {% else %}Услуги{% endif %}
-  </h1>
 
   <div class="row">
-    {% for s in services %}
-      <div class="col-md-4 mb-4">
-        <a href="{{ s.get_absolute_url }}" class="card h-100 text-decoration-none">
-          {% if s.cover %}
-            <img src="{{ s.cover.url }}" class="card-img-top" alt="{{ s.title }}">
-          {% endif %}
-          <div class="card-body">
-            <h5 class="card-title">{{ s.title }}</h5>
-            {% if s.short_desc %}<p class="card-text">{{ s.short_desc|truncatechars:140 }}</p>{% endif %}
-            <div class="small text-muted">
-              {% if s.price_child %}Дети: {{ s.price_child|floatformat:0 }} сом · {% endif %}
-              Взрослые: {{ s.price_adult|floatformat:0 }} сом
-            </div>
+    <div class="col-lg-8 col-xl-9">
+      <div class="row">
+        {% for s in services %}
+          <div class="col-md-4 mb-4">
+            <a href="{{ s.get_absolute_url }}" class="card h-100 text-decoration-none">
+              {% if s.cover %}
+                <img src="{{ s.cover.url }}" class="card-img-top" alt="{{ s.title }}">
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title">{{ s.title }}</h5>
+                {% if s.short_desc %}<p class="card-text">{{ s.short_desc|truncatechars:140 }}</p>{% endif %}
+                <div class="small text-muted">
+                  <span>Цена: {{ s.price_adult|floatformat:0 }} сом</span>
+                  {% if s.price_child %} · <span>Дополнительные услуги: {{ s.price_child|floatformat:0 }} сом</span>
+                  {% elif s.price_extra %} · <span>Дополнительные услуги: {{ s.price_extra|floatformat:0 }} сом</span>{% endif %}
+                </div>
+              </div>
+            </a>
           </div>
-        </a>
+        {% empty %}
+          <div class="col-12"><p>Пока нет услуг.</p></div>
+        {% endfor %}
       </div>
-    {% empty %}
-      <div class="col-12"><p>Пока нет услуг.</p></div>
-    {% endfor %}
+    </div>
+
+    <aside class="col-lg-4 col-xl-3 t-aside">
+      {% if categories %}
+        <div class="t-aside__box">
+          <div class="t-aside__title">Категории</div>
+          <ul class="t-aside__list">
+            {% for c in categories %}
+              <li><a href="{% url 'services:by_category' slug=c.slug %}">{{ c.name }}{% if c.items %} <span class="text-muted">({{ c.items }})</span>{% endif %}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if tags %}
+        <div class="t-aside__box">
+          <div class="t-aside__title">Теги</div>
+          <div class="t-aside__tags">
+            {% for tg in tags %}
+              <a href="{% url 'services:by_tag' slug=tg.slug %}">#{{ tg.name }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if popular_services %}
+        <div class="t-aside__box">
+          <div class="t-aside__title">Популярные</div>
+          <ul class="t-aside__popular">
+            {% for p in popular_services %}
+              <li>
+                <a href="{{ p.get_absolute_url }}">{% if p.cover %}<img src="{{ p.cover.url }}" alt="{{ p.title }}">{% endif %} {{ p.title }}</a>
+                <div class="small text-muted">{{ p.price_adult|floatformat:0 }}</div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </aside>
   </div>
 </div>
 {% endblock %}

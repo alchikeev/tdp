@@ -123,7 +123,7 @@
 
                     <div class="t-card__price">
                       <div class="t-card__price-line">
-                        <span>Взрослый</span>
+                        <span>Взрослые</span>
                         <div class="t-price">
                           {% if t.price_old_adult and t.price_old_adult > t.price_adult %}
                             <s class="t-price__old">{{ t.price_old_adult|floatformat:0|intcomma }}฿</s>
@@ -133,12 +133,20 @@
                       </div>
                       {% if t.price_child %}
                       <div class="t-card__price-line">
-                        <span>Детский</span>
+                        <span>Дети</span>
                         <div class="t-price">
                           {% if t.price_old_child and t.price_old_child > t.price_child %}
                             <s class="t-price__old">{{ t.price_old_child|floatformat:0|intcomma }}฿</s>
                           {% endif %}
                           <strong class="t-price__new">{{ t.price_child|floatformat:0|intcomma }}฿</strong>
+                        </div>
+                      </div>
+                      {% endif %}
+                      {% if t.price_extra %}
+                      <div class="t-card__price-line">
+                        <span>Дополнительные услуги</span>
+                        <div class="t-price">
+                          <strong class="t-price__new">{{ t.price_extra|floatformat:0|intcomma }}฿</strong>
                         </div>
                       </div>
                       {% endif %}
