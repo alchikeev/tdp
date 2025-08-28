@@ -25,7 +25,8 @@ index.css  — HERO (обложка)
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center;
   z-index:1;
-  padding-top:80px;                    /* под фикс-хедер на десктопе */
+  padding-top:0;
+  margin-top: 150px;                    
 }
 
 /* Сетка героя */
@@ -99,6 +100,7 @@ index.css  — HERO (обложка)
 /* Мобилка */
 @media (max-width: 992px){
   .hero-right{ align-items:flex-start; }
+  .home_slider_content_container{margin-top: 150px;}
   .hero-trust{
     width:100%; padding:12px; gap:10px; margin-top:8px;
     flex-direction:row; flex-wrap:wrap; justify-content:center;
@@ -130,7 +132,6 @@ index.css  — HERO (обложка)
 .hero-badge.rotating span:nth-child(2){ animation:rotateBadge 9s 3s infinite; }
 .hero-badge.rotating span:nth-child(3){ animation:rotateBadge 9s 6s infinite; }
 
-.hero-corner{ display:none !important; }
 
 @keyframes rotateBadge{
   0%{opacity:0; transform:translateY(6px)}
@@ -152,7 +153,7 @@ index.css  — HERO (обложка)
 
 /* Планшеты и ниже */
 @media (max-width: 992px){
-  .home_slider_content_container{ padding-top:56px; }
+  .home_slider_content_container{ margin-top: 18rem; }
   .hero{
     grid-template-columns:1fr; gap:18px;
     width:min(820px, 92%);

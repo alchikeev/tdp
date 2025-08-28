@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     # ваши приложения
     'travello',
     'accounts',
+    'reviews',
     # позже добавим:
     # 'core', 'tours', 'services', 'reviews',
 ]

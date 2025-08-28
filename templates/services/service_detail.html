@@ -1,9 +1,35 @@
 {% extends "base.html" %}
 {% load static %}
+{% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+{% endblock %}
+{% block body_class %}has-inner-hero{% endblock %}
 
 {% block title %}{{ service.meta_title|default:service.title }}{% endblock %}
 
 {% block content %}
+{# ===== SLIDE-HERO (inline) ===== #}
+<section class="home slide slide--inner">
+  <div class="home_slider_container">
+    <div class="background_image" style="background-image: url('{% if service.cover %}{{ service.cover.url }}{% else %}{% static "images/home_slider.jpg" %}{% endif %}');"></div>
+    <div class="home_slider_content_container">
+      <div class="hero hero--inner">
+        <div class="hero-left">
+          <h1 class="hero-title">{{ service.title }}</h1>
+          {% if service.location %}<p class="hero-sub">{{ service.location }}</p>{% endif %}
+        </div>
+        <div class="hero-right">
+          <button class="btn-hero open-lead-modal"
+                  data-cta="Inner Hero — Service Detail"
+                  data-related_type="service"
+                  data-related_id="{{ service.id }}"
+                  type="button">Оставить заявку</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 <div class="container my-4">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">

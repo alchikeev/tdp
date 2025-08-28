@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
+{% load static %}
+{% block title %}Отзывы{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+{% endblock %}
+{% block body_class %}has-inner-hero{% endblock %}
+{% block content %}
+<section class="home slide slide--inner">
+    <div class="home_slider_container">
+        <div class="background_image" style="background-image: url('{% static "images/home_slider.jpg" %}');"></div>
+        <div class="home_slider_content_container">
+            <div class="hero hero--inner">
+                <div class="container hero__grid">
+                    <div class="hero-left">
+                        <h1 class="hero-title">Отзывы</h1>
+                        <p class="hero-sub">Читайте отзывы наших клиентов или оставьте свой отзыв.</p>
+                    </div>
+                    <div class="hero-right">
+                        <a href="{% url 'reviews:add' %}" class="btn-hero" role="button">Оставить отзыв</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container mt-4">
+    <h1>Отзывы</h1>
+    <p><a class="btn btn-primary" href="{% url 'reviews:add' %}">Оставить отзыв</a></p>
+    {% if reviews %}
+        <div class="list-group">
+            {% for review in reviews %}
+                <div class="list-group-item mb-3">
+                    <h5>{{ review.name }} <small class="text-muted">{{ review.created_at|date:"d.m.Y H:i" }}</small></h5>
+                    <p>{{ review.message }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Пока нет одобренных отзывов.</p>
+    {% endif %}
+</div>
+{% endblock %}

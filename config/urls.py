@@ -11,6 +11,7 @@ urlpatterns = [
     path("api/", include(("core.urls", "core"), namespace="core")),
     path("tours/", include(("tours.urls", "tours"), namespace="tours")),
     path("services/", include(("services.urls", "services"), namespace="services")),
+    path("reviews/", include(("reviews.urls", "reviews"), namespace="reviews")),
 ]
 
 if settings.DEBUG:

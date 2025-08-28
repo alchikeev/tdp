@@ -1,9 +1,40 @@
 {% extends "base.html" %}
+{% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
 {% load static %}
 
 {% block title %}Услуги{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+{% endblock %}
+
+{% block body_class %}has-inner-hero{% endblock %}
+
 {% block content %}
+<section class="home slide slide--inner">
+  <div class="home_slider_container">
+  <div class="background_image" style="background-image: url('{% static "images/home_slider.jpg" %}');"></div>
+
+    <div class="home_slider_content_container">
+      <div class="hero hero--inner">
+        <div class="container hero__grid">
+          <div class="hero-left">
+            <h1 class="hero-title">Услуги на Пхукете</h1>
+            <p class="hero-sub">Выберите услугу и оставьте заявку — мы ответим вам в течение 10–15 минут.</p>
+          </div>
+
+          <div class="hero-right">
+            <button class="btn-hero open-lead-modal"
+                    data-cta="Inner Hero — Услуги"
+                    type="button">Оставить заявку</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="container my-4">
   <h1 class="mb-3">
     {% if active_category %}Услуги: {{ active_category.name }}
