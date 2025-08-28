@@ -59,6 +59,12 @@
   
   {% block extra_js %}{% endblock %}
 
+  {# back to top styles and script #}
+  <link rel="stylesheet" href="{% static 'css/components/_back_to_top.css' %}">
+  <script defer src="{% static 'js/back_to_top.js' %}"></script>
+
+  {% include "partials/_back_to_top.html" %}
+
   {# Optional: Google Analytics #}
   {# 
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-X"></script>
