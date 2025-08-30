@@ -1,12 +1,11 @@
 services:
   tdp:
-    build: .
+    image: ghcr.io/alchikeev/tdp:latest   # 👈 вместо build
     env_file: .env
     working_dir: /app
     volumes:
       - static_data:/app/staticfiles
       - media_data:/app/media
-      # при желании: - db_data:/app/db   (если вынесем sqlite в поддиректорию)
     restart: unless-stopped
 
   caddy:
@@ -29,4 +28,3 @@ volumes:
   media_data:
   caddy_data:
   caddy_config:
-  # db_data:

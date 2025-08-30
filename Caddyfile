@@ -1,35 +1,19 @@
+cat >/srv/tdp/Caddyfile <<'CADDY'
 thaidreamphuket.com, www.thaidreamphuket.com {
-    encode zstd gzip
+	encode zstd gzip
 
-    # Блокируем шум от бот-сканеров WP
-    @wp path_regexp wp /(wp-admin|wordpress)/.*
-    respond @wp 404
+	@wp {
+		path *wp-admin* *wp-login.php* *wordpress* *wp-content* *wp-includes*
+	}
+	respond @wp 404
 
-    # Раздача статических файлов и медиа
-    @static path /static/* /media/*
-    handle @static {
-        root * /var/www
-        file_server
-        try_files {path}
-    }
+	reverse_proxy tdp:8000 {
+		header_up Host {host}
+		header_up X-Forwarded-Proto {scheme}
+	}
 
-    # Прокси на Django (gunicorn) в контейнере tdp
-    handle {
-        reverse_proxy tdp:8000 {
-            header_up Host {host}
-            header_up X-Forwarded-Proto {scheme}
-            header_up X-Forwarded-For {remote}
-        }
-    }
-
-    # Почта для Let's Encrypt
-    tls admin@thaidreamphuket.com
-
-    # Безопасные заголовки
-    header {
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        X-Content-Type-Options "nosniff"
-        Referrer-Policy "strict-origin-when-cross-origin"
-        X-Frame-Options "SAMEORIGIN"
-    }
+	log {
+		output stdout
+	}
 }
+CADDY
