@@ -89,6 +89,28 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# ----- production / env-driven overrides -----
+# ALLOWED_HOSTS из .env (записывайте через запятую)
+ALLOWED_HOSTS = [h.strip() for h in env('ALLOWED_HOSTS', default='').split(',') if h.strip()] or ALLOWED_HOSTS
+
+# CSRF_TRUSTED_ORIGINS должны включать схему (https://...)
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in env('CSRF_TRUSTED_ORIGINS', default='').split(',') if o.strip()]
+
+# Работа за реверс-прокси (Caddy)
+sp = env('SECURE_PROXY_SSL_HEADER', default='')
+if sp:
+    SECURE_PROXY_SSL_HEADER = tuple(s.strip() for s in sp.split(','))
+USE_X_FORWARDED_HOST = True
+
+SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=True)
+CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=True)
+
+# Пути статик/медиа из .env (совпадают с docker-compose)
+STATIC_URL = env('STATIC_URL', default=str(STATIC_URL))
+MEDIA_URL = env('MEDIA_URL', default=str(MEDIA_URL))
+STATIC_ROOT = env('STATIC_ROOT', default=str(STATIC_ROOT))
+MEDIA_ROOT = env('MEDIA_ROOT', default=str(MEDIA_ROOT))
+
 # ===== i18n/time =====
 LANGUAGE_CODE = "ru"
 TIME_ZONE = "Asia/Bishkek"
