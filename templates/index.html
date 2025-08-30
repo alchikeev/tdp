@@ -11,7 +11,7 @@
   <!-- Home / Hero -->
   <section class="home">
     <div class="home_slider_container">
-      <div class="background_image" style="background-image:url({% static 'images/home_slider.jpg' %})"></div>
+  <div class="background_image" style="background-image:url({% static 'images/home_slider.jpg' %})"></div>
 
       <div class="home_slider_content_container">
         <div class="hero">
@@ -53,6 +53,7 @@
       </div>
     </div>
   </section>
+  
 
   <!-- Tours grid on homepage -->
   <section class="container my-5">
@@ -119,7 +120,7 @@
 
   <!-- Intro -->
   <section class="intro">
-    <div class="intro_background" style="background-image:url({% static 'images/intro.png' %})"></div>
+  <div class="intro_background" style="background-image:url({% static 'images/intro.png' %})"></div>
     <div class="container">
       <div class="row">
         <div class="col">
@@ -188,32 +189,57 @@
 
   <!-- Testimonials -->
   <section class="testimonials" id="testimonials">
-    <div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/testimonials.jpg' %}" data-speed="0.8"></div>
+  <div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/reviews_bg.jpg' %}" data-speed="0.8" style="background-image:url({% static 'images/reviews_bg.jpg' %}); background-size:cover; background-position:center;"></div>
     <div class="container">
       <div class="row">
         <div class="col text-center">
           <div class="section_subtitle">Отзывы наших гостей</div>
-          <div class="section_title"><h2>Отзывы</h2></div>
         </div>
       </div>
-      <div class="row testimonials_row">
-        <div class="col">
-          <div class="testimonials_slider_container">
-            <div class="owl-carousel owl-theme testimonials_slider">
-              <div class="owl-item text-center">
-                <div class="testimonial">Спасибо за отличную организацию — всё прошло без задержек и с комфортом!</div>
-                <div class="testimonial_author">
-                  <div class="testimonial_author_content d-flex flex-row align-items-end justify-content-start">
-                    <div>Алина,</div>
-                    <div>гость</div>
-                  </div>
+
+      <div class="reviews-grid">
+        {% for r in reviews|slice:":6" %}
+          <article class="review-card" tabindex="0" aria-labelledby="rev-{{ forloop.counter }}-author">
+            <div class="review-card-inner">
+              <header class="review-head">
+                <div class="review-author" id="rev-{{ forloop.counter }}-author">{{ r.name }}</div>
+                <div class="review-meta">
+                  <time datetime="{{ r.created_at|date:'c' }}">{{ r.created_at|date:'d.m.Y' }}</time>
+                  {% with r.rating|default:5 as rating %}
+                    <div class="review-rating" aria-label="Рейтинг {{ rating }} из 5">
+                      {% for _ in "12345" %}
+                        {% if forloop.counter <= rating %}
+                          <span class="star active" aria-hidden="true">★</span>
+                        {% else %}
+                          <span class="star" aria-hidden="true">★</span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  {% endwith %}
                 </div>
+              </header>
+
+              <div class="review-body">
+                <p class="review-text">{{ r.message }}</p>
               </div>
-              <!-- ... другие слайды ... -->
-            </div><!-- /.owl-carousel -->
-          </div>
-        </div>
+
+              {% if r.image %}
+                <div class="review-photos">
+                  <img src="{{ r.image.url }}" alt="Фото от {{ r.name }}" loading="lazy">
+                </div>
+              {% endif %}
+
+            </div>
+          </article>
+        {% empty %}
+          <p>Пока нет отзывов.</p>
+        {% endfor %}
       </div>
+
+      <div class="reviews-cta text-center mt-4">
+        <a href="{% url 'reviews:list' %}" class="btn btn-primary reviews-all">Смотреть все отзывы</a>
+      </div>
+
     </div>
     <div class="test_nav">
       <ul class="d-flex flex-column align-items-end justify-content-end">
@@ -274,6 +300,91 @@
     </div>
   </section>
 
+  <!-- How it works / Conversion block -->
+  <section id="how-it-works" class="how-it-works" aria-labelledby="hiwTitle" role="region" aria-label="Как это работает" tabindex="0">
+    <div class="container">
+      <div class="hiw-left">
+        <div class="hiw-sub">Как это работает</div>
+        <h3 id="hiwTitle" class="hiw-title">Бронь за 4 шага — быстро и просто</h3>
+        <p class="hiw-desc">Вы оставляете заявку, мы подтверждаем наличие мест, договор и оплата — готово. Ниже показаны этапы — можно перейти на любой.</p>
+
+        <div class="hiw-steps" role="tablist">
+          <article class="hiw-step" role="tabpanel" aria-hidden="false">
+            <div style="display:flex; align-items:center;">
+              <div class="num">1</div>
+              <div>
+                <div class="title">Оставляете заявку</div>
+                <div class="text">Заполните форму или нажмите «Оставить заявку» — мы получим заявку в CRM.</div>
+              </div>
+            </div>
+          </article>
+          <article class="hiw-step" role="tabpanel" aria-hidden="true">
+            <div style="display:flex; align-items:center;">
+              <div class="num">2</div>
+              <div>
+                <div class="title">Подтверждаем детали</div>
+                <div class="text">Наш менеджер уточнит время, трансфер и дополнительные пожелания.</div>
+              </div>
+            </div>
+          </article>
+          <article class="hiw-step" role="tabpanel" aria-hidden="true">
+            <div style="display:flex; align-items:center;">
+              <div class="num">3</div>
+              <div>
+                <div class="title">Оплата и подтверждение</div>
+                <div class="text">Вы оплачиваете удобным способом, мы присылаем подтверждение и ваучеры.</div>
+              </div>
+            </div>
+          </article>
+          <article class="hiw-step" role="tabpanel" aria-hidden="true">
+            <div style="display:flex; align-items:center;">
+              <div class="num">4</div>
+              <div>
+                <div class="title">Отдых и поддержка</div>
+                <div class="text">Мы остаёмся на связи и помогаем на месте при необходимости.</div>
+              </div>
+            </div>
+          </article>
+
+          <div class="hiw-controls" aria-hidden="false">
+            <button type="button" class="hiw-prev" aria-label="Предыдущий шаг">‹</button>
+            <button type="button" class="hiw-next" aria-label="Следующий шаг">›</button>
+            <div class="hiw-dots" role="tablist" aria-label="Навигация по шагам"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="hiw-right" aria-labelledby="hiwFormTitle">
+        <h4 id="hiwFormTitle">Оставьте заявку прямо сейчас</h4>
+        <form class="hiw-form" method="post" action="{% url 'core:lead_create' %}" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="source_page" value="how-it-works">
+          <input type="hidden" name="cta" value="how-it-works-form">
+          <div class="f-row">
+            <label for="hiw_name">Имя</label>
+            <input id="hiw_name" name="name" type="text" required>
+          </div>
+          <div class="f-row">
+            <label for="hiw_phone">Телефон</label>
+            <input id="hiw_phone" name="phone" type="tel" inputmode="tel" pattern="[\d\+\-\s\(\)]{8,18}" required>
+          </div>
+          <div class="f-row">
+            <label for="hiw_msg">Комментарий (необязательно)</label>
+            <textarea id="hiw_msg" name="message" rows="3"></textarea>
+          </div>
+          <div class="f-row">
+            <button id="hiw_submit" type="submit" class="btn btn-primary">Отправить заявку</button>
+          </div>
+          <div class="f-row">
+            <div class="hiw-msg hiw-success" id="hiw_success" role="status" aria-live="polite" hidden>Спасибо! Заявка принята — мы свяжемся в ближайшее время.</div>
+            <div class="hiw-msg hiw-error" id="hiw_error" role="alert" aria-live="assertive" hidden>Не удалось отправить заявку. Пожалуйста, попробуйте ещё раз или напишите в WhatsApp.</div>
+          </div>
+        </form>
+      </aside>
+    </div>
+  </section>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -282,7 +393,164 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+      // AJAX submission for How-it-works form
+      function initHiwForm(){
+        var form = document.querySelector('.hiw-form');
+        if (!form) return;
+        var submit = document.getElementById('hiw_submit');
+        var success = document.getElementById('hiw_success');
+        var error = document.getElementById('hiw_error');
+
+        function show(el){ if (!el) return; el.hidden = false; }
+        function hide(el){ if (!el) return; el.hidden = true; }
+
+        form.addEventListener('submit', async function(e){
+          e.preventDefault();
+          hide(success); hide(error);
+          if (submit) { submit.disabled = true; submit.textContent = 'Отправка...'; }
+
+          // basic client validation
+          var name = form.querySelector('[name="name"]').value.trim();
+          var phone = form.querySelector('[name="phone"]').value.trim();
+          if (!name || !phone){ show(error); error.textContent = 'Пожалуйста, укажите имя и телефон.'; if (submit){ submit.disabled=false; submit.textContent='Отправить заявку'; } return; }
+
+          var fd = new FormData(form);
+          try{
+            var resp = await fetch(form.action, { method:'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} });
+            if (!resp.ok) throw new Error('network');
+            var data = await resp.json();
+            if (data && data.ok){
+              show(success);
+              form.reset();
+            } else {
+              show(error);
+            }
+          }catch(err){
+            show(error);
+          }finally{
+            if (submit){ submit.disabled = false; submit.textContent = 'Отправить заявку'; }
+          }
+        }, false);
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHiwForm);
+      else initHiwForm();
+
     gtag('js', new Date());
     gtag('config', 'UA-23581568-13');
   </script> -->
+
+  {# REVIEWS SECTION: inline script to animate cards on scroll (uses IntersectionObserver) #}
+  <script>
+    (function(){
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      function onReady(){
+        var cards = document.querySelectorAll('.review-card');
+        if (!cards.length) return;
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        cards.forEach(function(c,i){ c.style.transitionDelay = (i*80)+'ms'; io.observe(c); });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', onReady);
+      else onReady();
+    })();
+  </script>
+  <!-- HOW IT WORKS: slider + inline lead form -->
+  <script>
+    (function(){
+      // Slider logic for #how-it-works steps
+      var AUTO_MS = 3500; // autoplay interval
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // do not auto-rotate when reduced motion
+        AUTO_MS = 0;
+      }
+
+      function initHowItWorks(){
+        var root = document.getElementById('how-it-works');
+        if (!root) return;
+        var track = root.querySelector('.hiw-steps');
+        var steps = Array.prototype.slice.call(root.querySelectorAll('.hiw-step'));
+        var dots = root.querySelector('.hiw-dots');
+        var prev = root.querySelector('.hiw-prev');
+        var next = root.querySelector('.hiw-next');
+        var idx = 0;
+        var timer = null;
+
+        function render(){
+          steps.forEach(function(s,i){ s.classList.toggle('active', i===idx); s.setAttribute('aria-hidden', i===idx? 'false':'true'); });
+          // update dots
+          if (dots){
+            dots.innerHTML = '';
+            steps.forEach(function(_,i){
+              var b = document.createElement('button');
+              b.className = 'dot' + (i===idx? ' active':'');
+              b.setAttribute('aria-label','Перейти к шагу '+(i+1));
+              b.dataset.index = i;
+              b.type = 'button';
+              dots.appendChild(b);
+            });
+          }
+        }
+
+        function go(to){
+          if (typeof to === 'number') idx = (to+steps.length)%steps.length;
+          render();
+        }
+
+        function start(){ if (AUTO_MS>0){ stop(); timer = setInterval(function(){ go(idx+1); }, AUTO_MS); } }
+        function stop(){ if (timer) { clearInterval(timer); timer = null; } }
+
+        // initial
+        render(); start();
+
+        // controls
+        if (next) next.addEventListener('click', function(){ go(idx+1); start(); });
+        if (prev) prev.addEventListener('click', function(){ go(idx-1); start(); });
+
+        // dots delegate
+        if (dots) dots.addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; go(parseInt(b.dataset.index,10)); start(); });
+
+        // pause on hover/focus
+        root.addEventListener('mouseenter', stop); root.addEventListener('mouseleave', start);
+        root.addEventListener('focusin', stop); root.addEventListener('focusout', start);
+
+        // keyboard
+        root.addEventListener('keydown', function(e){ if (e.key==='ArrowRight') { e.preventDefault(); go(idx+1); start(); } else if (e.key==='ArrowLeft') { e.preventDefault(); go(idx-1); start(); } });
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHowItWorks);
+      else initHowItWorks();
+    })();
+  </script>
+  <script>
+    (function(){
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+      if (isMobile) return; // skip on small screens
+
+      var nodes = document.querySelectorAll('.parallax_background');
+      if (!nodes.length) return;
+
+      var ticking = false;
+      function onScroll(){ if (!ticking){ window.requestAnimationFrame(update); ticking = true; } }
+
+      function update(){
+        var top = window.pageYOffset || document.documentElement.scrollTop;
+        nodes.forEach(function(n){
+          var speed = parseFloat(n.getAttribute('data-speed')) || 0.6;
+          // calculate translateY (negative to move slower than page)
+          var y = Math.round(top * (1 - speed));
+          n.style.transform = 'translate3d(0,' + y + 'px, 0)';
+        });
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', function(){ if (window.innerWidth < 768) { nodes.forEach(function(n){ n.style.transform='none'; }); window.removeEventListener('scroll', onScroll); } }, { passive: true });
+      // initial frame
+      update();
+    })();
+  </script>
 {% endblock %}
+

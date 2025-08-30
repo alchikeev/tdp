@@ -368,10 +368,6 @@ section
 	padding-right: 15px;
 	margin-bottom: 33px;
 }
-.destination_content
-{
-
-}
 .destination_title
 {
 	margin-top: 15px;
@@ -395,114 +391,6 @@ section
 	margin-top: 16px;
 }
 
-/*********************************
-9. Testimonials
-*********************************/
-
-.testimonials
-{
-	width: 100%;
-	padding-top: 118px;
-	padding-bottom: 115px;
-}
-.testimonials .section_title,
-.testimonials .section_subtitle
-{
-	color: #FFFFFF;
-}
-.testimonials_slider_container
-{
-	margin-top: 69px;
-}
-.testimonial
-{
-	font-size: 30px;
-	font-style: italic;
-	color: #FFFFFF;
-}
-.testimonial_author
-{
-	display: inline-block;
-	margin-top: 79px;
-	text-align: center;
-}
-.testimonial_author div:first-child
-{
-	font-family: 'Oswald', sans-serif;
-	font-size: 18px;
-	font-weight: 400;
-	color: #FFFFFF;
-	text-transform: uppercase;
-	line-height: 0.85;
-}
-.testimonial_author div:last-child
-{
-	font-family: 'Oswald', sans-serif;
-	font-size: 12px;
-	font-weight: 400;
-	color: #FFFFFF;
-	text-transform: uppercase;
-	line-height: 0.85;
-	margin-left: 6px;
-}
-.test_nav
-{
-	position: absolute;
-	right: 119px;
-	top: 42%;
-}
-.test_nav ul li
-{
-	position: relative;
-}
-.test_nav ul li a
-{
-	font-family: 'Oswald', sans-serif;
-	font-size: 16px;
-	color: rgba(255,255,255,0.63);
-	-webkit-transition: all 400ms ease;
-	-moz-transition: all 400ms ease;
-	-ms-transition: all 400ms ease;
-	-o-transition: all 400ms ease;
-	transition: all 400ms ease;
-}
-.test_nav ul li:not(:last-child)
-{
-	margin-bottom: 32px;
-}
-.test_nav ul li span
-{
-	margin-left: 30px;
-}
-.test_nav ul li::after
-{
-	display: block;
-	position: absolute;
-	right: -4px;
-	bottom: -6px;
-	width: 0px;
-	height: 2px;
-	background: rgba(255,255,255,0.63);
-	visibility: hidden;
-	opacity: 0;
-	content: '';
-	-webkit-transition: all 400ms ease;
-	-moz-transition: all 400ms ease;
-	-ms-transition: all 400ms ease;
-	-o-transition: all 400ms ease;
-	transition: all 400ms ease;
-}
-.test_nav ul li:hover::after
-{
-	visibility: visible;
-	opacity: 1;
-	background: rgba(255,255,255,1);
-	width: calc(100% + 28px);
-}
-.test_nav ul li:hover a
-{
-	color: rgba(255,255,255,1);
-}
 
 /*********************************
 10. News

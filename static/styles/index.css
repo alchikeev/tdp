@@ -152,6 +152,106 @@ index.css  — HERO (обложка)
   50%{ transform:scale(1.08); opacity:.95 }
 }
 
+/* ============================
+   Client Reviews Section
+   ============================ */
+
+.client-reviews{ position:relative; padding:72px 0; overflow:visible; }
+.client-reviews .reviews-bg{ position:absolute; inset:0; background-size:cover; background-position:center; z-index:0; filter:grayscale(.04) contrast(.95) saturate(.95); }
+.client-reviews .reviews-overlay{ position:absolute; inset:0; background:rgba(255,255,255,0.88); z-index:1; }
+.client-reviews .container{ position:relative; z-index:2; }
+
+.reviews-title{ font-weight:800; text-transform:uppercase; letter-spacing:2.6px; margin-bottom:28px; font-size:20px; }
+
+.reviews-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; align-items:stretch; }
+.review-card{ background:#fff; border-radius:12px; box-shadow:0 8px 24px rgba(3,10,18,0.06); overflow:hidden; display:flex; align-items:stretch; opacity:0; transform:translateY(12px); }
+.review-card-inner{ padding:18px; display:flex; flex-direction:column; width:100%; }
+.review-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px; }
+.review-author{ font-weight:700; color:#111; }
+.review-meta{ display:flex; gap:12px; align-items:center; font-size:13px; color:#666; }
+.review-rating{ display:flex; gap:4px; align-items:center; }
+.star{ color:#e6e6e6; font-size:14px; line-height:1; }
+.star.active{ color:var(--brand, #FF7A1A); }
+
+.review-body{ flex:1 1 auto; }
+.review-text{ margin:8px 0 12px; color:#222; font-size:15px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; max-height: calc(1.4em * 5); line-clamp:5; }
+
+.review-photos{ display:flex; gap:8px; margin-top:8px; }
+.review-photos img{ width:56px; height:56px; object-fit:cover; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+
+.review-card.is-visible{ opacity:1; transform:none; transition: opacity .24s ease, transform .24s ease; }
+.review-card:hover{ transform:translateY(-6px); box-shadow:0 18px 40px rgba(3,10,18,0.10); }
+
+.reviews-cta{ margin-top:20px; }
+.reviews-all{ display:inline-block; background:var(--brand, #FF7A1A); color:#fff; padding:12px 26px; border-radius:999px; font-weight:800; box-shadow:0 10px 28px rgba(231,103,0,0.22); transition: transform .12s ease, box-shadow .12s ease; }
+.reviews-all:hover{ transform:translateY(-3px); box-shadow:0 18px 40px rgba(231,103,0,0.30); }
+
+/* Responsive grid: 2 columns on tablet, 1 on small screens */
+@media (max-width: 992px){ .reviews-grid{ grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 576px){ .reviews-grid{ grid-template-columns: 1fr; } .client-reviews{ padding:44px 0; } }
+
+/* Ensure equal heights by letting cards stretch */
+.reviews-grid > article.review-card{ display:flex; }
+.reviews-grid > article.review-card .review-card-inner{ flex:1; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .review-card, .review-card.is-visible, .reviews-all{ transition:none !important; animation:none !important; }
+  .review-card{ opacity:1; transform:none; }
+}
+
+
+/* ---------------------------------------------------------------------
+   Testimonials (original parallax + nav) - moved from main_styles.css
+   Здесь собраны все правила для секции Testimonials / Reviews чтобы
+   было удобно править в одном месте (отступы, заголовки, навигация).
+   --------------------------------------------------------------------- */
+
+.testimonials{
+  width:100%;
+  padding-top:48px; /* уменьшено расстояние от верхней части */
+  padding-bottom:115px;
+}
+.testimonials .section_title,
+.testimonials .section_subtitle{
+  color:#FFFFFF;
+}
+.testimonials .section_subtitle{
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:1px;
+  margin-bottom:6px;
+}
+.testimonials .section_title h2{ display:none; }
+.testimonials_slider_container{ margin-top:69px; }
+.testimonial{ font-size:30px; font-style:italic; color:#FFFFFF; }
+.testimonial_author{ display:inline-block; margin-top:79px; text-align:center; }
+.testimonial_author div:first-child{ font-family:'Oswald', sans-serif; font-size:18px; font-weight:400; color:#FFFFFF; text-transform:uppercase; line-height:0.85; }
+.testimonial_author div:last-child{ font-family:'Oswald', sans-serif; font-size:12px; font-weight:400; color:#FFFFFF; text-transform:uppercase; line-height:0.85; margin-left:6px; }
+.test_nav{ position:absolute; right:119px; top:42%; }
+.test_nav ul li{ position:relative; }
+.test_nav ul li a{ font-family:'Oswald', sans-serif; font-size:16px; color:rgba(255,255,255,0.63); transition: all 400ms ease; }
+.test_nav ul li:not(:last-child){ margin-bottom:32px; }
+.test_nav ul li span{ margin-left:30px; }
+.test_nav ul li::after{ display:block; position:absolute; right:-4px; bottom:-6px; width:0px; height:2px; background:rgba(255,255,255,0.63); visibility:hidden; opacity:0; content: ''; transition: all 400ms ease; }
+.test_nav ul li:hover::after{ visibility:visible; opacity:1; background:rgba(255,255,255,1); width:calc(100% + 28px); }
+.test_nav ul li:hover a{ color: rgba(255,255,255,1); }
+
+/* Parallax helper: attach to .parallax_background to allow JS transform */
+.parallax_background{
+  position: absolute; inset:0; background-size:cover; background-position:center; z-index:0; will-change: transform; transform: translate3d(0,0,0);
+}
+
+@media (max-width: 768px){
+  /* disable heavy parallax on small screens */
+  .parallax_background{ transform:none !important; will-change:auto; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .parallax_background{ transform:none !important; will-change:auto; }
+}
+
+
 /*********************************
 Адаптив
 *********************************/
@@ -298,6 +398,44 @@ index.css  — HERO (обложка)
   50%  { transform: translate(6px,-6px)   scale(var(--s,1)); }
   100% { transform: translate(-6px,6px)   scale(var(--s,1)); }
 }
+
+/* ============================
+  HOW IT WORKS — Conversion block
+  ============================ */
+.how-it-works{ padding:64px 0; background:linear-gradient(180deg, #fff, #fbfbfb); }
+.how-it-works .container{ display:grid; grid-template-columns: 1fr 420px; gap:32px; align-items:start; }
+.hiw-left{ padding:12px 6px; }
+.hiw-sub{ color:var(--brand-600); font-weight:700; text-transform:uppercase; letter-spacing:1px; font-size:13px; }
+.hiw-title{ font-size:28px; font-weight:800; margin:8px 0 18px; }
+.hiw-desc{ color:#444; margin-bottom:22px; }
+
+.hiw-steps{ position:relative; display:block; }
+.hiw-step{ display:none; padding:18px; border-radius:12px; background:#fff; box-shadow:0 10px 30px rgba(16,24,40,0.06); }
+.hiw-step.active{ display:block; }
+.hiw-step .num{ width:64px; height:64px; border-radius:50%; background:var(--brand); color:#fff; display:inline-grid; place-items:center; font-weight:800; font-size:20px; margin-right:14px; }
+.hiw-step .title{ font-weight:800; margin-bottom:6px; }
+.hiw-controls{ display:flex; align-items:center; gap:12px; margin-top:16px; }
+.hiw-prev, .hiw-next{ background:transparent; border:1px solid #e6e6e6; padding:8px 12px; border-radius:8px; cursor:pointer; }
+.hiw-dots{ margin-left:8px; display:flex; gap:8px; align-items:center; }
+.hiw-dots .dot{ width:10px; height:10px; border-radius:50%; background:#e6e6e6; border:none; cursor:pointer; }
+.hiw-dots .dot.active{ background:var(--brand); box-shadow:0 6px 18px rgba(231,103,0,0.12); }
+
+.hiw-right{ background:#fff; padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(16,24,40,0.06); }
+.hiw-form .f-row{ margin-bottom:12px; }
+.hiw-form label{ display:block; font-size:13px; margin-bottom:6px; color:#333; }
+.hiw-form input[type=text], .hiw-form input[type=tel], .hiw-form textarea{ width:100%; padding:10px 12px; border:1px solid #e7e7e7; border-radius:8px; font-size:15px; }
+.hiw-form button[type=submit]{ width:100%; padding:12px 16px; background:var(--brand); color:#fff; border:none; border-radius:10px; font-weight:800; margin-top:8px; }
+
+@media (max-width: 992px){ .how-it-works .container{ grid-template-columns:1fr; } .hiw-right{ order:2; } }
+
+@media (max-width: 560px){ .hiw-step .num{ width:56px; height:56px; font-size:18px; } .how-it-works{ padding:36px 0; } }
+
+@media (prefers-reduced-motion: reduce){ .hiw-step, .hiw-dots .dot, .hiw-prev, .hiw-next{ transition:none !important; } }
+
+/* inline messages for how-it-works form */
+.hiw-msg{ padding:10px 12px; border-radius:8px; font-weight:600; margin-top:8px; }
+.hiw-success{ background: #E9F9F1; color:#0B6A3A; border:1px solid rgba(11,106,58,0.08); }
+.hiw-error{ background: #FFF3F2; color:#9B2C2C; border:1px solid rgba(155,44,44,0.06); }
 
 /* скрыть на мобилке */
 @media (max-width: 992px){

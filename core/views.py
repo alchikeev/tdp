@@ -4,6 +4,7 @@ from django.shortcuts import render
 from .models import Lead
 from tours.models import Tour
 from services.models import Service
+from reviews.models import Review
 
 
 def home(request):
@@ -16,7 +17,9 @@ def home(request):
     random.shuffle(services)
     tours = tours[:9]
     services = services[:9]
-    return render(request, 'index.html', {'tours': tours, 'services': services})
+    # Последние одобренные отзывы (макс. 6) берём из приложения reviews
+    reviews = list(Review.objects.filter(is_approved=True)[:6])
+    return render(request, 'index.html', {'tours': tours, 'services': services, 'reviews': reviews})
 
 
 @require_POST
