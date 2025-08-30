@@ -1,0 +1,73 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ main ]      # деплой при пуше в main
+  workflow_dispatch:        # и кнопка "Run workflow" вручную
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write       # пуш в ghcr
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH deploy (pull → up → migrate → collectstatic)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+            # где лежит docker-compose.yml, Caddyfile и .env на сервере
+            cd /srv/tdp
+
+            # если директория — git-репо, подтянем изменения для compose/Caddyfile/.env.example
+            if [ -d .git ]; then
+              git pull --rebase || true
+            fi
+
+            # тянем новый образ из GHCR (публичный — логин не нужен)
+            docker compose pull tdp
+
+            # поднимаем приложение (Caddy трогать не обязательно, если Caddyfile не менялся)
+            docker compose up -d tdp
+
+            # прогоняем миграции и собираем статику
+            docker compose exec -T tdp python manage.py migrate --noinput
+            docker compose exec -T tdp python manage.py collectstatic --noinput
+
+            # опционально: подчистить старые dangling-образы
+            docker image prune -f || true
