@@ -23,7 +23,7 @@
       <input type="text" name="website" class="lm-hp" autocomplete="off" tabindex="-1">
 
       <div class="lm-field">
-        <input type="text" name="fullname" class="lm-input" placeholder="Имя" required>
+        <input type="text" name="name" class="lm-input" placeholder="Имя" required>
       </div>
 
       <div class="lm-field">
@@ -67,7 +67,7 @@
     modal.classList.add('open');
     modal.setAttribute('aria-hidden','false');
     setTimeout(() => {
-      const first = form.querySelector('input[name="fullname"]');
+      const first = form.querySelector('input[name="name"]');
       if (first) first.focus();
     }, 40);
   }
