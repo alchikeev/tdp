@@ -14,6 +14,7 @@ urlpatterns = [
     path("services/", include(("services.urls", "services"), namespace="services")),
     path("prices/", include(("prices.urls", "prices"), namespace="prices")),
     path("reviews/", include(("reviews.urls", "reviews"), namespace="reviews")),
+    path('admin/backup/backup/', include(('backup.urls', 'backup'), namespace='admin')),
 ]
 
 if settings.DEBUG:
