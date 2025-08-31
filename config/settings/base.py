@@ -11,6 +11,7 @@ if ENV_FILE.exists():            # читаем только если файл �
     environ.Env.read_env(str(ENV_FILE))
 
 SECRET_KEY = env('SECRET_KEY', default='unsafe-dev-key')
+# Отладочный режим (по умолчанию True для разработки)
 DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
@@ -29,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',  # enable humanize template tags
     # твои приложения:
-    'core', 'tours', 'services', 'reviews', 'prices', # и т.д.
+    'core', 'tours', 'services', 'reviews', 'prices', 'backup', # и т.д.
 ]
 
 MIDDLEWARE = [

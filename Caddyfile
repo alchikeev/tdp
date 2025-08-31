@@ -1,19 +1,29 @@
-cat >/srv/tdp/Caddyfile <<'CADDY'
 thaidreamphuket.com, www.thaidreamphuket.com {
-	encode zstd gzip
+    encode zstd gzip
 
-	@wp {
-		path *wp-admin* *wp-login.php* *wordpress* *wp-content* *wp-includes*
-	}
-	respond @wp 404
+    # раздача статики и медиа из смонтированных томов
+    handle_path /static/* {
+        root * /var/www/static
+        file_server
+    }
+    handle_path /media/* {
+        root * /var/www/media
+        file_server
+    }
 
-	reverse_proxy tdp:8000 {
-		header_up Host {host}
-		header_up X-Forwarded-Proto {scheme}
-	}
+    # блокируем вордпресс-мусор
+    @wp {
+        path *wp-admin* *wp-login.php* *wordpress* *wp-content* *wp-includes*
+    }
+    respond @wp 404
 
-	log {
-		output stdout
-	}
+    # прокси на бекенд Django (сервис tdp внутри docker-сети)
+    reverse_proxy tdp:8000 {
+        header_up Host {host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    log {
+        output stdout
+    }
 }
-CADDY
