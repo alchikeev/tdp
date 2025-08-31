@@ -17,4 +17,7 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    # Раздача медиа-файлов (картинки и т.д.)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Раздача статических файлов (CSS, JS) из папки static
+    urlpatterns += static(settings.STATIC_URL, document_root=str(settings.STATICFILES_DIRS[0]))
