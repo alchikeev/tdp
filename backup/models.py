@@ -1,13 +1,12 @@
 from django.db import models
-from core.models import SiteSettings
 
-
-# Proxy model based on SiteSettings so admin can show a section without new table
-class Backup(SiteSettings):
+class Backup(models.Model):
+    """Прокси-модель для появления пункта в админке (таблица в БД не создаётся)."""
     class Meta:
-        proxy = True
-        verbose_name = 'Резервное копирование'
-        verbose_name_plural = 'Резервное копирование'
+        managed = False
+        app_label = "backup"
+        verbose_name = "Резервное копирование"
+        verbose_name_plural = "Резервные копии"
 
     def __str__(self):
-        return 'Резервное копирование'
+        return "Резервное копирование"
