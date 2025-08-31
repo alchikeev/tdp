@@ -4,11 +4,14 @@ from pathlib import Path
 import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent  # .../config/..
-env = environ.Env(DEBUG=(bool, True))  # по умолчанию DEBUG для удобства разработки
-environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))  # .env рядом с manage.py
+env = environ.Env(DEBUG=(bool, True))
+
+ENV_FILE = BASE_DIR / '.env'     # /srv/tdp/.env
+if ENV_FILE.exists():            # читаем только если файл реально есть
+    environ.Env.read_env(str(ENV_FILE))
 
 SECRET_KEY = env('SECRET_KEY', default='unsafe-dev-key')
-DEBUG = env.bool('DEBUG', default=False)
+DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])  # важно для Django 4.2+
@@ -73,6 +76,10 @@ STATIC_URL = env('STATIC_URL', default='/static/')
 MEDIA_URL  = env('MEDIA_URL',  default='/media/')
 STATIC_ROOT = env('STATIC_ROOT', default=str(BASE_DIR / 'staticfiles'))
 MEDIA_ROOT  = env('MEDIA_ROOT',  default=str(BASE_DIR / 'media'))
+# Папка с общими статическими файлами проекта (CSS, JS, изображения и т.д.)
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'Asia/Bishkek'
