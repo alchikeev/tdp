@@ -210,7 +210,7 @@ def backup_restore(request):
 
                     try:
                         cat_obj = TourCategory.objects.get(slug=cat_slug)
-                    except Category.DoesNotExist:
+                    except TourCategory.DoesNotExist:
                         raise ValidationError(f"Категория '{cat_slug}' не найдена при восстановлении тура '{tour_slug}'")
 
                     banned = {"pk", "_m2m", "created_at"}
@@ -236,7 +236,7 @@ def backup_restore(request):
 
                     try:
                         cat_obj = ServiceCategory.objects.get(slug=cat_slug)
-                    except Category.DoesNotExist:
+                    except ServiceCategory.DoesNotExist:
                         raise ValidationError(f"Категория '{cat_slug}' не найдена при восстановлении сервиса '{service_slug}'")
 
                     banned = {"pk", "_m2m", "created_at"}
