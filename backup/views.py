@@ -105,8 +105,8 @@ def backup_download(request):
         # таксономии для туров и услуг
         add_json(TourCategory.objects.all(), "tour_categories")
         add_json(ServiceCategory.objects.all(), "service_categories")
-        add_json(Tour.objects.all().select_related("category").prefetch_related("tags"), "tours")
-        add_json(Service.objects.all().select_related("category").prefetch_related("tags"), "services")
+        add_json(Tour.objects.all().prefetch_related("categories", "tags"), "tours")
+        add_json(Service.objects.all().prefetch_related("categories", "tags"), "services")
         add_json(Review.objects.all(), "reviews")
         add_json(NewsPost.objects.all(), "news")
         add_json(BlogPost.objects.all(), "blog")
@@ -227,55 +227,46 @@ def backup_restore(request):
                     tag_slugs.add(slug)
                     report["imported"]["tags"] += 1
 
-                # 5) туры (TourCategory)
+                # 5) туры (TourCategory -> categories)
                 for t in load_json("tours"):
                     tour_slug = t.get("slug") or f"restored-{t.get('pk')}"
-                    # определяем категорию из category_slug или по старому pk
-                    cat_slug = t.get("category_slug") or cat_map.get(t.get("category_id"))
-                    if not cat_slug:
-                        raise ValidationError(f"У тура '{tour_slug}' отсутствует категория")
-
-                    try:
-                        cat_obj = TourCategory.objects.get(slug=cat_slug)
-                    except TourCategory.DoesNotExist:
-                        raise ValidationError(f"Категория '{cat_slug}' не найдена при восстановлении тура '{tour_slug}'")
-
+                    # Основные поля, без M2M
                     banned = {"pk", "_m2m", "created_at"}
                     defaults = {
                         k: v for k, v in t.items()
                         if k not in banned and not k.endswith("_id") and not k.endswith("_slug")
                     }
-                    defaults["category"] = cat_obj
                     tour_obj, _ = Tour.objects.update_or_create(slug=tour_slug, defaults=defaults)
                     report["imported"]["tours"] += 1
+
+                    # M2M категории
+                    cat_list = [s for s in t.get("_m2m", {}).get("categories", []) if s]
+                    if cat_list:
+                        tour_obj.categories.set(TourCategory.objects.filter(slug__in=cat_list))
 
                     # M2M теги
                     tag_list = [s for s in t.get("_m2m", {}).get("tags", []) if s]
                     if tag_list:
                         tour_obj.tags.set(Tag.objects.filter(slug__in=tag_list))
 
-                # 6) сервисы (ServiceCategory)
+                # 6) сервисы (ServiceCategory -> categories)
                 for s in load_json("services"):
                     service_slug = s.get("slug") or f"restored-s-{s.get('pk')}"
-                    cat_slug = s.get("category_slug") or cat_map.get(s.get("category_id"))
-                    if not cat_slug:
-                        raise ValidationError(f"У сервиса '{service_slug}' отсутствует категория")
-
-                    try:
-                        cat_obj = ServiceCategory.objects.get(slug=cat_slug)
-                    except ServiceCategory.DoesNotExist:
-                        raise ValidationError(f"Категория '{cat_slug}' не найдена при восстановлении сервиса '{service_slug}'")
-
+                    # Основные поля, без M2M
                     banned = {"pk", "_m2m", "created_at"}
                     defaults = {
                         k: v for k, v in s.items()
                         if k not in banned and not k.endswith("_id") and not k.endswith("_slug")
                     }
-                    defaults["category"] = cat_obj
                     svc_obj, _ = Service.objects.update_or_create(slug=service_slug, defaults=defaults)
-
                     report["imported"]["services"] += 1
 
+                    # M2M категории
+                    cat_list = [slug for slug in s.get("_m2m", {}).get("categories", []) if slug]
+                    if cat_list:
+                        svc_obj.categories.set(ServiceCategory.objects.filter(slug__in=cat_list))
+
+                    # M2M теги
                     tag_list = [ts for ts in s.get("_m2m", {}).get("tags", []) if ts]
                     if tag_list:
                         svc_obj.tags.set(Tag.objects.filter(slug__in=tag_list))

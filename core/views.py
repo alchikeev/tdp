@@ -23,8 +23,12 @@ def home(request):
     reviews = list(Review.objects.filter(is_approved=True))
     random.shuffle(reviews)
     reviews = reviews[:3]
-    news_posts = list(NewsPost.objects.filter(is_published=True).order_by('-pub_date')[:5])
-    blog_posts = list(BlogPost.objects.filter(is_published=True).order_by('-pub_date')[:5])
+    # Последние три новости для главной страницы
+    news_posts = list(NewsPost.objects.filter(is_published=True).order_by('-pub_date')[:3])
+    # Случайные блог-посты (макс. 3)
+    blog_list = list(BlogPost.objects.filter(is_published=True))
+    random.shuffle(blog_list)
+    blog_posts = blog_list[:3]
     return render(request, 'index.html', {
         'tours': tours,
         'services': services,
