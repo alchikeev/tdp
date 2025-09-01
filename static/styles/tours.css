@@ -91,9 +91,7 @@
 .t-card__footer{ margin-top:auto; display:flex; justify-content:space-between; align-items:center; gap:10px; }
 .t-rating{ display:flex; align-items:center; gap:6px; color:#ff9900; font-weight:800; }
 .t-rev{ color:#98a2b3; font-weight:700; }
-.btn-more{ background:#eef2f7; border-radius:10px; padding:8px 12px; font-weight:700; color:#152433; text-decoration:none; }
-.btn-more:hover{ background:#e3e9f2; }
-.order_btn{ border-radius:10px; }
+/* .btn-more and .order_btn styles are now handled by buttons.css */
 
 /* Пагинация */
 .t-pagination .page-link{ border-radius:10px; }
@@ -101,4 +99,13 @@
 /* Адаптив для карточек */
 @media (max-width:575.98px){
   .t-card__cover{ height:200px; }
+}
+
+/* Hover animation for tour cards */
+.t-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.t-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.15);
 }

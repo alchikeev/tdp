@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.db.models import Count, Q
 from tours.models import Tour
 from services.models import Service
-from core.models import Category, Tag
+from core.models import Tag
 
 
 def price_list(request):
@@ -18,16 +18,7 @@ def price_list(request):
         .order_by('-created_at')
     )
 
-    # Сайдбар: категории и теги
-    # Категории для туров: аннотируем количеством активных туров
-    rel_name_tours = Tour._meta.get_field('category').remote_field.related_name or 'tour_set'
-    count_expr_tours = Count(rel_name_tours, filter=Q(**{f"{rel_name_tours}__is_active": True}))
-    categories_tours = Category.objects.annotate(items=count_expr_tours).order_by('name')
-
-    # Категории для услуг: related_name 'services'
-    rel_name_services = Service._meta.get_field('category').remote_field.related_name or 'service_set'
-    count_expr_services = Count(rel_name_services, filter=Q(**{f"{rel_name_services}__is_active": True}))
-    categories_services = Category.objects.annotate(items=count_expr_services).order_by('name')
+    # Сайдбар: теги
 
     tags = Tag.objects.order_by('name')
 
@@ -54,10 +45,8 @@ def price_list(request):
     return render(request, 'prices/price_list.html', {
         'tours': tours,
         'services': services,
-        'categories_tours': categories_tours,
-        'categories_services': categories_services,
         'tags': tags,
         'popular_tours': popular_tours,
-    'popular_services': popular_services,
-    'price_pdf': pdf,
+        'popular_services': popular_services,
+        'price_pdf': pdf,
     })

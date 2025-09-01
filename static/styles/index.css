@@ -63,21 +63,7 @@ index.css  — HERO (обложка)
   margin-bottom:18px;
   margin-top: 36px;
 }
-.btn-hero{
-  display:inline-flex; align-items:center; justify-content:center; gap:10px;
-  padding:12px 20px; border-radius:999px;
-  /* фирменный оранжевый фон + белый текст */
-  background: var(--brand-600, #E76700); color:#fff; text-decoration:none;
-  font-weight:700; letter-spacing:.2px; border:2px solid var(--brand-600, #E76700);
-  box-shadow:0 10px 26px rgba(231,103,0,.38);
-  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
-  animation:floaty 3s ease-in-out infinite;
-}
-.btn-hero:hover{
-  transform:translateY(-2px);
-  box-shadow:0 14px 34px rgba(231,103,0,.52);
-  background:#fff; color:var(--brand-600, #E76700); border-color:#fff;
-}
+/* .btn-hero styles are now handled by buttons.css */
 
 /* Преимущества */
 .hero-trust{
@@ -282,10 +268,7 @@ index.css  — HERO (обложка)
   .hero{ margin-top: 0 !important; }
   .hero-title{ margin-top: 0 !important; }
   .hero-cta{ width:100%; }
-  .btn-hero{
-    width:100%; padding:14px 18px;
-    font-size:16px;
-  }
+  /* .btn-hero mobile styles are now handled by buttons.css */
   .hero-trust{
     margin-top:6px; padding:10px 12px;
     gap:8px; justify-content:center;
@@ -300,18 +283,9 @@ index.css  — HERO (обложка)
 /* CTA на больших экранах */
 @media (min-width: 993px){
   .hero-cta{ gap: 20px; }
-  .btn-hero{
-    padding: 16px 128px;
-    font-size: 18px;
-    min-width: 280px;
-  }
+  /* .btn-hero desktop styles are now handled by buttons.css */
 }
-@media (min-width: 562px){
-  .btn-hero{ padding: 18px 128px; font-size: 20px; min-width: 320px; }
-}
-@media (min-width: 1400px){
-  .btn-hero{ padding: 18px 128px; font-size: 20px; min-width: 320px; }
-}
+/* .btn-hero responsive styles are now handled by buttons.css */
 
 
 
@@ -399,44 +373,7 @@ index.css  — HERO (обложка)
   100% { transform: translate(-6px,6px)   scale(var(--s,1)); }
 }
 
-/* ============================
-  HOW IT WORKS — Conversion block
-  ============================ */
-.how-it-works{ padding:64px 0; background:linear-gradient(180deg, #fff, #fbfbfb); }
-.how-it-works .container{ display:grid; grid-template-columns: 1fr 420px; gap:32px; align-items:start; }
-.hiw-left{ padding:12px 6px; }
-.hiw-sub{ color:var(--brand-600); font-weight:700; text-transform:uppercase; letter-spacing:1px; font-size:13px; }
-.hiw-title{ font-size:28px; font-weight:800; margin:8px 0 18px; }
-.hiw-desc{ color:#444; margin-bottom:22px; }
-
-.hiw-steps{ position:relative; display:block; }
-.hiw-step{ display:none; padding:18px; border-radius:12px; background:#fff; box-shadow:0 10px 30px rgba(16,24,40,0.06); }
-.hiw-step.active{ display:block; }
-.hiw-step .num{ width:64px; height:64px; border-radius:50%; background:var(--brand); color:#fff; display:inline-grid; place-items:center; font-weight:800; font-size:20px; margin-right:14px; }
-.hiw-step .title{ font-weight:800; margin-bottom:6px; }
-.hiw-controls{ display:flex; align-items:center; gap:12px; margin-top:16px; }
-.hiw-prev, .hiw-next{ background:transparent; border:1px solid #e6e6e6; padding:8px 12px; border-radius:8px; cursor:pointer; }
-.hiw-dots{ margin-left:8px; display:flex; gap:8px; align-items:center; }
-.hiw-dots .dot{ width:10px; height:10px; border-radius:50%; background:#e6e6e6; border:none; cursor:pointer; }
-.hiw-dots .dot.active{ background:var(--brand); box-shadow:0 6px 18px rgba(231,103,0,0.12); }
-
-.hiw-right{ background:#fff; padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(16,24,40,0.06); }
-.hiw-form .f-row{ margin-bottom:12px; }
-.hiw-form label{ display:block; font-size:13px; margin-bottom:6px; color:#666; }
-.hiw-form input[type=text], .hiw-form input[type=tel], .hiw-form textarea{ width:100%; padding:10px 12px; border:1px solid #e7e7e7; border-radius:8px; font-size:15px; }
-.hiw-form button[type=submit]{ width:100%; padding:12px 16px; background:var(--brand-600); color:#fff; border:none; border-radius:10px; font-weight:800; margin-top:8px; }
-.hiw-form button[type=submit]:hover{ background:#fff; color:var(--brand); border:1px solid var(--brand); }
-
-@media (max-width: 992px){ .how-it-works .container{ grid-template-columns:1fr; } .hiw-right{ order:2; } }
-
-@media (max-width: 560px){ .hiw-step .num{ width:56px; height:56px; font-size:18px; } .how-it-works{ padding:36px 0; } }
-
-@media (prefers-reduced-motion: reduce){ .hiw-step, .hiw-dots .dot, .hiw-prev, .hiw-next{ transition:none !important; } }
-
-/* inline messages for how-it-works form */
-.hiw-msg{ padding:10px 12px; border-radius:8px; font-weight:600; margin-top:8px; }
-.hiw-success{ background: #E9F9F1; color:#0B6A3A; border:1px solid rgba(11,106,58,0.08); }
-.hiw-error{ background: #FFF3F2; color:#9B2C2C; border:1px solid rgba(155,44,44,0.06); }
+/* HOW IT WORKS styles are now handled by how-it-works.css */
 
 /* скрыть на мобилке */
 @media (max-width: 992px){
@@ -528,4 +465,81 @@ index.css  — HERO (обложка)
   --shape-sx: 1.12; --shape-sy: 1.90;
   --dx: 30px; --dy: -6px; --rot: .28deg;
   --dur: 23s; --delay: .3s; --scale: 0.90;
+}
+
+/* Tours cards on homepage */
+.tours {
+  padding: 2rem 1rem;
+}
+.tours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.tour-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.tour-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+.tour-card__image {
+  width: 100%;
+  height: 0;
+  padding-top: 133.33%; /* соотношение 3:4 */
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.tour-card:hover .tour-card__image {
+  transform: scale(1.03);
+}
+.tour-card__badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--brand);
+  color: #fff;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+.tour-card__info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  /* Remove background overlay */
+  background: transparent;
+  backdrop-filter: none;
+}
+.tour-card__location {
+  font-size: 0.75rem;
+  color: #fff;
+  margin-bottom: 0.25rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+.tour-card__location::before {
+  content: "—";
+  margin-right: 0.5rem;
+  color: #fff;
+}
+.tour-card__title {
+  font-size: 1.1rem;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+  text-transform: uppercase;
+  margin: 0;
 }

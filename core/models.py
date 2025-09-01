@@ -18,16 +18,7 @@ class SiteSettings(models.Model):
     def __str__(self):
         return "Глобальные настройки"
 
-class Category(models.Model):
-    name   = models.CharField(max_length=120)
-    slug   = models.SlugField(unique=True)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
-
-    def __str__(self): return self.name
+# Category model removed - not used in the application
 
 class Tag(models.Model):
     name = models.CharField(max_length=64, unique=True)

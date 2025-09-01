@@ -1,134 +1,20 @@
-/* JS Document */
-
-/******************************
-
-[Table of Contents]
-
-1. Vars and Inits
-2. Set Header
-3. Init Menu
-4. Init Input
-5. Init Google Map
-
-
-******************************/
+/* JS Document - Contact page specific functionality */
 
 $(document).ready(function()
 {
 	"use strict";
 
-	/* 
-
-	1. Vars and Inits
-
-	*/
-
-	var header = $('.header');
-	var headerSocial = $('.header_social');
-	var menu = $('.menu');
-	var menuActive = false;
-	var burger = $('.hamburger');
-	var map;
-
-	setHeader();
-
-	$(window).on('resize', function()
-	{
-		setHeader();
-
-		setTimeout(function()
-		{
-			$(window).trigger('resize.px.parallax');
-		}, 375);
-	});
-
-	$(document).on('scroll', function()
-	{
-		setHeader();
-	});
-
-	initMenu();
-	initInput();
+	// Initialize contact page specific functionality
+	initContactInput();
 	initGoogleMap();
 
 	/* 
 
-	2. Set Header
+	Init Contact Input (different from newsletter input)
 
 	*/
 
-	function setHeader()
-	{
-		if($(window).scrollTop() > 127)
-		{
-			header.addClass('scrolled');
-			headerSocial.addClass('scrolled');
-		}
-		else
-		{
-			header.removeClass('scrolled');
-			headerSocial.removeClass('scrolled');
-		}
-	}
-
-	/* 
-
-	3. Set Menu
-
-	*/
-
-	function initMenu()
-	{
-		if($('.menu').length)
-		{
-			var menu = $('.menu');
-			if($('.hamburger').length)
-			{
-				burger.on('click', function()
-				{
-					if(menuActive)
-					{
-						closeMenu();
-					}
-					else
-					{
-						openMenu();
-					}
-				});
-			}
-		}
-		if($('.menu_close').length)
-		{
-			var close = $('.menu_close');
-			close.on('click', function()
-			{
-				if(menuActive)
-				{
-					closeMenu();
-				}
-			});
-		}
-	}
-
-	function openMenu()
-	{
-		menu.addClass('active');
-		menuActive = true;
-	}
-
-	function closeMenu()
-	{
-		menu.removeClass('active');
-		menuActive = false;
-	}
-
-	/* 
-
-	4. Init Input
-
-	*/
-
-	function initInput()
+	function initContactInput()
 	{
 		if($('.inpt').length)
 		{
@@ -166,7 +52,7 @@ $(document).ready(function()
 
 	 /* 
 
-	5. Init Google Map
+	Init Google Map
 
 	*/
 
@@ -205,7 +91,7 @@ $(document).ready(function()
     	}
 
     	// Initialize a map with options
-    	map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    	var map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
 		// Re-center map after window resize
 		google.maps.event.addDomListener(window, 'resize', function()

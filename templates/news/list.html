@@ -1,8 +1,28 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Новости — Thai Dream Phuket{% endblock %}
+{% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+{% endblock %}
+{% block body_class %}has-inner-hero{% endblock %}
 {% block content %}
+<section class="home slide slide--inner">
+    <div class="home_slider_container">
+        <div class="background_image" style="background-image: url('{% static "images/home_slider.jpg" %}');"></div>
+        <div class="home_slider_content_container">
+            <div class="hero hero--inner">
+                <div class="container hero__grid">
+                    <div class="hero-left">
+                        <h1 class="hero-title">Новости</h1>
+                        <p class="hero-sub">Актуальные новости и события</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <div class="container my-5">
-  <h1>Новости</h1>
   <div class="row">
     {% for post in posts %}
       <div class="col-md-4 mb-4">

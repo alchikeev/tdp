@@ -3,6 +3,7 @@
 
 {% block title %}Главная — Thai Dream Phuket{% endblock %}
 {% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/how-it-works.css' %}">
   <link rel="stylesheet" href="{% static 'styles/index.css' %}">
 {% endblock %}
 
@@ -58,6 +59,9 @@
   <!-- Tours grid on homepage -->
   <section class="container my-5">
     <div class="row">
+      <div class="col-12 mb-3">
+        <h2>Популярные туры</h2>
+      </div>
       {% for t in tours %}
         <div class="col-md-4 mb-4">
           <a href="{{ t.get_absolute_url }}" class="card h-100 text-decoration-none">
@@ -81,7 +85,6 @@
       {% endfor %}
     </div>
   </section>
-
 
   <div class="container text-center mb-5">
     <a href="{% url 'tours:list' %}" class="btn btn-outline-primary">Смотреть ещё экскурсии</a>
@@ -157,33 +160,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Tours grid on homepage -->
-  <section class="container my-5">
-    <div class="row">
-      {% for t in tours %}
-        <div class="col-md-4 mb-4">
-          <a href="{{ t.get_absolute_url }}" class="card h-100 text-decoration-none">
-            {% if t.cover %}
-              <img src="{{ t.cover.url }}" class="card-img-top" alt="{{ t.title }}">
-            {% endif %}
-            <div class="card-body">
-              <h5 class="card-title">{{ t.title }}</h5>
-              {% if t.short_desc %}
-                <p class="card-text">{{ t.short_desc|truncatechars:120 }}</p>
-              {% endif %}
-              <div class="small text-muted">
-                Взрослые: {{ t.price_adult|floatformat:0 }} сом
-                {% if t.price_child %} · Дети: {{ t.price_child|floatformat:0 }} сом{% endif %}
-              </div>
-            </div>
-          </a>
-        </div>
-      {% empty %}
-        <div class="col-12"><p>Пока нет туров.</p></div>
-      {% endfor %}
     </div>
   </section>
 
@@ -307,87 +283,134 @@
   </section>
 
   <!-- How it works / Conversion block -->
-  <section id="how-it-works" class="how-it-works" aria-labelledby="hiwTitle" role="region" aria-label="Как это работает" tabindex="0">
+  <section id="how-it-works" class="how-it-works">
     <div class="container">
-      <div class="hiw-left">
-        <div class="hiw-sub">Как это работает</div>
-        <h3 id="hiwTitle" class="hiw-title">Бронь за 4 шага — быстро и просто</h3>
-        <p class="hiw-desc">Вы оставляете заявку, мы подтверждаем наличие мест, договор и оплата — готово. Ниже показаны этапы — можно перейти на любой.</p>
+      <div class="how-it-works-header">
+        <div class="how-it-works-subtitle">Как это работает</div>
+        <h2 class="how-it-works-title">Бронь за 4 шага — быстро и просто</h2>
+        <p class="how-it-works-description">Вы оставляете заявку, мы подтверждаем наличие мест, договор и оплата — готово. Ниже показаны этапы — можно перейти на любой.</p>
+      </div>
 
-        <div class="hiw-steps" role="tablist">
-          <article class="hiw-step" role="tabpanel" aria-hidden="false">
-            <div style="display:flex; align-items:center;">
-              <div class="num">1</div>
-              <div>
-                <div class="title">Оставляете заявку</div>
-                <div class="text">Заполните форму или нажмите «Оставить заявку» — мы получим заявку в CRM.</div>
+      <div class="how-it-works-content">
+        <!-- Steps Section -->
+        <div class="how-it-works-steps">
+          <div class="steps-container">
+            <div class="steps-progress-line"></div>
+            
+            <div class="step-item active">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <div class="step-icon">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V9M19 9H14V4H5V21H19V9Z" fill="#E76700"/>
+                  </svg>
+                </div>
+                <h3 class="step-title">Оставляете заявку</h3>
+                <p class="step-description">Заполните форму или нажмите «Оставить заявку» — мы получим заявку в CRM.</p>
               </div>
             </div>
-          </article>
-          <article class="hiw-step" role="tabpanel" aria-hidden="true">
-            <div style="display:flex; align-items:center;">
-              <div class="num">2</div>
-              <div>
-                <div class="title">Подтверждаем детали</div>
-                <div class="text">Наш менеджер уточнит время, трансфер и дополнительные пожелания.</div>
-              </div>
-            </div>
-          </article>
-          <article class="hiw-step" role="tabpanel" aria-hidden="true">
-            <div style="display:flex; align-items:center;">
-              <div class="num">3</div>
-              <div>
-                <div class="title">Оплата и подтверждение</div>
-                <div class="text">Вы оплачиваете удобным способом, мы присылаем подтверждение и ваучеры.</div>
-              </div>
-            </div>
-          </article>
-          <article class="hiw-step" role="tabpanel" aria-hidden="true">
-            <div style="display:flex; align-items:center;">
-              <div class="num">4</div>
-              <div>
-                <div class="title">Отдых и поддержка</div>
-                <div class="text">Мы остаёмся на связи и помогаем на месте при необходимости.</div>
-              </div>
-            </div>
-          </article>
 
-          <div class="hiw-controls" aria-hidden="false">
-            <button type="button" class="hiw-prev" aria-label="Предыдущий шаг">‹</button>
-            <button type="button" class="hiw-next" aria-label="Следующий шаг">›</button>
-            <div class="hiw-dots" role="tablist" aria-label="Навигация по шагам"></div>
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <div class="step-icon">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#E76700"/>
+                  </svg>
+                </div>
+                <h3 class="step-title">Подтверждаем детали</h3>
+                <p class="step-description">Наш менеджер уточнит время, трансфер и дополнительные пожелания.</p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <div class="step-icon">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#E76700"/>
+                  </svg>
+                </div>
+                <h3 class="step-title">Оплата и подтверждение</h3>
+                <p class="step-description">Вы оплачиваете удобным способом, мы присылаем подтверждение и ваучеры.</p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <div class="step-icon">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" fill="#E76700"/>
+                  </svg>
+                </div>
+                <h3 class="step-title">Отдых и поддержка</h3>
+                <p class="step-description">Мы остаёмся на связи и помогаем на месте при необходимости.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Controls -->
+          <div class="steps-navigation">
+            <button type="button" class="step-nav-btn" data-action="prev" aria-label="Предыдущий шаг">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z"/>
+              </svg>
+            </button>
+            
+            <div class="steps-dots">
+              <div class="step-dot active"></div>
+              <div class="step-dot"></div>
+              <div class="step-dot"></div>
+              <div class="step-dot"></div>
+            </div>
+            
+            <button type="button" class="step-nav-btn" data-action="next" aria-label="Следующий шаг">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8.59 16.59L10 18L16 12L10 6L8.59 7.41L13.17 12L8.59 16.59Z"/>
+              </svg>
+            </button>
           </div>
         </div>
 
+        <!-- Form Section -->
+        <div class="how-it-works-form">
+          <div class="form-header">
+            <h3 class="form-title">Оставьте заявку прямо сейчас</h3>
+            <p class="form-subtitle">Получите персональное предложение за 5 минут</p>
+          </div>
+          
+          <form class="hiw-form" method="post" action="{% url 'core:lead_create' %}" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="source_page" value="how-it-works">
+            <input type="hidden" name="cta" value="how-it-works-form">
+            
+            <div class="form-group">
+              <label for="hiw_name" class="form-label">Имя</label>
+              <input id="hiw_name" name="name" type="text" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="hiw_phone" class="form-label">Телефон</label>
+              <input id="hiw_phone" name="phone" type="tel" class="form-input" inputmode="tel" pattern="[\d\+\-\s\(\)]{8,18}" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="hiw_msg" class="form-label">Комментарий (необязательно)</label>
+              <textarea id="hiw_msg" name="message" class="form-input form-textarea" rows="3"></textarea>
+            </div>
+            
+            <button id="hiw_submit" type="submit" class="form-submit">Отправить заявку</button>
+            
+            <div class="form-message success" id="hiw_success" role="status" aria-live="polite" hidden>
+              Спасибо! Заявка принята — мы свяжемся в ближайшее время.
+            </div>
+            <div class="form-message error" id="hiw_error" role="alert" aria-live="assertive" hidden>
+              Не удалось отправить заявку. Пожалуйста, попробуйте ещё раз или напишите в WhatsApp.
+            </div>
+          </form>
+        </div>
       </div>
-
-      <aside class="hiw-right" aria-labelledby="hiwFormTitle">
-        <h4 id="hiwFormTitle">Оставьте заявку прямо сейчас</h4>
-        <form class="hiw-form" method="post" action="{% url 'core:lead_create' %}" novalidate>
-          {% csrf_token %}
-          <input type="hidden" name="source_page" value="how-it-works">
-          <input type="hidden" name="cta" value="how-it-works-form">
-          <div class="f-row">
-            <label for="hiw_name">Имя</label>
-            <input id="hiw_name" name="name" type="text" required>
-          </div>
-          <div class="f-row">
-            <label for="hiw_phone">Телефон</label>
-            <input id="hiw_phone" name="phone" type="tel" inputmode="tel" pattern="[\d\+\-\s\(\)]{8,18}" required>
-          </div>
-          <div class="f-row">
-            <label for="hiw_msg">Комментарий (необязательно)</label>
-            <textarea id="hiw_msg" name="message" rows="3"></textarea>
-          </div>
-          <div class="f-row">
-            <button id="hiw_submit" type="submit" class="btn btn-primary">Отправить заявку</button>
-          </div>
-          <div class="f-row">
-            <div class="hiw-msg hiw-success" id="hiw_success" role="status" aria-live="polite" hidden>Спасибо! Заявка принята — мы свяжемся в ближайшее время.</div>
-            <div class="hiw-msg hiw-error" id="hiw_error" role="alert" aria-live="assertive" hidden>Не удалось отправить заявку. Пожалуйста, попробуйте ещё раз или напишите в WhatsApp.</div>
-          </div>
-        </form>
-      </aside>
     </div>
   </section>
 
@@ -462,73 +485,7 @@
       else onReady();
     })();
   </script>
-  <!-- HOW IT WORKS: slider + inline lead form -->
-  <script>
-    (function(){
-      // Slider logic for #how-it-works steps
-      var AUTO_MS = 3500; // autoplay interval
-      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        // do not auto-rotate when reduced motion
-        AUTO_MS = 0;
-      }
-
-      function initHowItWorks(){
-        var root = document.getElementById('how-it-works');
-        if (!root) return;
-        var track = root.querySelector('.hiw-steps');
-        var steps = Array.prototype.slice.call(root.querySelectorAll('.hiw-step'));
-        var dots = root.querySelector('.hiw-dots');
-        var prev = root.querySelector('.hiw-prev');
-        var next = root.querySelector('.hiw-next');
-        var idx = 0;
-        var timer = null;
-
-        function render(){
-          steps.forEach(function(s,i){ s.classList.toggle('active', i===idx); s.setAttribute('aria-hidden', i===idx? 'false':'true'); });
-          // update dots
-          if (dots){
-            dots.innerHTML = '';
-            steps.forEach(function(_,i){
-              var b = document.createElement('button');
-              b.className = 'dot' + (i===idx? ' active':'');
-              b.setAttribute('aria-label','Перейти к шагу '+(i+1));
-              b.dataset.index = i;
-              b.type = 'button';
-              dots.appendChild(b);
-            });
-          }
-        }
-
-        function go(to){
-          if (typeof to === 'number') idx = (to+steps.length)%steps.length;
-          render();
-        }
-
-        function start(){ if (AUTO_MS>0){ stop(); timer = setInterval(function(){ go(idx+1); }, AUTO_MS); } }
-        function stop(){ if (timer) { clearInterval(timer); timer = null; } }
-
-        // initial
-        render(); start();
-
-        // controls
-        if (next) next.addEventListener('click', function(){ go(idx+1); start(); });
-        if (prev) prev.addEventListener('click', function(){ go(idx-1); start(); });
-
-        // dots delegate
-        if (dots) dots.addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; go(parseInt(b.dataset.index,10)); start(); });
-
-        // pause on hover/focus
-        root.addEventListener('mouseenter', stop); root.addEventListener('mouseleave', start);
-        root.addEventListener('focusin', stop); root.addEventListener('focusout', start);
-
-        // keyboard
-        root.addEventListener('keydown', function(e){ if (e.key==='ArrowRight') { e.preventDefault(); go(idx+1); start(); } else if (e.key==='ArrowLeft') { e.preventDefault(); go(idx-1); start(); } });
-      }
-
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHowItWorks);
-      else initHowItWorks();
-    })();
-  </script>
+  <!-- HOW IT WORKS: now handled by how-it-works.js -->
   <script>
     (function(){
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -558,5 +515,6 @@
       update();
     })();
   </script>
+  <script src="{% static 'js/how-it-works.js' %}"></script>
 {% endblock %}
 
