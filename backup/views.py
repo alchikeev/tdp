@@ -18,8 +18,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from tours.models import Tour
-from services.models import Service
+from tours.models import Tour, TourCategory
+from services.models import Service, ServiceCategory
 from reviews.models import Review
 from news.models import NewsPost
 from blog.models import BlogPost
@@ -171,16 +171,23 @@ def backup_restore(request):
 
                 report = {"imported": {"categories": 0, "tags": 0, "tours": 0, "services": 0, "news": 0, "blog": 0}, "files": []}
 
-                # 1) категории
+                # 1) категории (core)
                 cat_map = {}
                 for c in load_json("categories"):
                     slug = c.get("slug")
                     name = c.get("name") or slug
                     if not slug:
                         raise ValidationError("В categories найден объект без slug")
+                    # core Category
                     Category.objects.update_or_create(slug=slug, defaults={"name": name})
                     cat_map[c.get("pk")] = slug
                     report["imported"]["categories"] += 1
+                # синхронизируем категории для tours и services
+                for slug in cat_map.values():
+                    # имя берем из core
+                    core_cat = Category.objects.get(slug=slug)
+                    TourCategory.objects.update_or_create(slug=slug, defaults={"name": core_cat.name})
+                    ServiceCategory.objects.update_or_create(slug=slug, defaults={"name": core_cat.name})
 
                 # 2) теги
                 tag_slugs = set()
@@ -193,7 +200,7 @@ def backup_restore(request):
                     tag_slugs.add(slug)
                     report["imported"]["tags"] += 1
 
-                # 3) туры
+                # 3) туры (TourCategory)
                 for t in load_json("tours"):
                     tour_slug = t.get("slug") or f"restored-{t.get('pk')}"
                     # определяем категорию из category_slug или по старому pk
@@ -202,7 +209,7 @@ def backup_restore(request):
                         raise ValidationError(f"У тура '{tour_slug}' отсутствует категория")
 
                     try:
-                        cat_obj = Category.objects.get(slug=cat_slug)
+                        cat_obj = TourCategory.objects.get(slug=cat_slug)
                     except Category.DoesNotExist:
                         raise ValidationError(f"Категория '{cat_slug}' не найдена при восстановлении тура '{tour_slug}'")
 
@@ -220,7 +227,7 @@ def backup_restore(request):
                     if tag_list:
                         tour_obj.tags.set(Tag.objects.filter(slug__in=tag_list))
 
-                # 4) сервисы
+                # 4) сервисы (ServiceCategory)
                 for s in load_json("services"):
                     service_slug = s.get("slug") or f"restored-s-{s.get('pk')}"
                     cat_slug = s.get("category_slug") or cat_map.get(s.get("category_id"))
@@ -228,7 +235,7 @@ def backup_restore(request):
                         raise ValidationError(f"У сервиса '{service_slug}' отсутствует категория")
 
                     try:
-                        cat_obj = Category.objects.get(slug=cat_slug)
+                        cat_obj = ServiceCategory.objects.get(slug=cat_slug)
                     except Category.DoesNotExist:
                         raise ValidationError(f"Категория '{cat_slug}' не найдена при восстановлении сервиса '{service_slug}'")
 
