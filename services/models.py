@@ -6,7 +6,10 @@ class Service(models.Model):
     slug         = models.SlugField(unique=True)
 
     # общие таксономии из core
-    category     = models.ForeignKey('core.Category', on_delete=models.PROTECT, related_name='services')
+    category     = models.ForeignKey(
+        'services.ServiceCategory', on_delete=models.PROTECT,
+        related_name='services', verbose_name='Категория услуги'
+    )
     tags         = models.ManyToManyField('core.Tag', blank=True, related_name='services')
 
     short_desc   = models.TextField(blank=True)
@@ -37,6 +40,21 @@ class Service(models.Model):
 
     def get_absolute_url(self):
         return reverse('services:detail', kwargs={'slug': self.slug})
+class ServiceCategory(models.Model):
+    name = models.CharField("Название", max_length=120)
+    slug = models.SlugField("Слаг", unique=True)
+    parent = models.ForeignKey(
+        'self', null=True, blank=True,
+        related_name='children', on_delete=models.CASCADE,
+        verbose_name="Родительская категория"
+    )
+
+    class Meta:
+        verbose_name = 'Категория услуги'
+        verbose_name_plural = 'Категории услуг'
+
+    def __str__(self):
+        return self.name
 
 
 class ServiceImage(models.Model):

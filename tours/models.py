@@ -25,18 +25,34 @@ class TourQuerySet(models.QuerySet):
             | models.Q(description__icontains=q)
             | models.Q(location__icontains=q)
         )
+        
+
+class TourCategory(models.Model):
+    name = models.CharField("Название", max_length=120)
+    slug = models.SlugField("Слаг", unique=True)
+    parent = models.ForeignKey(
+        'self', null=True, blank=True,
+        related_name='children', on_delete=models.CASCADE,
+        verbose_name="Родительская категория"
+    )
+
+    class Meta:
+        verbose_name = 'Категория тура'
+        verbose_name_plural = 'Категории туров'
+
+    def __str__(self):
+        return self.name
 
 
-# =========================
-#  Основные модели
-# =========================
+
+
 class Tour(models.Model):
-    # Таксономии из core
+    # Категории туров
     category = models.ForeignKey(
-        "core.Category",
+        "tours.TourCategory",
         on_delete=models.PROTECT,
         related_name="tours",
-        verbose_name="Категория",
+        verbose_name="Категория тура",
     )
     tags = models.ManyToManyField(
         "core.Tag",

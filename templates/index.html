@@ -251,51 +251,57 @@
   </section>
 
   <!-- News -->
-  <section class="news" id="news">
+  <section class="news py-5" id="news">
     <div class="container">
+      <h2 class="mb-4">Новости</h2>
       <div class="row">
-        <div class="col-xl-8">
-          <div class="news_container">
-
-            <div class="news_post d-flex flex-md-row flex-column align-items-start justify-content-start">
-              <div class="news_post_image"><img src="{% static 'images/news_1.jpg' %}" alt=""></div>
-              <div class="news_post_content">
-                <div class="news_post_date d-flex flex-row align-items-end justify-content-start">
-                  <div>02</div>
-                  <div>june</div>
-                </div>
-                <div class="news_post_title"><a href="#">Best tips to travel light</a></div>
-                <div class="news_post_category">
-                  <ul><li><a href="#">lifestyle & Thai Dream Phuket</a></li></ul>
-                </div>
-                <div class="news_post_text">
-                  <p>Советы и новости туризма: как подготовиться к путешествию и не переплатить.</p>
-                </div>
+        {% for post in news_posts %}
+          <div class="col-md-4 mb-4">
+            <a href="{{ post.get_absolute_url }}" class="card h-100 text-decoration-none">
+              {% if post.cover %}
+                <img src="{{ post.cover.url }}" class="card-img-top" alt="{{ post.title }}">
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <div class="small text-muted">{{ post.pub_date|date:"d.m.Y" }}</div>
+                <p class="card-text">{{ post.content|truncatechars:120 }}</p>
               </div>
-            </div>
-
-            <!-- ... ещё посты ... -->
-
+            </a>
           </div>
-        </div>
+        {% empty %}
+          <div class="col-12"><p>Пока нет новостей.</p></div>
+        {% endfor %}
+      </div>
+      <div class="text-center mt-4">
+        <a href="{% url 'news:list' %}" class="btn btn-outline-primary">Смотреть ещё новости</a>
+      </div>
+    </div>
+  </section>
 
-        <div class="col-xl-4">
-          <div class="travello">
-            <div class="background_image" style="background-image:url({% static 'images/travello.jpg' %})"></div>
-            <div class="travello_content">
-              <div class="travello_content_inner"></div>
-            </div>
-            <div class="travello_container">
-              <a href="#">
-                <div class="d-flex flex-column align-items-center justify-content-end">
-                  <span class="travello_title">Скидка 20% на онлайн-бронирование</span>
-                  <span class="travello_subtitle">Забронируйте тур прямо сейчас и сэкономьте</span>
-                </div>
-              </a>
-            </div>
+  <!-- Blog -->
+  <section class="blog py-5 bg-light" id="blog">
+    <div class="container">
+      <h2 class="mb-4">Блог</h2>
+      <div class="row">
+        {% for post in blog_posts %}
+          <div class="col-md-4 mb-4">
+            <a href="{{ post.get_absolute_url }}" class="card h-100 text-decoration-none">
+              {% if post.cover %}
+                <img src="{{ post.cover.url }}" class="card-img-top" alt="{{ post.title }}">
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <div class="small text-muted">{{ post.pub_date|date:"d.m.Y" }}</div>
+                <p class="card-text">{{ post.content|truncatechars:120 }}</p>
+              </div>
+            </a>
           </div>
-        </div>
-
+        {% empty %}
+          <div class="col-12"><p>Пока нет статей.</p></div>
+        {% endfor %}
+      </div>
+      <div class="text-center mt-4">
+        <a href="{% url 'blog:list' %}" class="btn btn-outline-primary">Смотреть ещё статьи</a>
       </div>
     </div>
   </section>

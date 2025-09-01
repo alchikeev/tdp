@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} — Новости{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h1>{{ post.title }}</h1>
+  <div class="text-muted mb-3">{{ post.pub_date|date:"d.m.Y H:i" }}</div>
+  {% if post.cover %}
+    <img src="{{ post.cover.url }}" class="img-fluid mb-4" alt="{{ post.title }}">
+  {% endif %}
+  <div class="mb-5">{{ post.content|linebreaks }}</div>
+  <a href="{% url 'news:list' %}" class="btn btn-outline-secondary">← Назад к новостям</a>
+</div>
+{% endblock %}

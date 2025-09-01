@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, Count
 
-from .models import Tour
-from core.models import Category, Tag
+from .models import Tour, TourCategory
+from core.models import Tag
 
 
 # =========================
@@ -61,7 +61,7 @@ def _sidebar_context():
     # Мы собираем ключи динамически:
     count_expr = Count(rel_name, filter=Q(**{f"{rel_name}__is_active": True}))
 
-    categories = Category.objects.annotate(items=count_expr).order_by("name")
+    categories = TourCategory.objects.annotate(items=count_expr).order_by("name")
     tags = Tag.objects.order_by("name")
 
     popular = (
@@ -130,7 +130,7 @@ def tour_list_by_category(request, slug):
     """
     Список активных туров по категории.
     """
-    category = get_object_or_404(Category, slug=slug)
+    category = get_object_or_404(TourCategory, slug=slug)
     qs = (
         Tour.objects.filter(is_active=True, category=category)
         .select_related("category")

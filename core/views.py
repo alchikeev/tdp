@@ -5,6 +5,8 @@ from .models import Lead
 from tours.models import Tour
 from services.models import Service
 from reviews.models import Review
+from news.models import NewsPost
+from blog.models import BlogPost
 
 
 def home(request):
@@ -19,7 +21,15 @@ def home(request):
     services = services[:9]
     # Последние одобренные отзывы (макс. 6) берём из приложения reviews
     reviews = list(Review.objects.filter(is_approved=True)[:6])
-    return render(request, 'index.html', {'tours': tours, 'services': services, 'reviews': reviews})
+    news_posts = list(NewsPost.objects.filter(is_published=True).order_by('-pub_date')[:5])
+    blog_posts = list(BlogPost.objects.filter(is_published=True).order_by('-pub_date')[:5])
+    return render(request, 'index.html', {
+        'tours': tours,
+        'services': services,
+        'reviews': reviews,
+        'news_posts': news_posts,
+        'blog_posts': blog_posts,
+    })
 
 
 @require_POST

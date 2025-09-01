@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Service, ServiceImage
+from .models import Service, ServiceImage, ServiceCategory
 
 class ServiceImageInline(admin.TabularInline):
     model = ServiceImage
@@ -18,3 +18,8 @@ class ServiceAdmin(admin.ModelAdmin):
         ('SEO', {'fields': ('meta_title', 'meta_desc')}),
         ('Параметры', {'fields': ('is_active',)}),
     )
+
+@admin.register(ServiceCategory)
+class ServiceCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'parent')
+    prepopulated_fields = {'slug': ('name',)}

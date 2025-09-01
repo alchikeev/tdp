@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Блог — Thai Dream Phuket{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h1>Блог</h1>
+  <div class="row">
+    {% for post in posts %}
+      <div class="col-md-4 mb-4">
+        <a href="{{ post.get_absolute_url }}" class="card h-100 text-decoration-none">
+          {% if post.cover %}
+            <img src="{{ post.cover.url }}" class="card-img-top" alt="{{ post.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ post.title }}</h5>
+            <div class="small text-muted">{{ post.pub_date|date:"d.m.Y" }}</div>
+            <p class="card-text">{{ post.content|truncatechars:150 }}</p>
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <p>Пока нет статей.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

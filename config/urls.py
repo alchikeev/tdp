@@ -6,7 +6,6 @@ from django.urls import path, include
 from core.views import home
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     # backup admin UI is integrated via admin changelist for the Backup proxy model
     path("", home, name="home"),
     path("api/", include(("core.urls", "core"), namespace="core")),
@@ -14,7 +13,9 @@ urlpatterns = [
     path("services/", include(("services.urls", "services"), namespace="services")),
     path("prices/", include(("prices.urls", "prices"), namespace="prices")),
     path("reviews/", include(("reviews.urls", "reviews"), namespace="reviews")),
-    path('admin/backup/backup/', include(('backup.urls', 'backup'), namespace='admin')),
+    path("admin/", admin.site.urls),
+    path("news/", include(("news.urls", "news"), namespace="news")),
+    path("blog/", include(("blog.urls", "blog"), namespace="blog")),
 ]
 
 if settings.DEBUG:

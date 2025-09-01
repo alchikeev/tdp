@@ -1,12 +1,16 @@
+# backup/models.py
 from django.db import models
+from core.models import SiteSettings
 
-class Backup(models.Model):
-    """Прокси-модель для появления пункта в админке (таблица в БД не создаётся)."""
+
+class Backup(SiteSettings):
+    """
+    Proxy-модель на существующую таблицу core_sitesettings.
+    Нужна только для того, чтобы получить пункт меню в админке
+    и базовый URL /admin/backup/backup/.
+    """
     class Meta:
-        managed = False
+        proxy = True
         app_label = "backup"
-        verbose_name = "Резервное копирование"
+        verbose_name = "Резервная копия"
         verbose_name_plural = "Резервные копии"
-
-    def __str__(self):
-        return "Резервное копирование"

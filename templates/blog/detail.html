@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} — Блог{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h1>{{ post.title }}</h1>
+  <div class="text-muted mb-3">{{ post.pub_date|date:"d.m.Y H:i" }}</div>
+  {% if post.cover %}
+    <img src="{{ post.cover.url }}" class="img-fluid mb-4" alt="{{ post.title }}">
+  {% endif %}
+  <div class="mb-4">{{ post.content|linebreaks }}</div>
+  {% if post.youtube_url %}
+    <div class="embed-responsive embed-responsive-16by9 mb-4">
+      <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ post.youtube_url|cut:'https://www.youtube.com/watch?v=' }}" allowfullscreen></iframe>
+    </div>
+  {% endif %}
+  <a href="{% url 'blog:list' %}" class="btn btn-outline-secondary">← Назад к блогу</a>
+</div>
+{% endblock %}

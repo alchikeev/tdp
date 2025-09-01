@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tour, TourImage
+from .models import Tour, TourImage, TourCategory
 
 class TourImageInline(admin.TabularInline):
     model = TourImage
@@ -18,3 +18,7 @@ class TourAdmin(admin.ModelAdmin):
         ('SEO', {'fields': ('meta_title','meta_desc')}),
         ('Видимость', {'fields': ('is_active','is_popular','rating','reviews_count')}),
     )
+@admin.register(TourCategory)
+class TourCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'parent')
+    prepopulated_fields = {'slug': ('name',)}

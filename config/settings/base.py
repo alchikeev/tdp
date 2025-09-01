@@ -30,7 +30,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',  # enable humanize template tags
     # твои приложения:
-    'core', 'tours', 'services', 'reviews', 'prices', 'backup', # и т.д.
+    'core', 'tours', 'services', 'reviews', 'prices', 'backup',
+    # новые приложения
+    'news',
+    'blog',
 ]
 
 MIDDLEWARE = [

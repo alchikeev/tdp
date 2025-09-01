@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteSettings, Category, Tag, Lead
+from .models import SiteSettings, Tag, Lead
 
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
@@ -7,12 +7,6 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return not SiteSettings.objects.exists()
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent')
-    prepopulated_fields = {"slug": ("name",)}
-    search_fields = ('name',)
-    list_filter = ('parent',)
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
