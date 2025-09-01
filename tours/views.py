@@ -55,7 +55,7 @@ def _sidebar_context():
     Мы определяем его динамически и безопасно формируем Count/Q.
     """
     # Определяем related_name для Category -> Tour (или используем 'tour_set')
-    rel_name = Tour._meta.get_field("category").remote_field.related_name or "tour_set"
+    rel_name = Tour._meta.get_field("categories").remote_field.related_name or "tour_set"
 
     # Пример: Count("tours", filter=Q(tours__is_active=True))  # если related_name='tours'
     # Мы собираем ключи динамически:
@@ -66,15 +66,13 @@ def _sidebar_context():
 
     popular = (
         Tour.objects.filter(is_active=True, is_popular=True)
-        .select_related("category")
-        .prefetch_related("tags")
+        .prefetch_related("categories", "tags")
         .order_by("-rating", "-created_at")[:6]
     )
     if not popular:
         popular = (
             Tour.objects.filter(is_active=True)
-            .select_related("category")
-            .prefetch_related("tags")
+            .prefetch_related("categories", "tags")
             .order_by("-rating", "-created_at")[:6]
         )
 
@@ -120,8 +118,7 @@ def tour_list(request):
     """
     qs = (
         Tour.objects.filter(is_active=True)
-        .select_related("category")
-        .prefetch_related("tags")
+        .prefetch_related("categories", "tags")
     )
     return _render_list(request, qs)
 
@@ -132,9 +129,8 @@ def tour_list_by_category(request, slug):
     """
     category = get_object_or_404(TourCategory, slug=slug)
     qs = (
-        Tour.objects.filter(is_active=True, category=category)
-        .select_related("category")
-        .prefetch_related("tags")
+        Tour.objects.filter(is_active=True, categories=category)
+        .prefetch_related("categories", "tags")
     )
     return _render_list(request, qs, extra_ctx={"active_category": category})
 
@@ -146,8 +142,7 @@ def tour_list_by_tag(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     qs = (
         Tour.objects.filter(is_active=True, tags=tag)
-        .select_related("category")
-        .prefetch_related("tags")
+        .prefetch_related("categories", "tags")
     )
     return _render_list(request, qs, extra_ctx={"active_tag": tag})
 
@@ -157,17 +152,16 @@ def tour_detail(request, slug):
     Детальная страница тура.
     """
     tour = get_object_or_404(
-        Tour.objects.select_related("category").prefetch_related("tags"),
+        Tour.objects.prefetch_related("categories", "tags"),
         slug=slug,
         is_active=True,
     )
 
-    # Похожие туры из той же категории
+    # Похожие туры по любой из категорий текущего тура
     related = (
-        Tour.objects.filter(is_active=True, category=tour.category)
+        Tour.objects.filter(is_active=True, categories__in=tour.categories.all())
         .exclude(id=tour.id)
-        .select_related("category")
-        .prefetch_related("tags")
+        .prefetch_related("categories", "tags")
         .order_by("-is_popular", "-created_at")[:6]
     )
 

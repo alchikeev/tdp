@@ -19,8 +19,10 @@ def home(request):
     random.shuffle(services)
     tours = tours[:9]
     services = services[:9]
-    # Последние одобренные отзывы (макс. 6) берём из приложения reviews
-    reviews = list(Review.objects.filter(is_approved=True)[:6])
+    # Случайные одобренные отзывы (макс. 3)
+    reviews = list(Review.objects.filter(is_approved=True))
+    random.shuffle(reviews)
+    reviews = reviews[:3]
     news_posts = list(NewsPost.objects.filter(is_published=True).order_by('-pub_date')[:5])
     blog_posts = list(BlogPost.objects.filter(is_published=True).order_by('-pub_date')[:5])
     return render(request, 'index.html', {

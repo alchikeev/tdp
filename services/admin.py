@@ -7,17 +7,21 @@ class ServiceImageInline(admin.TabularInline):
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'price_adult', 'price_child', 'price_extra', 'is_active', 'created_at')
-    list_filter  = ('is_active', 'category', 'tags')
+    list_display = ('title', 'get_categories', 'price_adult', 'price_child', 'price_extra', 'is_active', 'created_at')
+    list_filter  = ('is_active', 'categories', 'tags')
     search_fields = ('title', 'short_desc', 'description', 'location')
     prepopulated_fields = {'slug': ('title',)}
     inlines = [ServiceImageInline]
     fieldsets = (
-        (None, {'fields': ('title', 'slug', 'category', 'tags', 'short_desc', 'description', 'location', 'cover')}),
+        (None, {'fields': ('title', 'slug', 'categories', 'tags', 'short_desc', 'description', 'location', 'cover')}),
         ('Цены', {'fields': ('price_adult', 'price_child', 'price_extra')}),
         ('SEO', {'fields': ('meta_title', 'meta_desc')}),
         ('Параметры', {'fields': ('is_active',)}),
     )
+
+    def get_categories(self, obj):
+        return ", ".join([c.name for c in obj.categories.all()])
+    get_categories.short_description = 'Категории'
 
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(admin.ModelAdmin):

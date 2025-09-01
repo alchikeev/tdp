@@ -6,9 +6,9 @@ class Service(models.Model):
     slug         = models.SlugField(unique=True)
 
     # общие таксономии из core
-    category     = models.ForeignKey(
-        'services.ServiceCategory', on_delete=models.PROTECT,
-        related_name='services', verbose_name='Категория услуги'
+    categories   = models.ManyToManyField(
+        'services.ServiceCategory', blank=True,
+        related_name='services', verbose_name='Категории услуг'
     )
     tags         = models.ManyToManyField('core.Tag', blank=True, related_name='services')
 

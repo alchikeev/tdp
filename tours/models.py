@@ -48,11 +48,11 @@ class TourCategory(models.Model):
 
 class Tour(models.Model):
     # Категории туров
-    category = models.ForeignKey(
+    categories = models.ManyToManyField(
         "tours.TourCategory",
-        on_delete=models.PROTECT,
         related_name="tours",
-        verbose_name="Категория тура",
+        verbose_name="Категории туров",
+        blank=True,
     )
     tags = models.ManyToManyField(
         "core.Tag",
@@ -155,7 +155,6 @@ class Tour(models.Model):
         indexes = [
             models.Index(fields=["is_active", "-created_at"], name="tour_active_created_idx"),
             models.Index(fields=["slug"], name="tour_slug_idx"),
-            models.Index(fields=["category", "is_active"], name="tour_category_active_idx"),
             models.Index(fields=["is_popular", "-created_at"], name="tour_popular_idx"),
         ]
         constraints = [

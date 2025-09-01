@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, Count
 
-from .models import Service            # проверь имя модели/поля
-from core.models import Category, Tag  # поправь импорт, если они в другом app
+from .models import Service, ServiceCategory
+from core.models import Tag
 
 
 # =========================
@@ -40,10 +40,10 @@ def _apply_filters_and_sort(request, qs):
 
 
 def _sidebar_context():
-    rel_name = Service._meta.get_field('category').remote_field.related_name or 'service_set'
+    rel_name = Service._meta.get_field('categories').remote_field.related_name or 'service_set'
     count_expr = Count(rel_name, filter=Q(**{f"{rel_name}__is_active": True}))
 
-    categories = Category.objects.annotate(items=count_expr).order_by('name')
+    categories = ServiceCategory.objects.annotate(items=count_expr).order_by('name')
     tags = Tag.objects.order_by('name')
 
     # Популярные: безопасно проверяем наличие поля is_popular в модели
@@ -51,15 +51,13 @@ def _sidebar_context():
     if 'is_popular' in field_names:
         popular = (
             Service.objects.filter(is_active=True, is_popular=True)
-            .select_related('category')
-            .prefetch_related('tags')
+            .prefetch_related('categories', 'tags')
             .order_by('-created_at')[:6]
         )
     else:
         popular = (
             Service.objects.filter(is_active=True)
-            .select_related('category')
-            .prefetch_related('tags')
+            .prefetch_related('categories', 'tags')
             .order_by('-created_at')[:6]
         )
 
@@ -98,18 +96,16 @@ def _render_list(request, qs, extra_ctx=None):
 def service_list(request):
     qs = (
         Service.objects.filter(is_active=True)
-        .select_related('category')
-        .prefetch_related('tags')
+        .prefetch_related('categories', 'tags')
     )
     return _render_list(request, qs)
 
 
 def service_list_by_category(request, slug):
-    category = get_object_or_404(Category, slug=slug)
+    category = get_object_or_404(ServiceCategory, slug=slug)
     qs = (
-        Service.objects.filter(is_active=True, category=category)
-        .select_related('category')
-        .prefetch_related('tags')
+        Service.objects.filter(is_active=True, categories=category)
+        .prefetch_related('categories', 'tags')
     )
     return _render_list(request, qs, extra_ctx={'active_category': category})
 
@@ -118,20 +114,19 @@ def service_list_by_tag(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     qs = (
         Service.objects.filter(is_active=True, tags=tag)
-        .select_related('category')
-        .prefetch_related('tags')
+        .prefetch_related('categories', 'tags')
     )
     return _render_list(request, qs, extra_ctx={'active_tag': tag})
 
 
 def service_detail(request, slug):
-    service = get_object_or_404(Service.objects.select_related('category').prefetch_related('tags', 'images'), slug=slug, is_active=True)
+    service = get_object_or_404(Service.objects.prefetch_related('categories', 'tags', 'images'), slug=slug, is_active=True)
 
+    # Похожие услуги по любой из категорий текущей услуги
     related = (
-        Service.objects.filter(is_active=True, category=service.category)
+        Service.objects.filter(is_active=True, categories__in=service.categories.all())
         .exclude(id=service.id)
-        .select_related('category')
-        .prefetch_related('tags')
+        .prefetch_related('categories', 'tags')
         .order_by('-created_at')[:6]
     )
 
