@@ -23,6 +23,7 @@ from services.models import Service, ServiceCategory
 from reviews.models import Review
 from news.models import NewsPost
 from blog.models import BlogPost
+from prices.models import PricePDF
 from core.models import Category, Tag, SiteSettings
 
 MEDIA_ROOT = Path(settings.MEDIA_ROOT)
@@ -105,6 +106,7 @@ def backup_download(request):
         add_json(Review.objects.all(), "reviews")
         add_json(NewsPost.objects.all(), "news")
         add_json(BlogPost.objects.all(), "blog")
+        add_json(PricePDF.objects.all(), "prices")
 
         # SiteSettings: без id
         ss = SiteSettings.objects.first()
@@ -169,7 +171,7 @@ def backup_restore(request):
                     p = data_dir / f"{name}.json"
                     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
 
-                report = {"imported": {"categories": 0, "tags": 0, "tours": 0, "services": 0, "news": 0, "blog": 0}, "files": []}
+                report = {"imported": {"categories": 0, "tags": 0, "tours": 0, "services": 0, "news": 0, "blog": 0, "prices": 0}, "files": []}
 
                 # 1) категории (core)
                 cat_map = {}
@@ -269,7 +271,14 @@ def backup_restore(request):
                     BlogPost.objects.update_or_create(slug=blog_slug, defaults=defaults)
                     report["imported"]["blog"] += 1
 
-                # 5) SiteSettings (опционально, один объект)
+                # 7) прайсы (PricePDF)
+                PricePDF.objects.all().delete()
+                for p in load_json("prices"):
+                    data = {k: v for k, v in p.items() if k not in {"pk", "uploaded_at"}}
+                    PricePDF.objects.create(**data)
+                    report["imported"]["prices"] += 1
+
+                # 8) SiteSettings (опционально, один объект)
                 ss = load_json("site_settings")
                 if isinstance(ss, dict) and ss:
                     ss.pop("id", None)
@@ -303,7 +312,7 @@ def backup_restore(request):
         request,
         f"Импортировано: {imp.get('categories', 0)} категорий, "
         f"{imp.get('tags', 0)} тегов, {imp.get('tours', 0)} туров, "
-        f"{imp.get('services', 0)} сервисов, {imp.get('news', 0)} новостей, {imp.get('blog', 0)} статей; "
+        f"{imp.get('services', 0)} сервисов, {imp.get('news', 0)} новостей, {imp.get('blog', 0)} статей, {imp.get('prices', 0)} прайсов; "
         f"файлов медиа: {len(report['files'])}"
     )
     return redirect(reverse("admin:backup_backup_changelist"))
