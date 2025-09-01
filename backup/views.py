@@ -99,8 +99,12 @@ def backup_download(request):
             z.writestr(f"data/{name}.json", json.dumps(data, ensure_ascii=False, indent=2))
 
         # порядок важен лишь для удобства
+        # порядок важен лишь для удобства
         add_json(Category.objects.all(), "categories")
         add_json(Tag.objects.all(), "tags")
+        # таксономии для туров и услуг
+        add_json(TourCategory.objects.all(), "tour_categories")
+        add_json(ServiceCategory.objects.all(), "service_categories")
         add_json(Tour.objects.all().select_related("category").prefetch_related("tags"), "tours")
         add_json(Service.objects.all().select_related("category").prefetch_related("tags"), "services")
         add_json(Review.objects.all(), "reviews")
@@ -182,7 +186,7 @@ def backup_restore(request):
                     p = data_dir / f"{name}.json"
                     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
 
-                report = {"imported": {"categories": 0, "tags": 0, "tours": 0, "services": 0, "news": 0, "blog": 0, "prices": 0}, "files": []}
+                report = {"imported": {"categories": 0, "tags": 0, "tours": 0, "services": 0, "reviews": 0, "news": 0, "blog": 0, "prices": 0}, "files": []}
 
                 # 1) категории (core)
                 cat_map = {}
@@ -195,14 +199,24 @@ def backup_restore(request):
                     Category.objects.update_or_create(slug=slug, defaults={"name": name})
                     cat_map[c.get("pk")] = slug
                     report["imported"]["categories"] += 1
-                # синхронизируем категории для tours и services
-                for slug in cat_map.values():
-                    # имя берем из core
-                    core_cat = Category.objects.get(slug=slug)
-                    TourCategory.objects.update_or_create(slug=slug, defaults={"name": core_cat.name})
-                    ServiceCategory.objects.update_or_create(slug=slug, defaults={"name": core_cat.name})
 
-                # 2) теги
+                # 2) категории туров из JSON
+                for tc in load_json("tour_categories"):
+                    slug = tc.get("slug")
+                    name = tc.get("name") or slug
+                    parent_slug = tc.get("parent_slug")
+                    parent = TourCategory.objects.filter(slug=parent_slug).first() if parent_slug else None
+                    TourCategory.objects.update_or_create(slug=slug, defaults={"name": name, "parent": parent})
+
+                # 3) категории услуг из JSON
+                for sc in load_json("service_categories"):
+                    slug = sc.get("slug")
+                    name = sc.get("name") or slug
+                    parent_slug = sc.get("parent_slug")
+                    parent = ServiceCategory.objects.filter(slug=parent_slug).first() if parent_slug else None
+                    ServiceCategory.objects.update_or_create(slug=slug, defaults={"name": name, "parent": parent})
+
+                # 4) теги
                 tag_slugs = set()
                 for t in load_json("tags"):
                     slug = t.get("slug")
@@ -213,7 +227,7 @@ def backup_restore(request):
                     tag_slugs.add(slug)
                     report["imported"]["tags"] += 1
 
-                # 3) туры (TourCategory)
+                # 5) туры (TourCategory)
                 for t in load_json("tours"):
                     tour_slug = t.get("slug") or f"restored-{t.get('pk')}"
                     # определяем категорию из category_slug или по старому pk
@@ -240,7 +254,7 @@ def backup_restore(request):
                     if tag_list:
                         tour_obj.tags.set(Tag.objects.filter(slug__in=tag_list))
 
-                # 4) сервисы (ServiceCategory)
+                # 6) сервисы (ServiceCategory)
                 for s in load_json("services"):
                     service_slug = s.get("slug") or f"restored-s-{s.get('pk')}"
                     cat_slug = s.get("category_slug") or cat_map.get(s.get("category_id"))
@@ -265,8 +279,14 @@ def backup_restore(request):
                     tag_list = [ts for ts in s.get("_m2m", {}).get("tags", []) if ts]
                     if tag_list:
                         svc_obj.tags.set(Tag.objects.filter(slug__in=tag_list))
+                # 7) отзывы
+                for r in load_json("reviews"):
+                    banned = {"pk"}
+                    defaults = {k: v for k, v in r.items() if k not in banned}
+                    Review.objects.create(**defaults)
+                    report["imported"]["reviews"] += 1
 
-                # 5) новости
+                # 8) новости
                 for n in load_json("news"):
                     news_slug = n.get("slug") or f"restored-news-{n.get('pk')}"
                     banned = {"pk", "_m2m", "created_at", "pub_date"}
@@ -274,7 +294,7 @@ def backup_restore(request):
                     NewsPost.objects.update_or_create(slug=news_slug, defaults=defaults)
                     report["imported"]["news"] += 1
 
-                # 6) блог
+                # 9) блог
                 for b in load_json("blog"):
                     blog_slug = b.get("slug") or f"restored-blog-{b.get('pk')}"
                     banned = {"pk", "_m2m", "created_at", "pub_date"}
@@ -282,14 +302,14 @@ def backup_restore(request):
                     BlogPost.objects.update_or_create(slug=blog_slug, defaults=defaults)
                     report["imported"]["blog"] += 1
 
-                # 7) прайсы (PricePDF)
+                # 10) прайсы (PricePDF)
                 PricePDF.objects.all().delete()
                 for p in load_json("prices"):
                     data = {k: v for k, v in p.items() if k not in {"pk", "uploaded_at"}}
                     PricePDF.objects.create(**data)
                     report["imported"]["prices"] += 1
 
-                # 8) SiteSettings (опционально, один объект)
+                # 11) SiteSettings (опционально, один объект)
                 ss = load_json("site_settings")
                 if isinstance(ss, dict) and ss:
                     ss.pop("id", None)
@@ -323,7 +343,8 @@ def backup_restore(request):
         request,
         f"Импортировано: {imp.get('categories', 0)} категорий, "
         f"{imp.get('tags', 0)} тегов, {imp.get('tours', 0)} туров, "
-        f"{imp.get('services', 0)} сервисов, {imp.get('news', 0)} новостей, {imp.get('blog', 0)} статей, {imp.get('prices', 0)} прайсов; "
+        f"{imp.get('services', 0)} сервисов, {imp.get('reviews', 0)} отзывов, "
+        f"{imp.get('news', 0)} новостей, {imp.get('blog', 0)} статей, {imp.get('prices', 0)} прайсов; "
         f"файлов медиа: {len(report['files'])}"
     )
     return redirect(reverse("admin:backup_backup_changelist"))
