@@ -166,6 +166,17 @@ def backup_restore(request):
                     z.extractall(tmpdir)
 
                 data_dir = tmp_p / "data"
+                # --- Очищаем старые данные перед восстановлением ---
+                SiteSettings.objects.all().delete()
+                BlogPost.objects.all().delete()
+                NewsPost.objects.all().delete()
+                Review.objects.all().delete()
+                Service.objects.all().delete()
+                ServiceCategory.objects.all().delete()
+                Tour.objects.all().delete()
+                TourCategory.objects.all().delete()
+                Tag.objects.all().delete()
+                Category.objects.all().delete()
 
                 def load_json(name: str):
                     p = data_dir / f"{name}.json"
