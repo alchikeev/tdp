@@ -7,7 +7,7 @@ services:
     build: .
     # Для использования готового образа раскомментируйте:
     # image: ghcr.io/adilet/tdp:latest
-    container_name: thaidream-web
+    container_name: tdp-web
     env_file:
       - .env
     environment:
