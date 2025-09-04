@@ -54,5 +54,22 @@ docker compose exec -e DJANGO_SETTINGS_MODULE=config.settings.prod web python ma
 - Статус: `docker compose ps`
 - Логи: `docker compose logs -f web`
 - База данных: `docker compose exec web ls -la /app/data/`
+- Настройки Django: `./check-settings.sh`
 - Сайт: https://thaidreamphuket.com
 - Админка: https://thaidreamphuket.com/admin
+
+## Полезные команды
+
+### Проверка настроек Django
+```bash
+# Используйте docker compose exec (загружает .env автоматически)
+docker compose exec web python manage.py shell -c "from django.conf import settings; print(settings.DATABASES['default']['NAME'])"
+
+# Или используйте скрипт
+./django-shell.sh "from django.conf import settings; print(settings.DATABASES['default']['NAME'])"
+```
+
+### Проверка всех настроек
+```bash
+./check-settings.sh
+```

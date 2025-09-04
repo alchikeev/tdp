@@ -3,7 +3,7 @@ from .base import *
 
 # Используем переменные окружения для продакшена
 DEBUG = env.bool('DEBUG', default=False)
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY', default='unsafe-dev-key-change-in-production')
 
 # Домены для продакшена из переменных окружения
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['thaidreamphuket.com', 'www.thaidreamphuket.com'])
