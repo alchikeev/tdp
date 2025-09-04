@@ -36,17 +36,17 @@ docker compose up -d
 
 #### 5. Примените миграции
 ```bash
-docker compose exec web python manage.py migrate --run-syncdb
+docker compose exec -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py migrate --run-syncdb
 ```
 
 #### 6. Создайте суперпользователя
 ```bash
-docker compose exec web python manage.py createsuperuser
+docker compose exec -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py createsuperuser
 ```
 
 #### 7. Соберите статику
 ```bash
-docker compose exec web python manage.py collectstatic --noinput
+docker compose exec -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py collectstatic --noinput
 ```
 
 ## Проверка

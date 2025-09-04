@@ -35,11 +35,11 @@ sleep 10
 
 # Применяем миграции
 echo "🗄️ Применяем миграции..."
-docker compose exec web python manage.py migrate --run-syncdb
+docker compose exec -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py migrate --run-syncdb
 
 # Создаем суперпользователя (опционально)
 echo "👤 Создаем суперпользователя..."
-docker compose exec web python manage.py shell -c "
+docker compose exec -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
 if not User.objects.filter(username='admin').exists():
@@ -51,7 +51,7 @@ else:
 
 # Собираем статику
 echo "📦 Собираем статические файлы..."
-docker compose exec web python manage.py collectstatic --noinput
+docker compose exec -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py collectstatic --noinput
 
 echo "✅ База данных исправлена!"
 echo "🌐 Сайт должен работать по адресу: https://thaidreamphuket.com"
