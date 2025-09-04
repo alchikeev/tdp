@@ -28,6 +28,21 @@ MEDIA_ROOT = env('MEDIA_ROOT', default=BASE_DIR / "media")
 # Убираем STATICFILES_DIRS для продакшена, так как статика собирается в STATIC_ROOT
 STATICFILES_DIRS = []
 
+# Настройки для раздачи статики в продакшене
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# Добавляем whitenoise для раздачи статики в продакшене
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Добавляем whitenoise
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
 # База данных для продакшена из переменных окружения
 DATABASES = {
     'default': env.db(

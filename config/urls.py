@@ -9,7 +9,7 @@ from core.views import home, health_ok
 urlpatterns = [
     # backup admin UI is integrated via admin changelist for the Backup proxy model
     path("", home, name="home"),
-    path("health", health_ok, name="health"),
+    path("health/", health_ok, name="health"),
     path("api/", include(("core.urls", "core"), namespace="core")),
     path("tours/", include(("tours.urls", "tours"), namespace="tours")),
     path("services/", include(("services.urls", "services"), namespace="services")),
