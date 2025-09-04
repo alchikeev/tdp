@@ -1,11 +1,13 @@
 # config/settings/prod.py
 from .base import *
 
-DEBUG = False
+# Используем переменные окружения для продакшена
+DEBUG = env.bool('DEBUG', default=False)
+SECRET_KEY = env('SECRET_KEY')
 
-# Домены для продакшена
-ALLOWED_HOSTS = ["thaidreamphuket.com", "www.thaidreamphuket.com"]
-CSRF_TRUSTED_ORIGINS = ["https://thaidreamphuket.com", "https://www.thaidreamphuket.com"]
+# Домены для продакшена из переменных окружения
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['thaidreamphuket.com', 'www.thaidreamphuket.com'])
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['https://thaidreamphuket.com', 'https://www.thaidreamphuket.com'])
 
 # cookies по https
 SESSION_COOKIE_SECURE = True
@@ -17,24 +19,25 @@ SECURE_HSTS_SECONDS = 31536000  # 1 год
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# Статика и медиа для продакшена
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
+# Статика и медиа для продакшена из переменных окружения
+STATIC_URL = env('STATIC_URL', default='/static/')
+STATIC_ROOT = env('STATIC_ROOT', default=BASE_DIR / "staticfiles")
+MEDIA_URL = env('MEDIA_URL', default='/media/')
+MEDIA_ROOT = env('MEDIA_ROOT', default=BASE_DIR / "media")
 
 # Убираем STATICFILES_DIRS для продакшена, так как статика собирается в STATIC_ROOT
 STATICFILES_DIRS = []
 
-# База данных для продакшена (SQLite в контейнере)
+# База данных для продакшена из переменных окружения
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'data' / 'db.sqlite3',
-    }
+    'default': env.db(
+        'DATABASE_URL',
+        default=f"sqlite:///{BASE_DIR / 'data' / 'db.sqlite3'}"
+    )
 }
 
-# Логирование для продакшена
+# Логирование для продакшена из переменных окружения
+LOG_LEVEL = env('LOG_LEVEL', default='INFO')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -51,12 +54,12 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
+        'level': LOG_LEVEL,
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': LOG_LEVEL,
             'propagate': False,
         },
     },
