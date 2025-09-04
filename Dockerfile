@@ -7,8 +7,8 @@ RUN apt-get update \
         wget \
         && rm -rf /var/lib/apt/lists/*
 
-# Создаем непривилегированного пользователя с фиксированным UID/GID
-RUN groupadd -r -g 1000 appuser && useradd -r -u 1000 -g appuser appuser
+# Создаем непривилегированного пользователя
+RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 # Устанавливаем рабочую директорию
 WORKDIR /app

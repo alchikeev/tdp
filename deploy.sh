@@ -25,11 +25,16 @@ echo "📊 Обновлено до: $(git log -1 --oneline)"
 echo "🛑 Останавливаем старый контейнер..."
 docker compose down
 
-# Создаем необходимые volumes
+# Удаляем старые volumes и создаем новые (исправляем права доступа)
+echo "🧹 Удаляем старые volumes и создаем новые..."
+docker volume rm tdp_static_data 2>/dev/null || true
+docker volume rm tdp_media_data 2>/dev/null || true
+docker volume rm tdp_data 2>/dev/null || true
+
 echo "📦 Создаем необходимые volumes..."
-docker volume create tdp_static_data 2>/dev/null || true
-docker volume create tdp_media_data 2>/dev/null || true
-docker volume create tdp_data 2>/dev/null || true
+docker volume create tdp_static_data
+docker volume create tdp_media_data
+docker volume create tdp_data
 
 # Собираем новый образ
 echo "🔨 Собираем Docker образ..."
