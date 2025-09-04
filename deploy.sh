@@ -34,7 +34,7 @@ docker compose build --no-cache
 
 # Применяем миграции
 echo "🗄️ Применяем миграции базы данных..."
-docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py migrate --run-syncdb
+docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py migrate
 
 # Собираем статику
 echo "📦 Собираем статические файлы..."
