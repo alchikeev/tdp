@@ -14,7 +14,7 @@ services:
     volumes:
       - tdp_static_data:/app/staticfiles
       - tdp_media_data:/app/media
-      - ./data:/app/data
+      - tdp_data:/app/data
     networks: [web]
     restart: unless-stopped
     healthcheck:
@@ -28,6 +28,8 @@ volumes:
   tdp_static_data:
     external: true
   tdp_media_data:
+    external: true
+  tdp_data:
     external: true
 
 networks:

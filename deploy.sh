@@ -22,17 +22,23 @@ git reset --hard origin/main
 echo "🛑 Останавливаем старый контейнер..."
 docker compose down
 
+# Создаем необходимые volumes
+echo "📦 Создаем необходимые volumes..."
+docker volume create tdp_static_data 2>/dev/null || true
+docker volume create tdp_media_data 2>/dev/null || true
+docker volume create tdp_data 2>/dev/null || true
+
 # Собираем новый образ
 echo "🔨 Собираем Docker образ..."
 docker compose build --no-cache
 
+# Инициализируем базу данных
+echo "🗄️ Инициализируем базу данных..."
+docker compose run --rm web python manage.py migrate --run-syncdb
+
 # Собираем статику
 echo "📦 Собираем статические файлы..."
 docker compose run --rm web python manage.py collectstatic --noinput
-
-# Применяем миграции
-echo "🗄️ Применяем миграции базы данных..."
-docker compose run --rm web python manage.py migrate
 
 # Запускаем контейнер
 echo "🐳 Запускаем контейнер..."

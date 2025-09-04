@@ -23,6 +23,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Убираем STATICFILES_DIRS для продакшена, так как статика собирается в STATIC_ROOT
+STATICFILES_DIRS = []
+
 # База данных для продакшена (SQLite в контейнере)
 DATABASES = {
     'default': {
