@@ -51,6 +51,10 @@ DATABASES = {
     )
 }
 
+# Создаем директорию для базы данных если её нет
+import os
+os.makedirs(BASE_DIR / 'data', exist_ok=True)
+
 # Логирование для продакшена из переменных окружения
 LOG_LEVEL = env('LOG_LEVEL', default='INFO')
 LOGGING = {
