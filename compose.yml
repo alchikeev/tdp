@@ -1,19 +1,23 @@
-# compose.yml
+# compose.yml - Продакшн конфигурация для VPS
 name: tdp
 
 services:
-  tdp-web:
+  tdp-web:                # Явное имя сервиса
+    container_name: tdp-web
     build: .
+    # Для использования готового образа раскомментируй:
+    # image: ghcr.io/adilet/tdp:latest
     env_file:
       - .env
     environment:
-      - DJANGO_SETTINGS_MODULE=config.settings.prod
+      DJANGO_SETTINGS_MODULE: config.settings.prod
     working_dir: /app
     volumes:
       - tdp_static_data:/app/staticfiles
       - tdp_media_data:/app/media
       - tdp_data:/app/data
-    networks: [web]
+    networks:
+      - web
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8000/health/ || exit 1"]
@@ -21,3 +25,15 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+volumes:
+  tdp_static_data:
+    external: true
+  tdp_media_data:
+    external: true
+  tdp_data:
+    external: true
+
+networks:
+  web:
+    external: true
