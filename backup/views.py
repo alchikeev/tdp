@@ -24,7 +24,7 @@ from reviews.models import Review
 from news.models import NewsPost
 from blog.models import BlogPost
 from prices.models import PricePDF
-from core.models import Tag, SiteSettings
+from core.models import Category, Tag, SiteSettings
 
 MEDIA_ROOT = Path(settings.MEDIA_ROOT)
 
@@ -100,7 +100,7 @@ def backup_download(request):
 
         # порядок важен лишь для удобства
         # порядок важен лишь для удобства
-        # Category model removed
+        add_json(Category.objects.all(), "categories")
         add_json(Tag.objects.all(), "tags")
         # таксономии для туров и услуг
         add_json(TourCategory.objects.all(), "tour_categories")
@@ -137,7 +137,7 @@ def backup_download(request):
 def backup_restore(request):
     """
     Импортирует архив в рамках одной транзакции:
-      - создает/обновляет Tag
+      - создает/обновляет Category/Tag
       - создает/обновляет Tour/Service с категорией
       - проставляет M2M-теги по slug
       - перезаписывает media/*
@@ -180,7 +180,7 @@ def backup_restore(request):
                 Tour.objects.all().delete()
                 TourCategory.objects.all().delete()
                 Tag.objects.all().delete()
-                # Category model removed
+                Category.objects.all().delete()
 
                 def load_json(name: str):
                     p = data_dir / f"{name}.json"
@@ -190,7 +190,15 @@ def backup_restore(request):
 
                 # 1) категории (core)
                 cat_map = {}
-                # Category model removed - no longer processing categories
+                for c in load_json("categories"):
+                    slug = c.get("slug")
+                    name = c.get("name") or slug
+                    if not slug:
+                        raise ValidationError("В categories найден объект без slug")
+                    # core Category
+                    Category.objects.update_or_create(slug=slug, defaults={"name": name})
+                    cat_map[c.get("pk")] = slug
+                    report["imported"]["categories"] += 1
 
                 # 2) категории туров из JSON
                 for tc in load_json("tour_categories"):
@@ -219,7 +227,7 @@ def backup_restore(request):
                     tag_slugs.add(slug)
                     report["imported"]["tags"] += 1
 
-                # 5) туры (TourCategory -> categories) - Category model removed
+                # 5) туры (TourCategory -> categories)
                 for t in load_json("tours"):
                     tour_slug = t.get("slug") or f"restored-{t.get('pk')}"
                     # Основные поля, без M2M

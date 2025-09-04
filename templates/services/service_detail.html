@@ -1,100 +1,478 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static humanize %}
+{% load tour_filters %}
 {% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
+{% block title %}{{ service.title }} — Услуги на Пхукете{% endblock %}
+
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
   <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/tour-detail.css' %}">
 {% endblock %}
 {% block body_class %}has-inner-hero{% endblock %}
 
-{% block title %}{{ service.meta_title|default:service.title }}{% endblock %}
-
 {% block content %}
+
 {# ===== SLIDE-HERO (inline) ===== #}
 <section class="home slide slide--inner">
   <div class="home_slider_container">
-    <div class="background_image" style="background-image: url('{% if service.cover %}{{ service.cover.url }}{% else %}{% static "images/home_slider.jpg" %}{% endif %}');"></div>
+    <div class="background_image" style="background-image:url({% if service.cover %}{{ service.cover.url }}{% else %}{% static 'images/home_slider.jpg' %}{% endif %})"></div>
     <div class="home_slider_content_container">
       <div class="hero hero--inner">
         <div class="container hero__grid">
           <div class="hero-left">
             <h1 class="hero-title">{{ service.title }}</h1>
-            {% if service.location %}<p class="hero-sub">{{ service.location }}</p>{% endif %}
+            <p class="hero-sub">{{ service.location|default:"Пхукет" }}</p>
           </div>
 
           <div class="hero-right">
             <button class="btn-hero open-lead-modal"
                     data-cta="Inner Hero — Service Detail"
-                    data-related_type="service"
-                    data-related_id="{{ service.id }}"
-                    type="button">Оставить заявку</button>
+                    data-related_type="service" data-related_id="{{ service.id }}"
+                    type="button">Записаться</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-<div class="container my-4">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">Главная</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'services:list' %}">Услуги</a></li>
-      <li class="breadcrumb-item active" aria-current="page">{{ service.title }}</li>
-    </ol>
-  </nav>
 
-  <div class="row">
-    <div class="col-lg-7">
-      {% if service.cover %}
-        <img src="{{ service.cover.url }}" class="img-fluid rounded mb-3" alt="{{ service.title }}">
-      {% endif %}
-      {% if service.images.all %}
-        <div class="row">
-          {% for img in service.images.all %}
-            <div class="col-4 mb-3">
-              <img src="{{ img.image.url }}" class="img-fluid rounded" alt="{{ img.caption }}">
+  <section class="t-detail">
+    <div class="container" style="padding-top: 60px;">
+      <div class="row">
+
+        <!-- Основная колонка -->
+        <div class="col-lg-8 col-xl-9">
+          
+          <!-- Галерея изображений -->
+          {% if service.images.all %}
+            <div class="t-gallery owl-carousel owl-theme mb-4">
+              {% for img in service.images.all %}
+                <div class="item">
+                  <img src="{{ img.image.url }}" alt="{{ img.caption|default:service.title }} — фото {{ forloop.counter }}" loading="lazy">
+                </div>
+              {% endfor %}
             </div>
-          {% endfor %}
+          {% elif service.cover %}
+            <div class="mb-4">
+              <img class="w-100 rounded" src="{{ service.cover.url }}" alt="{{ service.title }}">
+            </div>
+          {% endif %}
+
+          <!-- YouTube видео -->
+          {% if service.youtube_url and service.youtube_url|youtube_embed %}
+            <div class="t-video mb-4">
+              <div class="video-container">
+                <iframe src="{{ service.youtube_url|youtube_embed }}" 
+                        frameborder="0" 
+                        allowfullscreen
+                        title="Видео услуги: {{ service.title }}">
+                </iframe>
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Краткое описание -->
+          {% if service.short_desc %}
+            <div class="t-short-desc mb-4">
+              <p class="lead">{{ service.short_desc }}</p>
+            </div>
+          {% endif %}
+
+          <!-- Основная информация об услуге -->
+          <div class="t-info-grid mb-4">
+            <div class="row g-3">
+              {% if service.location %}
+                <div class="col-md-6">
+                  <div class="t-info-item">
+                    <i class="fa fa-map-marker"></i>
+                    <div>
+                      <strong>Локация</strong>
+                      <span>{{ service.location }}</span>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if service.rating %}
+                <div class="col-md-6">
+                  <div class="t-info-item">
+                    <i class="fa fa-star"></i>
+                    <div>
+                      <strong>Рейтинг</strong>
+                      <span>{{ service.rating }}/5 ({{ service.reviews_count }} отзывов)</span>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if service.categories.all %}
+                <div class="col-md-6">
+                  <div class="t-info-item">
+                    <i class="fa fa-tags"></i>
+                    <div>
+                      <strong>Категории</strong>
+                      <span>
+                        {% for cat in service.categories.all %}
+                          <a href="{% url 'services:by_category' slug=cat.slug %}">{{ cat.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Полное описание -->
+          {% if service.description %}
+            <div class="t-prose mb-4">
+              <h3>Описание услуги</h3>
+              {{ service.description|safe }}
+            </div>
+          {% endif %}
+
+          <!-- Что включено/не включено -->
+          {% if service.included or service.excluded %}
+            <div class="t-included-excluded mb-4">
+              <div class="row g-3">
+                {% if service.included %}
+                  <div class="col-md-6">
+                    <div class="t-box t-box--included">
+                      <div class="t-box__title">
+                        <i class="fa fa-check-circle"></i> 
+                        Что включено
+                      </div>
+                      <div class="t-box__content">
+                        {{ service.included|linebreaks }}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if service.excluded %}
+                  <div class="col-md-6">
+                    <div class="t-box t-box--excluded">
+                      <div class="t-box__title">
+                        <i class="fa fa-times-circle"></i> 
+                        Не включено
+                      </div>
+                      <div class="t-box__content">
+                        {{ service.excluded|linebreaks }}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Важная информация -->
+          {% if service.info %}
+            <div class="t-important-info mb-4">
+              <h3>Важная информация</h3>
+              <div class="t-info-content">
+                {{ service.info|linebreaks }}
+              </div>
+            </div>
+          {% else %}
+            <div class="t-important-info mb-4">
+              <h3>Важная информация</h3>
+              <div class="t-info-cards">
+                <div class="t-info-card">
+                  <i class="fa fa-calendar"></i>
+                  <div>
+                    <h4>Бронирование</h4>
+                    <p>Бронирование необходимо за 24 часа до начала услуги</p>
+                  </div>
+                </div>
+                <div class="t-info-card">
+                  <i class="fa fa-users"></i>
+                  <div>
+                    <h4>Группа</h4>
+                    <p>Минимум 1 человек, максимум 10 человек в группе</p>
+                  </div>
+                </div>
+                <div class="t-info-card">
+                  <i class="fa fa-clock-o"></i>
+                  <div>
+                    <h4>Время</h4>
+                    <p>Услуга предоставляется в удобное для вас время</p>
+                  </div>
+                </div>
+                <div class="t-info-card">
+                  <i class="fa fa-shield"></i>
+                  <div>
+                    <h4>Гарантии</h4>
+                    <p>Полная гарантия качества предоставляемых услуг</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Теги -->
+          {% if service.tags.all %}
+            <div class="t-tags mb-4">
+              <h4>Теги</h4>
+              <div class="t-tags-list">
+                {% for tg in service.tags.all %}
+                  <a class="t-tag" href="{% url 'services:by_tag' slug=tg.slug %}">#{{ tg.name }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if related %}
+            <div class="t-related mt-5">
+              <div class="t-related__title">Похожие услуги</div>
+              <div class="row g-3">
+                {% for r in related %}
+                  <div class="col-12 col-sm-6 col-xl-4 d-flex">
+                    <article class="t-card h-100" style="cursor:pointer;" onclick="location.href='{{ r.get_absolute_url }}'">
+                      <div class="t-card__cover">
+                        {% if r.cover %}
+                          <img class="t-card__img" src="{{ r.cover.url }}" alt="{{ r.title }}" loading="lazy">
+                        {% else %}
+                          <img class="t-card__img" src="{% static 'images/travello.jpg' %}" alt="{{ r.title }}" loading="lazy">
+                        {% endif %}
+                        {% if r.has_discount %}<span class="badge badge--disc">Скидка</span>{% endif %}
+                        {% if r.is_popular %}<span class="badge badge--hit">Хит</span>{% endif %}
+                      </div>
+                      <div class="t-card__body">
+                        <div class="t-card__header">
+                          <h3 class="t-card__title">{{ r.title }}</h3>
+                          <div class="t-card__meta">
+                            {% if r.location %}<span class="t-meta-item"><i class="fa fa-map-marker"></i> {{ r.location }}</span>{% endif %}
+                          </div>
+                        </div>
+
+                        <div class="t-card__price-section">
+                          <div class="t-card__price-main">
+                            <div class="t-price-group">
+                              <span class="t-price-label">Цена</span>
+                              <div class="t-price">
+                                {% if r.price_old_adult and r.price_old_adult > r.price_adult %}
+                                  <s class="t-price__old">{{ r.price_old_adult|floatformat:0|intcomma }}฿</s>
+                                {% endif %}
+                                <strong class="t-price__new">{{ r.price_adult|floatformat:0|intcomma }}฿</strong>
+                              </div>
+                            </div>
+                            {% if r.price_child %}
+                            <div class="t-price-group">
+                              <span class="t-price-label">Дополнительно</span>
+                              <div class="t-price">
+                                {% if r.price_old_child and r.price_old_child > r.price_child %}
+                                  <s class="t-price__old">{{ r.price_old_child|floatformat:0|intcomma }}฿</s>
+                                {% endif %}
+                                <strong class="t-price__new">{{ r.price_child|floatformat:0|intcomma }}฿</strong>
+                              </div>
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+
+                        <div class="t-card__footer">
+                          <div class="t-rating">
+                            <i class="fa fa-star"></i>
+                            <span class="t-rating-value">{{ r.rating|default:"4.9" }}</span>
+                            {% if r.reviews_count %}<span class="t-reviews-count">({{ r.reviews_count }})</span>{% endif %}
+                          </div>
+                          <button class="order_btn open-lead-modal"
+                                  data-cta="Related — {{ r.title }}"
+                                  data-related_type="service" data-related_id="{{ r.id }}">Заказать</button>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
         </div>
-      {% endif %}
-    </div>
-    <div class="col-lg-5">
-      <h1 class="h3">{{ service.title }}</h1>
-      {% if service.location %}<div class="text-muted mb-2">Локация: {{ service.location }}</div>{% endif %}
 
-      <div class="my-3">
-  <strong>Стоимость:</strong><br>
-  Цена: {{ service.price_adult|floatformat:0 }} сом
-  {% if service.price_child %}<br>Дополнительные услуги: {{ service.price_child|floatformat:0 }} сом{% elif service.price_extra %}<br>Дополнительные услуги: {{ service.price_extra|floatformat:0 }} сом{% endif %}
+        <!-- Сайдбар -->
+        <aside class="col-lg-4 col-xl-3 t-aside">
+          
+          <!-- Блок бронирования -->
+          <div class="t-widget t-widget--sticky">
+            <div class="t-pricebox">
+              <div class="t-pricebox__header">
+                <h4>Заказать услугу</h4>
+                {% if service.is_popular %}<span class="badge badge--hit">Хит</span>{% endif %}
+                {% if service.has_discount %}<span class="badge badge--disc">Скидка</span>{% endif %}
+              </div>
+              
+              <div class="t-pricebox__prices">
+                <div class="t-pricebox__row">
+                  <span>Основная цена</span>
+                  <div class="t-price">
+                    {% if service.price_old_adult and service.price_old_adult > service.price_adult %}
+                      <s class="t-price__old">{{ service.price_old_adult|floatformat:0|intcomma }}฿</s>
+                    {% endif %}
+                    <strong class="t-price__new">{{ service.price_adult|floatformat:0|intcomma }}฿</strong>
+                  </div>
+                </div>
+                {% if service.price_child %}
+                  <div class="t-pricebox__row">
+                    <span>Дополнительно</span>
+                    <div class="t-price">
+                      {% if service.price_old_child and service.price_old_child > service.price_child %}
+                        <s class="t-price__old">{{ service.price_old_child|floatformat:0|intcomma }}฿</s>
+                      {% endif %}
+                      <strong class="t-price__new">{{ service.price_child|floatformat:0|intcomma }}฿</strong>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if service.price_extra %}
+                  <div class="t-pricebox__row">
+                    <span>Доп. услуги</span>
+                    <div class="t-price">
+                      <strong class="t-price__new">{{ service.price_extra|floatformat:0|intcomma }}฿</strong>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="t-pricebox__features">
+                <div class="t-feature">
+                  <i class="fa fa-check"></i>
+                  <span>Бесплатная отмена за 24 часа</span>
+                </div>
+                <div class="t-feature">
+                  <i class="fa fa-check"></i>
+                  <span>Мгновенное подтверждение</span>
+                </div>
+                <div class="t-feature">
+                  <i class="fa fa-check"></i>
+                  <span>Гарантия качества</span>
+                </div>
+              </div>
+              
+              <button class="order_btn w-100 open-lead-modal"
+                      data-cta="Service Detail — Sidebar"
+                      data-related_type="service" data-related_id="{{ service.id }}">
+                <i class="fa fa-calendar"></i>
+                Заказать сейчас
+              </button>
+              
+              <div class="t-pricebox__note">
+                <small>Цены указаны за услугу. Дополнительные условия уточняйте при заказе.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Информация об услуге -->
+          <div class="t-aside__box">
+            <div class="t-aside__title">
+              <i class="fa fa-info-circle"></i>
+              Информация об услуге
+            </div>
+            <div class="t-aside__content">
+              {% if service.location %}
+                <div class="t-aside__item">
+                  <i class="fa fa-map-marker"></i>
+                  <div>
+                    <strong>Локация</strong>
+                    <span>{{ service.location }}</span>
+                  </div>
+                </div>
+              {% endif %}
+              {% if service.rating %}
+                <div class="t-aside__item">
+                  <i class="fa fa-star"></i>
+                  <div>
+                    <strong>Рейтинг</strong>
+                    <span>{{ service.rating }}/5 ({{ service.reviews_count }} отзывов)</span>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Категории -->
+          {% if service.categories.all %}
+            <div class="t-aside__box">
+              <div class="t-aside__title">
+                <i class="fa fa-tags"></i>
+                Категории
+              </div>
+              <div class="t-aside__content">
+                {% for cat in service.categories.all %}
+                  <a href="{% url 'services:by_category' slug=cat.slug %}" class="t-category-link">
+                    {{ cat.name }}
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Контакты -->
+          <div class="t-aside__box">
+            <div class="t-aside__title">
+              <i class="fa fa-phone"></i>
+              Нужна помощь?
+            </div>
+            <div class="t-aside__content">
+              <div class="t-contact-info">
+                <div class="t-contact-item">
+                  <i class="fa fa-phone"></i>
+                  <a href="tel:+66812345678">+66 81 234 5678</a>
+                </div>
+                <div class="t-contact-item">
+                  <i class="fa fa-whatsapp"></i>
+                  <a href="https://wa.me/66812345678" target="_blank">WhatsApp</a>
+                </div>
+                <div class="t-contact-item">
+                  <i class="fa fa-envelope"></i>
+                  <a href="mailto:info@phuket-tours.com">info@phuket-tours.com</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Поделиться -->
+          <div class="t-aside__box">
+            <div class="t-aside__title">
+              <i class="fa fa-share-alt"></i>
+              Поделиться
+            </div>
+            <div class="t-aside__content">
+              <div class="t-share-buttons">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                   target="_blank" class="t-share-btn t-share-btn--fb">
+                  <i class="fa fa-facebook"></i>
+                </a>
+                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ service.title }}" 
+                   target="_blank" class="t-share-btn t-share-btn--tw">
+                  <i class="fa fa-twitter"></i>
+                </a>
+                <a href="https://t.me/share/url?url={{ request.build_absolute_uri }}&text={{ service.title }}" 
+                   target="_blank" class="t-share-btn t-share-btn--tg">
+                  <i class="fa fa-telegram"></i>
+                </a>
+                <a href="https://vk.com/share.php?url={{ request.build_absolute_uri }}" 
+                   target="_blank" class="t-share-btn t-share-btn--vk">
+                  <i class="fa fa-vk"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </aside>
+
       </div>
-
-      <div class="mb-3">
-        {{ service.description|linebreaks }}
-      </div>
-
-      {% if service.youtube_url %}
-        <div class="ratio ratio-16x9 mb-3">
-          <iframe src="{{ service.youtube_url|cut:'watch?v='|add:'embed/' }}" title="YouTube video" allowfullscreen></iframe>
-        </div>
-      {% endif %}
-
-      <button class="order_btn open-lead-modal"
-              data-cta="Service — {{ service.title }}"
-              data-related_type="service"
-              data-related_id="{{ service.id }}">
-        Оставить заявку
-      </button>
-
-      {% if related %}
-        <hr>
-        <h5>Похожие услуги</h5>
-        <ul class="small">
-          {% for r in related %}
-            <li><a href="{{ r.get_absolute_url }}">{{ r.title }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
     </div>
-  </div>
-</div>
+  </section>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    (function() {
+      var $ = window.jQuery || null;
+      if (!$ || !$.fn || !$.fn.owlCarousel) return;
+      var gal = document.querySelector('.t-gallery');
+      if (!gal) return;
+      $('.t-gallery').owlCarousel({
+        items: 1, loop: true, dots: true, nav: false, autoplay: true, autoplayTimeout: 5000
+      });
+    })();
+  </script>
 {% endblock %}

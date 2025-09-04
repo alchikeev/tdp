@@ -1,0 +1,6 @@
+{% for subcategory in subcategories %}
+  <button class="subcategory-btn" onclick="filterToursByCategory({{ subcategory.id }})">
+    {{ subcategory.name }}
+    <span class="subcategory-count">({{ subcategory.tours_count }})</span>
+  </button>
+{% endfor %}

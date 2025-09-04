@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static humanize %}
+{% load tour_filters %}
 
 {% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
 {% block title %}{{ tour.title }} — Экскурсии на Пхукете{% endblock %}
@@ -38,16 +39,18 @@
 </section>
 
   <section class="t-detail">
-    <div class="container">
+    <div class="container" style="padding-top: 60px;">
       <div class="row">
 
         <!-- Основная колонка -->
         <div class="col-lg-8 col-xl-9">
-          {% if gallery_images %}
+          
+          <!-- Галерея изображений -->
+          {% if tour.images.all %}
             <div class="t-gallery owl-carousel owl-theme mb-4">
-              {% for img in gallery_images %}
+              {% for img in tour.images.all %}
                 <div class="item">
-                  <img src="{{ img.image.url }}" alt="{{ tour.title }} — фото {{ forloop.counter }}" loading="lazy">
+                  <img src="{{ img.image.url }}" alt="{{ img.caption|default:tour.title }} — фото {{ forloop.counter }}" loading="lazy">
                 </div>
               {% endfor %}
             </div>
@@ -57,55 +60,213 @@
             </div>
           {% endif %}
 
-          {% if tour.short_desc %}
-            <p class="lead">{{ tour.short_desc }}</p>
+          <!-- YouTube видео -->
+          {% if tour.youtube_url and tour.youtube_url|youtube_embed %}
+            <div class="t-video mb-4">
+              <div class="video-container">
+                <iframe src="{{ tour.youtube_url|youtube_embed }}" 
+                        frameborder="0" 
+                        allowfullscreen
+                        title="Видео тура: {{ tour.title }}">
+                </iframe>
+              </div>
+            </div>
           {% endif %}
 
+          <!-- Краткое описание -->
+          {% if tour.short_desc %}
+            <div class="t-short-desc mb-4">
+              <p class="lead">{{ tour.short_desc }}</p>
+            </div>
+          {% endif %}
+
+          <!-- Основная информация о туре -->
+          <div class="t-info-grid mb-4">
+            <div class="row g-3">
+              {% if tour.duration %}
+                <div class="col-md-6">
+                  <div class="t-info-item">
+                    <i class="fa fa-clock-o"></i>
+                    <div>
+                      <strong>Длительность</strong>
+                      <span>{{ tour.duration }}</span>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if tour.location %}
+                <div class="col-md-6">
+                  <div class="t-info-item">
+                    <i class="fa fa-map-marker"></i>
+                    <div>
+                      <strong>Локация</strong>
+                      <span>{{ tour.location }}</span>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if tour.rating %}
+                <div class="col-md-6">
+                  <div class="t-info-item">
+                    <i class="fa fa-star"></i>
+                    <div>
+                      <strong>Рейтинг</strong>
+                      <span>{{ tour.rating }}/5 ({{ tour.reviews_count }} отзывов)</span>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if tour.categories.all %}
+                <div class="col-md-6">
+                  <div class="t-info-item">
+                    <i class="fa fa-tags"></i>
+                    <div>
+                      <strong>Категории</strong>
+                      <span>
+                        {% for cat in tour.categories.all %}
+                          <a href="{% url 'tours:by_category' slug=cat.slug %}">{{ cat.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Полное описание -->
           {% if tour.description %}
-            <div class="t-prose">
+            <div class="t-prose mb-4">
+              <h3>Описание тура</h3>
               {{ tour.description|safe }}
             </div>
           {% endif %}
 
-          <div class="row g-3 my-4">
-            {% if tour.included %}
-              <div class="col-md-6">
-                <div class="t-box">
-                  <div class="t-box__title"><i class="fa fa-check-circle"></i> Включено</div>
-                  <div class="t-box__content">{{ tour.included|linebreaks }}</div>
-                </div>
+          <!-- Что включено/не включено -->
+          {% if tour.included or tour.excluded %}
+            <div class="t-included-excluded mb-4">
+              <div class="row g-3">
+                {% if tour.included %}
+                  <div class="col-md-6">
+                    <div class="t-box t-box--included">
+                      <div class="t-box__title">
+                        <i class="fa fa-check-circle"></i> 
+                        Что включено
+                      </div>
+                      <div class="t-box__content">
+                        {{ tour.included|linebreaks }}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if tour.excluded %}
+                  <div class="col-md-6">
+                    <div class="t-box t-box--excluded">
+                      <div class="t-box__title">
+                        <i class="fa fa-times-circle"></i> 
+                        Не включено
+                      </div>
+                      <div class="t-box__content">
+                        {{ tour.excluded|linebreaks }}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
               </div>
-            {% endif %}
-            {% if tour.excluded %}
-              <div class="col-md-6">
-                <div class="t-box t-box--muted">
-                  <div class="t-box__title"><i class="fa fa-times-circle"></i> Не включено</div>
-                  <div class="t-box__content">{{ tour.excluded|linebreaks }}</div>
-                </div>
-              </div>
-            {% endif %}
-          </div>
-
-          {% if attachments %}
-            <div class="t-attach my-4">
-              <div class="t-attach__title"><i class="fa fa-paperclip"></i> Материалы</div>
-              <ul class="t-attach__list">
-                {% for a in attachments %}
-                  <li>
-                    <a href="{{ a.file.url }}" target="_blank" rel="noopener">
-                      <i class="fa fa-file-o"></i> {{ a.title|default:a.filename }}
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
             </div>
           {% endif %}
 
+          <!-- Программа тура (пример) -->
+          <div class="t-program mb-4">
+            <h3>Программа тура</h3>
+            <div class="t-program-timeline">
+              <div class="t-program-item">
+                <div class="t-program-time">09:00</div>
+                <div class="t-program-content">
+                  <h4>Встреча в отеле</h4>
+                  <p>Встреча с гидом в холле отеля, посадка в комфортабельный автобус.</p>
+                </div>
+              </div>
+              <div class="t-program-item">
+                <div class="t-program-time">10:30</div>
+                <div class="t-program-content">
+                  <h4>Прибытие на место</h4>
+                  <p>Прибытие к месту проведения экскурсии, знакомство с программой.</p>
+                </div>
+              </div>
+              <div class="t-program-item">
+                <div class="t-program-time">12:00</div>
+                <div class="t-program-content">
+                  <h4>Обед</h4>
+                  <p>Обед в местном ресторане с традиционной кухней.</p>
+                </div>
+              </div>
+              <div class="t-program-item">
+                <div class="t-program-time">16:00</div>
+                <div class="t-program-content">
+                  <h4>Возвращение</h4>
+                  <p>Возвращение в отель, окончание программы.</p>
+                </div>
+              </div>
+            </div>
+            <div class="t-program-note">
+              <p><em>Внимание: Программа может изменяться в зависимости от погодных условий и других факторов.</em></p>
+            </div>
+          </div>
+
+          <!-- Важная информация -->
+          {% if tour.info %}
+            <div class="t-important-info mb-4">
+              <h3>Важная информация</h3>
+              <div class="t-info-content">
+                {{ tour.info|linebreaks }}
+              </div>
+            </div>
+          {% else %}
+            <div class="t-important-info mb-4">
+              <h3>Важная информация</h3>
+              <div class="t-info-cards">
+                <div class="t-info-card">
+                  <i class="fa fa-calendar"></i>
+                  <div>
+                    <h4>Бронирование</h4>
+                    <p>Бронирование необходимо за 24 часа до начала тура</p>
+                  </div>
+                </div>
+                <div class="t-info-card">
+                  <i class="fa fa-users"></i>
+                  <div>
+                    <h4>Группа</h4>
+                    <p>Минимум 2 человека, максимум 15 человек в группе</p>
+                  </div>
+                </div>
+                <div class="t-info-card">
+                  <i class="fa fa-umbrella"></i>
+                  <div>
+                    <h4>Погода</h4>
+                    <p>Тур проводится в любую погоду, при необходимости предоставляются дождевики</p>
+                  </div>
+                </div>
+                <div class="t-info-card">
+                  <i class="fa fa-child"></i>
+                  <div>
+                    <h4>Дети</h4>
+                    <p>Дети до 3 лет бесплатно, с 3 до 12 лет детский тариф</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Теги -->
           {% if tour.tags.all %}
-            <div class="t-tags">
-              {% for tg in tour.tags.all %}
-                <a class="t-tag" href="{% url 'tours:by_tag' slug=tg.slug %}">#{{ tg.name }}</a>
-              {% endfor %}
+            <div class="t-tags mb-4">
+              <h4>Теги</h4>
+              <div class="t-tags-list">
+                {% for tg in tour.tags.all %}
+                  <a class="t-tag" href="{% url 'tours:by_tag' slug=tg.slug %}">#{{ tg.name }}</a>
+                {% endfor %}
+              </div>
             </div>
           {% endif %}
 
@@ -115,21 +276,56 @@
               <div class="row g-3">
                 {% for r in related_tours %}
                   <div class="col-12 col-sm-6 col-xl-4 d-flex">
-                    <article class="t-card h-100">
+                    <article class="t-card h-100" style="cursor:pointer;" onclick="location.href='{{ r.get_absolute_url }}'">
                       <div class="t-card__cover">
                         {% if r.cover %}
                           <img class="t-card__img" src="{{ r.cover.url }}" alt="{{ r.title }}" loading="lazy">
                         {% else %}
                           <img class="t-card__img" src="{% static 'images/travello.jpg' %}" alt="{{ r.title }}" loading="lazy">
                         {% endif %}
+                        {% if r.has_discount %}<span class="badge badge--disc">Скидка</span>{% endif %}
+                        {% if r.is_popular %}<span class="badge badge--hit">Хит</span>{% endif %}
                       </div>
                       <div class="t-card__body">
-                        <a href="{{ r.get_absolute_url }}" class="t-card__title">{{ r.title }}</a>
-                        <div class="t-card__price">
-                          <strong class="t-price__new">{{ r.price_adult|floatformat:0|intcomma }}฿</strong>
+                        <div class="t-card__header">
+                          <h3 class="t-card__title">{{ r.title }}</h3>
+                          <div class="t-card__meta">
+                            {% if r.duration %}<span class="t-meta-item"><i class="fa fa-clock-o"></i> {{ r.duration }}</span>{% endif %}
+                            {% if r.location %}<span class="t-meta-item"><i class="fa fa-map-marker"></i> {{ r.location }}</span>{% endif %}
+                          </div>
                         </div>
-                        <div class="t-actions">
-                          <a href="{{ r.get_absolute_url }}" class="btn-more">Подробнее</a>
+
+                        <div class="t-card__price-section">
+                          <div class="t-card__price-main">
+                            <div class="t-price-group">
+                              <span class="t-price-label">Взрослые</span>
+                              <div class="t-price">
+                                {% if r.price_old_adult and r.price_old_adult > r.price_adult %}
+                                  <s class="t-price__old">{{ r.price_old_adult|floatformat:0|intcomma }}฿</s>
+                                {% endif %}
+                                <strong class="t-price__new">{{ r.price_adult|floatformat:0|intcomma }}฿</strong>
+                              </div>
+                            </div>
+                            {% if r.price_child %}
+                            <div class="t-price-group">
+                              <span class="t-price-label">Дети</span>
+                              <div class="t-price">
+                                {% if r.price_old_child and r.price_old_child > r.price_child %}
+                                  <s class="t-price__old">{{ r.price_old_child|floatformat:0|intcomma }}฿</s>
+                                {% endif %}
+                                <strong class="t-price__new">{{ r.price_child|floatformat:0|intcomma }}฿</strong>
+                              </div>
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+
+                        <div class="t-card__footer">
+                          <div class="t-rating">
+                            <i class="fa fa-star"></i>
+                            <span class="t-rating-value">{{ r.rating|default:"4.9" }}</span>
+                            {% if r.reviews_count %}<span class="t-reviews-count">({{ r.reviews_count }})</span>{% endif %}
+                          </div>
                           <button class="order_btn open-lead-modal"
                                   data-cta="Related — {{ r.title }}"
                                   data-related_type="tour" data-related_id="{{ r.id }}">Заказать</button>
@@ -145,58 +341,180 @@
 
         <!-- Сайдбар -->
         <aside class="col-lg-4 col-xl-3 t-aside">
+          
+          <!-- Блок бронирования -->
           <div class="t-widget t-widget--sticky">
             <div class="t-pricebox">
-              <div class="t-pricebox__row">
-                <span>Цена</span>
-                <div class="t-price">
-                  {% if tour.price_old_adult and tour.price_old_adult > tour.price_adult %}
-                    <s class="t-price__old">{{ tour.price_old_adult|floatformat:0|intcomma }}฿</s>
-                  {% endif %}
-                  <strong class="t-price__new">{{ tour.price_adult|floatformat:0|intcomma }}฿</strong>
+              <div class="t-pricebox__header">
+                <h4>Забронировать тур</h4>
+                {% if tour.is_popular %}<span class="badge badge--hit">Хит</span>{% endif %}
+                {% if tour.has_discount %}<span class="badge badge--disc">Скидка</span>{% endif %}
+              </div>
+              
+              <div class="t-pricebox__prices">
+                <div class="t-pricebox__row">
+                  <span>Взрослые</span>
+                  <div class="t-price">
+                    {% if tour.price_old_adult and tour.price_old_adult > tour.price_adult %}
+                      <s class="t-price__old">{{ tour.price_old_adult|floatformat:0|intcomma }}฿</s>
+                    {% endif %}
+                    <strong class="t-price__new">{{ tour.price_adult|floatformat:0|intcomma }}฿</strong>
+                  </div>
+                </div>
+                {% if tour.price_child %}
+                  <div class="t-pricebox__row">
+                    <span>Дети (3-12 лет)</span>
+                    <div class="t-price">
+                      {% if tour.price_old_child and tour.price_old_child > tour.price_child %}
+                        <s class="t-price__old">{{ tour.price_old_child|floatformat:0|intcomma }}฿</s>
+                      {% endif %}
+                      <strong class="t-price__new">{{ tour.price_child|floatformat:0|intcomma }}฿</strong>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if tour.price_extra %}
+                  <div class="t-pricebox__row">
+                    <span>Доп. услуги</span>
+                    <div class="t-price">
+                      <strong class="t-price__new">{{ tour.price_extra|floatformat:0|intcomma }}฿</strong>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="t-pricebox__features">
+                <div class="t-feature">
+                  <i class="fa fa-check"></i>
+                  <span>Бесплатная отмена за 24 часа</span>
+                </div>
+                <div class="t-feature">
+                  <i class="fa fa-check"></i>
+                  <span>Мгновенное подтверждение</span>
+                </div>
+                <div class="t-feature">
+                  <i class="fa fa-check"></i>
+                  <span>Мобильный билет</span>
                 </div>
               </div>
-              {% if tour.price_child %}
-                <div class="t-pricebox__row">
-                  <span>Дети</span>
-                  <div class="t-price">
-                    {% if tour.price_old_child and tour.price_old_child > tour.price_child %}
-                      <s class="t-price__old">{{ tour.price_old_child|floatformat:0|intcomma }}฿</s>
-                    {% endif %}
-                    <strong class="t-price__new">{{ tour.price_child|floatformat:0|intcomma }}฿</strong>
-                  </div>
-                </div>
-              {% endif %}
-              {% if tour.price_extra %}
-                <div class="t-pricebox__row">
-                  <span>Дополнительные услуги</span>
-                  <div class="t-price">
-                    <strong class="t-price__new">{{ tour.price_extra|floatformat:0|intcomma }}฿</strong>
-                  </div>
-                </div>
-              {% endif %}
-              {% if tour.note_price %}
-                <div class="t-pricebox__note">{{ tour.note_price|linebreaks }}</div>
-              {% endif %}
+              
               <button class="order_btn w-100 open-lead-modal"
                       data-cta="Tour Detail — Sidebar"
-                      data-related_type="tour" data-related_id="{{ tour.id }}">Оставить заявку</button>
+                      data-related_type="tour" data-related_id="{{ tour.id }}">
+                <i class="fa fa-calendar"></i>
+                Забронировать сейчас
+              </button>
+              
+              <div class="t-pricebox__note">
+                <small>Цены указаны за одного человека. Дети до 3 лет бесплатно.</small>
+              </div>
             </div>
           </div>
 
-          {% if tour.category %}
+          <!-- Информация о туре -->
+          <div class="t-aside__box">
+            <div class="t-aside__title">
+              <i class="fa fa-info-circle"></i>
+              Информация о туре
+            </div>
+            <div class="t-aside__content">
+              {% if tour.duration %}
+                <div class="t-aside__item">
+                  <i class="fa fa-clock-o"></i>
+                  <div>
+                    <strong>Длительность</strong>
+                    <span>{{ tour.duration }}</span>
+                  </div>
+                </div>
+              {% endif %}
+              {% if tour.location %}
+                <div class="t-aside__item">
+                  <i class="fa fa-map-marker"></i>
+                  <div>
+                    <strong>Локация</strong>
+                    <span>{{ tour.location }}</span>
+                  </div>
+                </div>
+              {% endif %}
+              {% if tour.rating %}
+                <div class="t-aside__item">
+                  <i class="fa fa-star"></i>
+                  <div>
+                    <strong>Рейтинг</strong>
+                    <span>{{ tour.rating }}/5 ({{ tour.reviews_count }} отзывов)</span>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Категории -->
+          {% if tour.categories.all %}
             <div class="t-aside__box">
-              <div class="t-aside__title">Категория</div>
-              <p><a href="{% url 'tours:by_category' slug=tour.category.slug %}">{{ tour.category.name }}</a></p>
+              <div class="t-aside__title">
+                <i class="fa fa-tags"></i>
+                Категории
+              </div>
+              <div class="t-aside__content">
+                {% for cat in tour.categories.all %}
+                  <a href="{% url 'tours:by_category' slug=cat.slug %}" class="t-category-link">
+                    {{ cat.name }}
+                  </a>
+                {% endfor %}
+              </div>
             </div>
           {% endif %}
 
-          {% if tour.info %}
-            <div class="t-aside__box">
-              <div class="t-aside__title">Полезно знать</div>
-              <div class="t-aside__text">{{ tour.info|linebreaks }}</div>
+          <!-- Контакты -->
+          <div class="t-aside__box">
+            <div class="t-aside__title">
+              <i class="fa fa-phone"></i>
+              Нужна помощь?
             </div>
-          {% endif %}
+            <div class="t-aside__content">
+              <div class="t-contact-info">
+                <div class="t-contact-item">
+                  <i class="fa fa-phone"></i>
+                  <a href="tel:+66812345678">+66 81 234 5678</a>
+                </div>
+                <div class="t-contact-item">
+                  <i class="fa fa-whatsapp"></i>
+                  <a href="https://wa.me/66812345678" target="_blank">WhatsApp</a>
+                </div>
+                <div class="t-contact-item">
+                  <i class="fa fa-envelope"></i>
+                  <a href="mailto:info@phuket-tours.com">info@phuket-tours.com</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Поделиться -->
+          <div class="t-aside__box">
+            <div class="t-aside__title">
+              <i class="fa fa-share-alt"></i>
+              Поделиться
+            </div>
+            <div class="t-aside__content">
+              <div class="t-share-buttons">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                   target="_blank" class="t-share-btn t-share-btn--fb">
+                  <i class="fa fa-facebook"></i>
+                </a>
+                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ tour.title }}" 
+                   target="_blank" class="t-share-btn t-share-btn--tw">
+                  <i class="fa fa-twitter"></i>
+                </a>
+                <a href="https://t.me/share/url?url={{ request.build_absolute_uri }}&text={{ tour.title }}" 
+                   target="_blank" class="t-share-btn t-share-btn--tg">
+                  <i class="fa fa-telegram"></i>
+                </a>
+                <a href="https://vk.com/share.php?url={{ request.build_absolute_uri }}" 
+                   target="_blank" class="t-share-btn t-share-btn--vk">
+                  <i class="fa fa-vk"></i>
+                </a>
+              </div>
+            </div>
+          </div>
         </aside>
 
       </div>

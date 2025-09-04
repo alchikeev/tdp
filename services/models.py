@@ -22,6 +22,28 @@ class Service(models.Model):
     price_child  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     # Дополнительные услуги — отдельная цена для опций
     price_extra  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    # Старые цены для скидок
+    price_old_adult = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    price_old_child = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    # Дополнительная информация
+    included = models.TextField("Что включено", blank=True, help_text="Список того, что включено в услугу")
+    excluded = models.TextField("Что не включено", blank=True, help_text="Список того, что не включено в услугу")
+    note_price = models.TextField("Примечание к цене", blank=True, help_text="Дополнительная информация о ценах")
+    info = models.TextField("Полезная информация", blank=True, help_text="Важная информация для клиентов")
+    
+    # Рейтинг/метки
+    rating = models.DecimalField(
+        "Рейтинг",
+        max_digits=3,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="0.00–5.00",
+    )
+    reviews_count = models.PositiveIntegerField("Кол-во отзывов", default=0)
+    is_popular = models.BooleanField("Популярное", default=False)
 
     cover        = models.ImageField(upload_to='services/covers/', blank=True, null=True)
     is_active    = models.BooleanField(default=True)
@@ -40,6 +62,10 @@ class Service(models.Model):
 
     def get_absolute_url(self):
         return reverse('services:detail', kwargs={'slug': self.slug})
+    
+    @property
+    def has_discount(self) -> bool:
+        return bool(self.price_old_adult and self.price_old_adult > self.price_adult)
 class ServiceCategory(models.Model):
     name = models.CharField("Название", max_length=120)
     slug = models.SlugField("Слаг", unique=True)

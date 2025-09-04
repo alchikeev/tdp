@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Count, Q
-from tours.models import Tour
-from services.models import Service
+from tours.models import Tour, TourCategory
+from services.models import Service, ServiceCategory
 from core.models import Tag
 
 
@@ -18,7 +18,22 @@ def price_list(request):
         .order_by('-created_at')
     )
 
-    # Сайдбар: теги
+    # Сайдбар: категории и теги
+    # Категории для туров: используем TourCategory
+    categories_tours = (
+        TourCategory.objects
+        .annotate(items=Count('tours', filter=Q(tours__is_active=True)))
+        .filter(items__gt=0)
+        .order_by('name')
+    )
+
+    # Категории для услуг: используем ServiceCategory
+    categories_services = (
+        ServiceCategory.objects
+        .annotate(items=Count('services', filter=Q(services__is_active=True)))
+        .filter(items__gt=0)
+        .order_by('name')
+    )
 
     tags = Tag.objects.order_by('name')
 
@@ -45,8 +60,10 @@ def price_list(request):
     return render(request, 'prices/price_list.html', {
         'tours': tours,
         'services': services,
+        'categories_tours': categories_tours,
+        'categories_services': categories_services,
         'tags': tags,
         'popular_tours': popular_tours,
-        'popular_services': popular_services,
-        'price_pdf': pdf,
+    'popular_services': popular_services,
+    'price_pdf': pdf,
     })

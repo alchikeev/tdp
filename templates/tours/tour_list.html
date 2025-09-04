@@ -113,37 +113,40 @@
                   </div>
 
                   <div class="t-card__body">
-                    <div class="t-card__title">{{ t.title }}</div>
-                   
-                    <div class="t-card__meta">
-                      {% if t.duration %}<span><i class="fa fa-clock-o"></i> {{ t.duration }}</span>{% endif %}
-                      {% if t.location %}<span><i class="fa fa-map-marker"></i> {{ t.location }}</span>{% endif %}
+                    <div class="t-card__header">
+                      <h3 class="t-card__title">{{ t.title }}</h3>
+                      <div class="t-card__meta">
+                        {% if t.duration %}<span class="t-meta-item"><i class="fa fa-clock-o"></i> {{ t.duration }}</span>{% endif %}
+                        {% if t.location %}<span class="t-meta-item"><i class="fa fa-map-marker"></i> {{ t.location }}</span>{% endif %}
+                      </div>
                     </div>
 
-                    <div class="t-card__price">
-                      <div class="t-card__price-line">
-                        <span>Взрослые</span>
-                        <div class="t-price">
-                          {% if t.price_old_adult and t.price_old_adult > t.price_adult %}
-                            <s class="t-price__old">{{ t.price_old_adult|floatformat:0|intcomma }}฿</s>
-                          {% endif %}
-                          <strong class="t-price__new">{{ t.price_adult|floatformat:0|intcomma }}฿</strong>
+                    <div class="t-card__price-section">
+                      <div class="t-card__price-main">
+                        <div class="t-price-group">
+                          <span class="t-price-label">Взрослые</span>
+                          <div class="t-price">
+                            {% if t.price_old_adult and t.price_old_adult > t.price_adult %}
+                              <s class="t-price__old">{{ t.price_old_adult|floatformat:0|intcomma }}฿</s>
+                            {% endif %}
+                            <strong class="t-price__new">{{ t.price_adult|floatformat:0|intcomma }}฿</strong>
+                          </div>
                         </div>
-                      </div>
-                      {% if t.price_child %}
-                      <div class="t-card__price-line">
-                        <span>Дети</span>
-                        <div class="t-price">
-                          {% if t.price_old_child and t.price_old_child > t.price_child %}
-                            <s class="t-price__old">{{ t.price_old_child|floatformat:0|intcomma }}฿</s>
-                          {% endif %}
-                          <strong class="t-price__new">{{ t.price_child|floatformat:0|intcomma }}฿</strong>
+                        {% if t.price_child %}
+                        <div class="t-price-group">
+                          <span class="t-price-label">Дети</span>
+                          <div class="t-price">
+                            {% if t.price_old_child and t.price_old_child > t.price_child %}
+                              <s class="t-price__old">{{ t.price_old_child|floatformat:0|intcomma }}฿</s>
+                            {% endif %}
+                            <strong class="t-price__new">{{ t.price_child|floatformat:0|intcomma }}฿</strong>
+                          </div>
                         </div>
+                        {% endif %}
                       </div>
-                      {% endif %}
                       {% if t.price_extra %}
-                      <div class="t-card__price-line">
-                        <span>Дополнительные услуги</span>
+                      <div class="t-card__price-extra">
+                        <span class="t-price-label">Дополнительные услуги</span>
                         <div class="t-price">
                           <strong class="t-price__new">{{ t.price_extra|floatformat:0|intcomma }}฿</strong>
                         </div>
@@ -154,15 +157,13 @@
                     <div class="t-card__footer">
                       <div class="t-rating">
                         <i class="fa fa-star"></i>
-                        <span>{{ t.rating|default:"4.9" }}</span>
-                        {% if t.reviews_count %}<span class="t-rev">({{ t.reviews_count }})</span>{% endif %}
+                        <span class="t-rating-value">{{ t.rating|default:"4.9" }}</span>
+                        {% if t.reviews_count %}<span class="t-reviews-count">({{ t.reviews_count }})</span>{% endif %}
                       </div>
-                      <div class="t-actions">
-                        <button class="order_btn open-lead-modal"
-                                data-cta="Tours — {{ t.title }}"
-                                data-related_type="tour"
-                                data-related_id="{{ t.id }}">Заказать</button>
-                      </div>
+                      <button class="order_btn open-lead-modal"
+                              data-cta="Tours — {{ t.title }}"
+                              data-related_type="tour"
+                              data-related_id="{{ t.id }}">Заказать</button>
                     </div>
                   </div>
                 </article>

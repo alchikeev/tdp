@@ -543,3 +543,359 @@ index.css  — HERO (обложка)
   text-transform: uppercase;
   margin: 0;
 }
+
+/* ============================
+   HOME TOUR CARDS - Business Card Style
+   ============================ */
+
+.tours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.tour-card-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.no-tours {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.home-tour-card {
+  position: relative;
+  width: 100%;
+  height: 400px; /* Визиточная пропорция - вертикальная */
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.15),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Нежный фильтр с уменьшенной контрастностью и осветлением */
+  filter: 
+    contrast(0.9) 
+    saturate(1.1) 
+    brightness(1.1) 
+    sepia(0.02) 
+    hue-rotate(2deg);
+}
+
+.home-tour-card:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.25),
+    0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+
+
+/* Overlay для лучшей читаемости текста с минимальной цветовой маской */
+.home-tour-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 30%,
+    rgba(0, 0, 0, 0.2) 60%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  z-index: 1;
+  transition: all 0.4s ease;
+}
+
+/* Top section - badges and rating */
+.home-tour-card__top {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 3;
+}
+
+.home-tour-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.home-tour-badge--hit {
+  background: linear-gradient(135deg, #ff3b30, #ff6b5b);
+}
+
+.home-tour-badge--discount {
+  background: linear-gradient(135deg, #ff9500, #ffb84d);
+}
+
+.home-tour-badge--service {
+  background: linear-gradient(135deg, #007aff, #5ac8fa);
+}
+
+.home-tour-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.home-tour-rating i {
+  color: #ffd700;
+  font-size: 16px;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Bottom section - title and meta */
+.home-tour-card__bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30px 20px 20px;
+  z-index: 3;
+}
+
+.home-tour-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+  margin: 0 0 12px 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.home-tour-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.home-tour-location {
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .tours-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tours-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+  }
+  
+  .home-tour-card {
+    height: 350px;
+  }
+  
+  .home-tour-card__top {
+    top: 15px;
+    left: 15px;
+    right: 15px;
+  }
+  
+  .home-tour-card__bottom {
+    padding: 25px 15px 15px;
+  }
+  
+  .home-tour-title {
+    font-size: 20px;
+  }
+  
+  .home-tour-badge {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  .home-tour-rating {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 576px) {
+  .tours-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .home-tour-card {
+    height: 320px;
+  }
+  
+  .home-tour-title {
+    font-size: 18px;
+  }
+  
+  .home-tour-location {
+    font-size: 13px;
+  }
+}
+
+/* ============================
+   HOME CATEGORIES
+   ============================ */
+
+.home-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.home-category-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 25px;
+  color: #475569;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.home-category-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.home-category-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.category-count {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.home-category-btn.active .category-count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.home-subcategories {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.subcategories-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.subcategory-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  color: #64748b;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.subcategory-btn:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.subcategory-count {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.subcategory-btn:hover .subcategory-count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive categories */
+@media (max-width: 768px) {
+  .home-categories {
+    gap: 8px;
+  }
+  
+  .home-category-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  .home-subcategories {
+    padding: 15px;
+  }
+  
+  .subcategories-content {
+    gap: 8px;
+  }
+}

@@ -1,45 +1,97 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-{% block title %}Блог — Thai Dream Phuket{% endblock %}
 {% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
+{% block title %}Блог — Thai Dream Phuket{% endblock %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
 {% endblock %}
+
 {% block body_class %}has-inner-hero{% endblock %}
+
 {% block content %}
+
 <section class="home slide slide--inner">
-    <div class="home_slider_container">
-        <div class="background_image" style="background-image: url('{% static "images/home_slider.jpg" %}');"></div>
-        <div class="home_slider_content_container">
-            <div class="hero hero--inner">
-                <div class="container hero__grid">
-                    <div class="hero-left">
-                        <h1 class="hero-title">Блог</h1>
-                        <p class="hero-sub">Полезные статьи и советы для путешественников</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<div class="container my-5">
-  <div class="row">
-    {% for post in posts %}
-      <div class="col-md-4 mb-4">
-        <a href="{{ post.get_absolute_url }}" class="card h-100 text-decoration-none">
-          {% if post.cover %}
-            <img src="{{ post.cover.url }}" class="card-img-top" alt="{{ post.title }}">
-          {% endif %}
-          <div class="card-body">
-            <h5 class="card-title">{{ post.title }}</h5>
-            <div class="small text-muted">{{ post.pub_date|date:"d.m.Y" }}</div>
-            <p class="card-text">{{ post.content|truncatechars:150 }}</p>
+  <div class="home_slider_container">
+    <div class="background_image" style="background-image:url({% static 'images/home_slider.jpg' %})"></div>
+    <div class="home_slider_content_container">
+      <div class="hero hero--inner">
+        <div class="container hero__grid">
+          <div class="hero-left">
+            <h1 class="hero-title">Блог</h1>
+            <p class="hero-sub">Полезные статьи и новости о туризме на Пхукете</p>
           </div>
-        </a>
+          <div class="hero-right"></div>
+        </div>
       </div>
-    {% empty %}
-      <p>Пока нет статей.</p>
-    {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="container my-4">
+  <div class="row">
+    <div class="col-lg-8 col-xl-9">
+      <div class="row">
+        {% for post in posts %}
+          <div class="col-md-6 col-lg-4 mb-4">
+            <article class="card h-100">
+              {% if post.cover %}
+                <img src="{{ post.cover.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+              {% endif %}
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <div class="small text-muted mb-2">{{ post.pub_date|date:"d.m.Y" }}</div>
+                <p class="card-text flex-grow-1">{{ post.content|truncatechars:150 }}</p>
+                <a href="{{ post.get_absolute_url }}" class="btn btn-primary mt-auto">Читать далее</a>
+              </div>
+            </article>
+          </div>
+        {% empty %}
+          <div class="col-12">
+            <div class="text-center py-5">
+              <h3>Пока нет статей</h3>
+              <p class="text-muted">Скоро здесь появятся интересные статьи о туризме на Пхукете!</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="col-lg-4 col-xl-3">
+      <div class="t-aside__box">
+        <div class="t-aside__title">
+          <i class="fa fa-info-circle"></i>
+          О блоге
+        </div>
+        <div class="t-aside__content">
+          <p>В нашем блоге мы делимся полезной информацией о туризме на Пхукете, советами путешественникам и новостями.</p>
+        </div>
+      </div>
+
+      <div class="t-aside__box">
+        <div class="t-aside__title">
+          <i class="fa fa-phone"></i>
+          Нужна помощь?
+        </div>
+        <div class="t-aside__content">
+          <div class="t-contact-info">
+            <div class="t-contact-item">
+              <i class="fa fa-phone"></i>
+              <a href="tel:+66812345678">+66 81 234 5678</a>
+            </div>
+            <div class="t-contact-item">
+              <i class="fa fa-whatsapp"></i>
+              <a href="https://wa.me/66812345678" target="_blank">WhatsApp</a>
+            </div>
+            <div class="t-contact-item">
+              <i class="fa fa-envelope"></i>
+              <a href="mailto:info@phuket-tours.com">info@phuket-tours.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
   </div>
 </div>
+
 {% endblock %}

@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Типографическая система — Thai Dream Phuket{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'styles/typography-demo.css' %}">
+{% endblock %}
+
+{% block body_class %}typography-demo-page{% endblock %}
+
+{% block content %}
+<div class="typography-demo">
+  <div class="typography-section">
+    <h1 class="hero-headline-large text-gradient">Новая типографическая система</h1>
+    <p>Современная система управления шрифтами с поддержкой кириллицы и латиницы. Основана на трендовых шрифтах Inter, Poppins, Orbitron, Exo 2 и других.</p>
+  </div>
+
+  <!-- Font Families Demo -->
+  <div class="typography-section">
+    <h2>Семейства шрифтов</h2>
+    
+    <div class="font-demo">
+      <div class="font-label">Primary Font (Inter)</div>
+      <h3>Основной шрифт для текста</h3>
+      <p class="font-primary">Inter — современный sans-serif шрифт, оптимизированный для экранов. Отлично подходит для основного текста, форм и интерфейсов. Поддерживает кириллицу и латиницу.</p>
+      <p class="font-primary">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Ultra Narrow Font (Space Grotesk/Rajdhani/Oswald) - Extremely Narrow</div>
+      <h3>Ультра-узкий шрифт для заголовков и навигации</h3>
+      <p class="font-ultra-narrow">Space Grotesk — ультра-узкий современный шрифт с минимальной шириной символов. Идеален для создания максимально сжатых заголовков.</p>
+      <p class="font-ultra-narrow">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Monospace Narrow Font (Space Mono/JetBrains Mono/Fira Code)</div>
+      <h3>Ультра-узкий моноширинный шрифт</h3>
+      <p class="font-mono-narrow">Space Mono — ультра-узкий моноширинный шрифт для создания технических заголовков с идеальным выравниванием.</p>
+      <p class="font-mono-narrow">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Narrow Font (Montserrat/Raleway/Oswald) - Kargert Alternative</div>
+      <h3>Узкий шрифт для заголовков и навигации</h3>
+      <p class="font-narrow">Montserrat — современный узкий sans-serif шрифт, альтернатива Kargert. Идеален для заголовков, навигации и акцентных элементов.</p>
+      <p class="font-narrow">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Display Font (Orbitron/Exo 2/Rajdhani) - Hero Headlines</div>
+      <h3>Ультра-современный шрифт для главных заголовков</h3>
+      <p class="font-display">Orbitron — футуристический шрифт, идеальный для больших заголовков и hero-секций. Создает эффект как на современных сайтах.</p>
+      <p class="font-display">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Futuristic Font (Audiowide/Orbitron/Exo 2)</div>
+      <h3>Футуристический шрифт для особых эффектов</h3>
+      <p class="font-futuristic">Audiowide — ультра-современный шрифт для создания футуристических заголовков и логотипов.</p>
+      <p class="font-futuristic">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Condensed Font (Roboto Condensed/Oswald)</div>
+      <h3>Сжатый шрифт для особых заголовков</h3>
+      <p class="font-condensed">Roboto Condensed — ультра-узкий шрифт для создания драматических заголовков и логотипов.</p>
+      <p class="font-condensed">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Secondary Font (Poppins)</div>
+      <h3>Шрифт для кнопок и интерфейса</h3>
+      <p class="font-secondary">Poppins — геометрический sans-serif шрифт с современным дизайном. Идеален для кнопок и интерфейсных элементов.</p>
+      <p class="font-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Accent Font (Playfair Display)</div>
+      <h3>Акцентный шрифт для особых элементов</h3>
+      <p class="font-accent">Playfair Display — элегантный serif шрифт с высоким контрастом. Используется для цитат, логотипов и декоративных элементов.</p>
+      <p class="font-accent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+
+    <div class="font-demo">
+      <div class="font-label">Monospace Font</div>
+      <h3>Моноширинный шрифт для кода</h3>
+      <p class="font-mono">SF Mono — моноширинный шрифт для отображения кода, технических данных и таблиц. Обеспечивает выравнивание символов.</p>
+      <p class="font-mono">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+  </div>
+
+  <!-- Hero Headlines Demo -->
+  <div class="typography-section">
+    <h2>Hero заголовки (как на изображениях)</h2>
+    
+    <div class="font-demo">
+      <div class="heading-info">Hero Headline Large - 72px / 4.5rem</div>
+      <h1 class="hero-headline-large">DISCOVER THE NEW HORIZON</h1>
+    </div>
+
+    <div class="font-demo">
+      <div class="heading-info">Hero Headline - 60px / 3.75rem</div>
+      <h1 class="hero-headline">NEVER STOP EXPLORING</h1>
+    </div>
+
+    <div class="font-demo">
+      <div class="heading-info">Display Headline - 48px / 3rem</div>
+      <h1 class="display-headline">ADVENTURE AWAITS</h1>
+    </div>
+
+    <div class="font-demo">
+      <div class="heading-info">Ultra Narrow Headline - 36px / 2.25rem</div>
+      <h1 class="ultra-narrow-headline">ULTRA NARROW TEXT</h1>
+    </div>
+
+    <div class="font-demo">
+      <div class="heading-info">Monospace Narrow Headline - 36px / 2.25rem</div>
+      <h1 class="mono-narrow-headline">MONOSPACE NARROW</h1>
+    </div>
+  </div>
+
+  <!-- Headings Demo -->
+  <div class="typography-section">
+    <h2>Обычные заголовки</h2>
+    
+    <div class="heading-demo">
+      <div class="heading-info">H1 - 48px / 3rem</div>
+      <h1>Главный заголовок страницы</h1>
+      
+      <div class="heading-info">H2 - 36px / 2.25rem</div>
+      <h2>Заголовок раздела</h2>
+      
+      <div class="heading-info">H3 - 30px / 1.875rem</div>
+      <h3>Заголовок подраздела</h3>
+      
+      <div class="heading-info">H4 - 24px / 1.5rem</div>
+      <h4>Заголовок компонента</h4>
+      
+      <div class="heading-info">H5 - 20px / 1.25rem</div>
+      <h5>Заголовок элемента</h5>
+      
+      <div class="heading-info">H6 - 18px / 1.125rem</div>
+      <h6>Малый заголовок</h6>
+    </div>
+  </div>
+
+  <!-- Font Weights Demo -->
+  <div class="typography-section">
+    <h2>Насыщенность шрифта</h2>
+    
+    <div class="weight-demo">
+      <div class="weight-item">
+        <div class="weight-label">Light (300)</div>
+        <div class="weight-text font-light">Легкий текст</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">Regular (400)</div>
+        <div class="weight-text font-normal">Обычный текст</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">Medium (500)</div>
+        <div class="weight-text font-medium">Средний текст</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">Semibold (600)</div>
+        <div class="weight-text font-semibold">Полужирный текст</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">Bold (700)</div>
+        <div class="weight-text font-bold">Жирный текст</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">Extrabold (800)</div>
+        <div class="weight-text font-extrabold">Очень жирный текст</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Font Sizes Demo -->
+  <div class="typography-section">
+    <h2>Размеры шрифта</h2>
+    
+    <div class="size-demo">
+      <div class="size-item">
+        <div class="size-label">XS - 12px</div>
+        <div class="size-text text-xs">Очень маленький текст</div>
+      </div>
+      <div class="size-item">
+        <div class="size-label">SM - 14px</div>
+        <div class="size-text text-sm">Маленький текст</div>
+      </div>
+      <div class="size-item">
+        <div class="size-label">Base - 16px</div>
+        <div class="size-text text-base">Базовый текст</div>
+      </div>
+      <div class="size-item">
+        <div class="size-label">LG - 18px</div>
+        <div class="size-text text-lg">Большой текст</div>
+      </div>
+      <div class="size-item">
+        <div class="size-label">XL - 20px</div>
+        <div class="size-text text-xl">Очень большой текст</div>
+      </div>
+      <div class="size-item">
+        <div class="size-label">2XL - 24px</div>
+        <div class="size-text text-2xl">Заголовочный текст</div>
+      </div>
+      <div class="size-item">
+        <div class="size-label">3XL - 30px</div>
+        <div class="size-text text-3xl">Крупный заголовок</div>
+      </div>
+      <div class="size-item">
+        <div class="size-label">4XL - 36px</div>
+        <div class="size-text text-4xl">Очень крупный заголовок</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Components Demo -->
+  <div class="typography-section">
+    <h2>Компоненты</h2>
+    
+    <div class="component-demo">
+      <!-- Buttons -->
+      <div class="component-item">
+        <h3>Кнопки</h3>
+        <div class="btn-demo">
+          <button class="btn btn-primary">Основная кнопка</button>
+          <button class="btn btn-secondary">Вторичная кнопка</button>
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="component-item">
+        <h3>Карточки</h3>
+        <div class="card-demo">
+          <div class="card-image"></div>
+          <div class="card-content">
+            <h4 class="card-title">Название карточки</h4>
+            <p class="card-text">Описание карточки с основным текстом, который использует новую типографическую систему.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forms -->
+      <div class="component-item">
+        <h3>Формы</h3>
+        <div class="form-demo">
+          <div class="form-group">
+            <label class="form-label">Название поля</label>
+            <input type="text" class="form-control" placeholder="Введите текст">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Сообщение</label>
+            <textarea class="form-control" rows="3" placeholder="Введите сообщение"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accessibility Demo -->
+  <div class="typography-section">
+    <h2>Доступность</h2>
+    
+    <div class="accessibility-demo">
+      <h3>Высокий контраст</h3>
+      <p>Текст оптимизирован для чтения с высоким контрастом и поддержкой скрин-ридеров.</p>
+      <div class="demo-text">
+        <strong>Жирный текст</strong> и <em>курсив</em> обеспечивают визуальную иерархию.
+        <br>
+        <small>Мелкий текст</small> используется для дополнительной информации.
+      </div>
+    </div>
+  </div>
+
+  <!-- Colors Demo -->
+  <div class="typography-section">
+    <h2>Цветовая палитра</h2>
+    
+    <div class="color-demo">
+      <div class="color-item color-primary">
+        <div class="color-label">Primary</div>
+        <div class="color-text">#E76700</div>
+      </div>
+      <div class="color-item color-secondary">
+        <div class="color-label">Secondary</div>
+        <div class="color-text">#64748b</div>
+      </div>
+      <div class="color-item color-success">
+        <div class="color-label">Success</div>
+        <div class="color-text">#10b981</div>
+      </div>
+      <div class="color-item color-warning">
+        <div class="color-label">Warning</div>
+        <div class="color-text">#f59e0b</div>
+      </div>
+      <div class="color-item color-danger">
+        <div class="color-label">Danger</div>
+        <div class="color-text">#ef4444</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Special Effects -->
+  <div class="typography-section">
+    <h2>Специальные эффекты</h2>
+    
+    <div class="font-demo">
+      <h3 class="text-gradient">Градиентный текст</h3>
+      <p>Используйте класс <code>.text-gradient</code> для создания градиентного текста.</p>
+    </div>
+
+    <div class="font-demo">
+      <h3 class="text-shadow">Тень текста</h3>
+      <p>Класс <code>.text-shadow</code> добавляет мягкую тень к тексту для лучшей читаемости.</p>
+    </div>
+
+    <div class="font-demo">
+      <h3 class="text-shadow-lg">Большая тень текста</h3>
+      <p>Класс <code>.text-shadow-lg</code> создает более выраженную тень.</p>
+    </div>
+  </div>
+
+  <!-- Usage Instructions -->
+  <div class="typography-section">
+    <h2>Инструкции по использованию</h2>
+    
+    <div class="font-demo">
+      <h3>CSS переменные</h3>
+      <p>Используйте CSS переменные для быстрого изменения шрифтов:</p>
+      <pre class="font-mono" style="background: #f1f5f9; padding: 1rem; border-radius: 8px; overflow-x: auto;">
+font-family: var(--font-primary);    /* Inter */
+font-family: var(--font-secondary);  /* Poppins */
+font-family: var(--font-narrow);     /* Montserrat/Raleway/Oswald - Kargert Alternative */
+font-family: var(--font-condensed);  /* Roboto Condensed/Oswald */
+font-family: var(--font-display);    /* Orbitron/Exo 2/Rajdhani - Hero Headlines */
+font-family: var(--font-futuristic); /* Audiowide/Orbitron/Exo 2 */
+font-family: var(--font-ultra-narrow); /* Space Grotesk/Rajdhani/Oswald - Ultra Narrow */
+font-family: var(--font-mono-narrow);  /* Space Mono/JetBrains Mono/Fira Code */
+font-family: var(--font-accent);     /* Playfair Display */
+font-family: var(--font-mono);       /* SF Mono */
+      </pre>
+    </div>
+
+    <div class="font-demo">
+      <h3>Утилитарные классы</h3>
+      <p>Используйте готовые классы для быстрого применения стилей:</p>
+      <pre class="font-mono" style="background: #f1f5f9; padding: 1rem; border-radius: 8px; overflow-x: auto;">
+.font-primary .font-secondary .font-narrow .font-condensed .font-display .font-futuristic .font-ultra-narrow .font-mono-narrow .font-accent .font-mono
+.font-light .font-normal .font-medium .font-semibold .font-bold .font-extrabold
+.text-xs .text-sm .text-base .text-lg .text-xl .text-2xl .text-3xl .text-4xl
+.leading-tight .leading-normal .leading-relaxed
+.tracking-tight .tracking-normal .tracking-wide .tracking-ultra-wide .tracking-mega-wide
+.hero-headline .hero-headline-large .display-headline .ultra-narrow-headline .mono-narrow-headline
+      </pre>
+    </div>
+  </div>
+</div>
+{% endblock %}

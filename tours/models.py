@@ -46,6 +46,45 @@ class TourCategory(models.Model):
 
 
 
+class TourImage(models.Model):
+    """Изображения для тура"""
+    tour = models.ForeignKey(
+        "tours.Tour",
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name="Тур"
+    )
+    image = models.ImageField(
+        "Изображение",
+        upload_to="tours/gallery/",
+        help_text="Рекомендуемый размер: 1200x800px"
+    )
+    caption = models.CharField(
+        "Подпись",
+        max_length=200,
+        blank=True,
+        help_text="Необязательная подпись к изображению"
+    )
+    order = models.PositiveIntegerField(
+        "Порядок",
+        default=0,
+        help_text="Порядок отображения (меньше = выше)"
+    )
+    is_active = models.BooleanField("Активно", default=True)
+    created_at = models.DateTimeField("Создано", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Изображение тура"
+        verbose_name_plural = "Изображения туров"
+        ordering = ["order", "created_at"]
+        indexes = [
+            models.Index(fields=["tour", "order"], name="tour_image_order_idx"),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.tour.title} — {self.caption or 'Изображение'}"
+
+
 class Tour(models.Model):
     # Категории туров
     categories = models.ManyToManyField(
@@ -128,6 +167,12 @@ class Tour(models.Model):
     reviews_count = models.PositiveIntegerField("Кол-во отзывов", default=0)
     is_popular = models.BooleanField("Популярное", default=False)
     is_active = models.BooleanField("Показывать на сайте", default=True)
+    
+    # Дополнительная информация
+    included = models.TextField("Что включено", blank=True, help_text="Список того, что включено в тур")
+    excluded = models.TextField("Что не включено", blank=True, help_text="Список того, что не включено в тур")
+    note_price = models.TextField("Примечание к цене", blank=True, help_text="Дополнительная информация о ценах")
+    info = models.TextField("Полезная информация", blank=True, help_text="Важная информация для туристов")
 
     # Медиа
     cover = models.ImageField(

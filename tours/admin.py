@@ -15,7 +15,8 @@ class TourAdmin(admin.ModelAdmin):
     inlines = (TourImageInline,)
     fieldsets = (
         (None, {'fields': ('title','slug','categories','tags','short_desc','description','duration','location','youtube_url','cover')}),
-        ('Цены', {'fields': ('price_adult','price_child','price_extra','price_old_adult','price_old_child')}),
+        ('Цены', {'fields': ('price_adult','price_child','price_extra','price_old_adult','price_old_child','note_price')}),
+        ('Дополнительная информация', {'fields': ('included','excluded','info')}),
         ('SEO', {'fields': ('meta_title','meta_desc')}),
         ('Видимость', {'fields': ('is_active','is_popular','rating','reviews_count')}),
     )

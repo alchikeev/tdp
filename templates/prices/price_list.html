@@ -6,6 +6,7 @@
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
   <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/prices.css' %}">
 {% endblock %}
 
 {% block body_class %}has-inner-hero{% endblock %}
@@ -50,38 +51,206 @@
           </div>
         </div>
       {% endif %}
-      <h2>Экскурсии</h2>
-      <div class="row g-3 mb-4">
-        {% for t in tours %}
-          <div class="col-12 col-sm-6 col-xl-4">
-            <div class="t-card">
-              <div class="t-card__body">
-                <a class="t-card__title" href="{{ t.get_absolute_url }}">{{ t.title }}</a>
-                <div class="t-card__price mt-2">
-                  <strong class="t-price__new">{{ t.price_adult|floatformat:0|intcomma }}฿</strong>
-                </div>
-              </div>
-            </div>
+      <!-- Экскурсии -->
+      <div class="price-section mb-5">
+        <div class="price-section__header">
+          <h2 class="price-section__title">
+            <i class="fa fa-map-marker"></i>
+            Экскурсии
+          </h2>
+          <div class="price-section__count">{{ tours|length }} экскурсий</div>
+        </div>
+        
+        {% if tours %}
+          <div class="price-table-container">
+            <table class="price-table">
+              <thead>
+                <tr>
+                  <th class="price-table__name">Название экскурсии</th>
+                  <th class="price-table__location">Локация</th>
+                  <th class="price-table__duration">Длительность</th>
+                  <th class="price-table__price">Цена (взрослый)</th>
+                  <th class="price-table__price">Цена (детский)</th>
+                  <th class="price-table__actions">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in tours %}
+                  <tr class="price-table__row">
+                    <td class="price-table__name">
+                      <div class="price-item">
+                        {% if t.cover %}
+                          <img src="{{ t.cover.url }}" alt="{{ t.title }}" class="price-item__image">
+                        {% endif %}
+                        <div class="price-item__content">
+                          <a href="{{ t.get_absolute_url }}" class="price-item__title">{{ t.title }}</a>
+                          {% if t.short_desc %}
+                            <div class="price-item__desc">{{ t.short_desc|truncatechars:80 }}</div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </td>
+                    <td class="price-table__location" data-label="Локация">
+                      {% if t.location %}
+                        <span class="price-location">
+                          <i class="fa fa-map-marker"></i>
+                          {{ t.location }}
+                        </span>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
+                    </td>
+                    <td class="price-table__duration" data-label="Длительность">
+                      {% if t.duration %}
+                        <span class="price-duration">
+                          <i class="fa fa-clock-o"></i>
+                          {{ t.duration }}
+                        </span>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
+                    </td>
+                    <td class="price-table__price" data-label="Цена (взрослый)">
+                      <div class="price-value">
+                        {% if t.price_old_adult and t.price_old_adult > t.price_adult %}
+                          <div class="price-old">{{ t.price_old_adult|floatformat:0|intcomma }}฿</div>
+                        {% endif %}
+                        <div class="price-current">{{ t.price_adult|floatformat:0|intcomma }}฿</div>
+                      </div>
+                    </td>
+                    <td class="price-table__price" data-label="Цена (детский)">
+                      {% if t.price_child %}
+                        <div class="price-value">
+                          {% if t.price_old_child and t.price_old_child > t.price_child %}
+                            <div class="price-old">{{ t.price_old_child|floatformat:0|intcomma }}฿</div>
+                          {% endif %}
+                          <div class="price-current">{{ t.price_child|floatformat:0|intcomma }}฿</div>
+                        </div>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
+                    </td>
+                    <td class="price-table__actions" data-label="Действия">
+                      <div class="price-actions">
+                        <a href="{{ t.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                          <i class="fa fa-eye"></i> Подробнее
+                        </a>
+                        <button class="btn btn-sm btn-primary open-lead-modal"
+                                data-cta="Prices — {{ t.title }}"
+                                data-related_type="tour" 
+                                data-related_id="{{ t.id }}">
+                          <i class="fa fa-calendar"></i> Заказать
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
-        {% empty %}
-          <p>Пока нет туров.</p>
-        {% endfor %}
+        {% else %}
+          <div class="price-empty">
+            <i class="fa fa-map-marker"></i>
+            <h3>Пока нет экскурсий</h3>
+            <p>Скоро здесь появятся интересные экскурсии по Пхукету!</p>
+          </div>
+        {% endif %}
       </div>
 
-      <h2>Услуги</h2>
-      <div class="row g-3">
-        {% for s in services %}
-          <div class="col-12 col-sm-6 col-xl-4">
-            <div class="card h-100">
-              <div class="card-body">
-                <a href="{{ s.get_absolute_url }}" class="h5 d-block">{{ s.title }}</a>
-                <div class="small text-muted mt-2">Цена: {{ s.price_adult|floatformat:0 }} сом</div>
-              </div>
-            </div>
+      <!-- Услуги -->
+      <div class="price-section">
+        <div class="price-section__header">
+          <h2 class="price-section__title">
+            <i class="fa fa-cogs"></i>
+            Услуги
+          </h2>
+          <div class="price-section__count">{{ services|length }} услуг</div>
+        </div>
+        
+        {% if services %}
+          <div class="price-table-container">
+            <table class="price-table">
+              <thead>
+                <tr>
+                  <th class="price-table__name">Название услуги</th>
+                  <th class="price-table__location">Локация</th>
+                  <th class="price-table__price">Основная цена</th>
+                  <th class="price-table__price">Дополнительно</th>
+                  <th class="price-table__actions">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in services %}
+                  <tr class="price-table__row">
+                    <td class="price-table__name">
+                      <div class="price-item">
+                        {% if s.cover %}
+                          <img src="{{ s.cover.url }}" alt="{{ s.title }}" class="price-item__image">
+                        {% endif %}
+                        <div class="price-item__content">
+                          <a href="{{ s.get_absolute_url }}" class="price-item__title">{{ s.title }}</a>
+                          {% if s.short_desc %}
+                            <div class="price-item__desc">{{ s.short_desc|truncatechars:80 }}</div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </td>
+                    <td class="price-table__location" data-label="Локация">
+                      {% if s.location %}
+                        <span class="price-location">
+                          <i class="fa fa-map-marker"></i>
+                          {{ s.location }}
+                        </span>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
+                    </td>
+                    <td class="price-table__price" data-label="Основная цена">
+                      <div class="price-value">
+                        {% if s.price_old_adult and s.price_old_adult > s.price_adult %}
+                          <div class="price-old">{{ s.price_old_adult|floatformat:0|intcomma }}฿</div>
+                        {% endif %}
+                        <div class="price-current">{{ s.price_adult|floatformat:0|intcomma }}฿</div>
+                      </div>
+                    </td>
+                    <td class="price-table__price" data-label="Дополнительно">
+                      {% if s.price_child or s.price_extra %}
+                        <div class="price-value">
+                          {% if s.price_child %}
+                            <div class="price-current">{{ s.price_child|floatformat:0|intcomma }}฿</div>
+                          {% elif s.price_extra %}
+                            <div class="price-current">{{ s.price_extra|floatformat:0|intcomma }}฿</div>
+                          {% endif %}
+                        </div>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
+                    </td>
+                    <td class="price-table__actions" data-label="Действия">
+                      <div class="price-actions">
+                        <a href="{{ s.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                          <i class="fa fa-eye"></i> Подробнее
+                        </a>
+                        <button class="btn btn-sm btn-primary open-lead-modal"
+                                data-cta="Prices — {{ s.title }}"
+                                data-related_type="service" 
+                                data-related_id="{{ s.id }}">
+                          <i class="fa fa-calendar"></i> Заказать
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
-        {% empty %}
-          <p>Пока нет услуг.</p>
-        {% endfor %}
+        {% else %}
+          <div class="price-empty">
+            <i class="fa fa-cogs"></i>
+            <h3>Пока нет услуг</h3>
+            <p>Скоро здесь появятся полезные услуги для туристов!</p>
+          </div>
+        {% endif %}
       </div>
     </div>
 

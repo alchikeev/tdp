@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load tour_filters %}
 {% block title %}{{ post.title }} — Блог{% endblock %}
 {% block after_header %}<div class="header-spacer" aria-hidden="true"></div>{% endblock %}
 {% block extra_css %}
@@ -22,16 +23,74 @@
         </div>
     </div>
 </section>
-<div class="container my-5">
-  {% if post.cover %}
-    <img src="{{ post.cover.url }}" class="img-fluid mb-4" alt="{{ post.title }}">
-  {% endif %}
-  <div class="mb-4">{{ post.content|linebreaks }}</div>
-  {% if post.youtube_url %}
-    <div class="embed-responsive embed-responsive-16by9 mb-4">
-      <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ post.youtube_url|cut:'https://www.youtube.com/watch?v=' }}" allowfullscreen></iframe>
+<div class="container my-5" style="padding-top: 60px;">
+  <div class="row">
+    <div class="col-lg-8 col-xl-9">
+      {% if post.cover %}
+        <img src="{{ post.cover.url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+      {% endif %}
+      
+      <div class="blog-content mb-4">
+        {{ post.content|linebreaks }}
+      </div>
+      
+      {% if post.youtube_url and post.youtube_url|youtube_embed %}
+        <div class="video-container mb-4">
+          <iframe src="{{ post.youtube_url|youtube_embed }}" 
+                  frameborder="0" 
+                  allowfullscreen
+                  title="Видео: {{ post.title }}">
+          </iframe>
+        </div>
+      {% endif %}
+      
+      <div class="blog-navigation">
+        <a href="{% url 'blog:list' %}" class="btn btn-outline-secondary">
+          <i class="fa fa-arrow-left"></i> Назад к блогу
+        </a>
+      </div>
     </div>
-  {% endif %}
-  <a href="{% url 'blog:list' %}" class="btn btn-outline-secondary">← Назад к блогу</a>
+    
+    <aside class="col-lg-4 col-xl-3">
+      <div class="t-aside__box">
+        <div class="t-aside__title">
+          <i class="fa fa-calendar"></i>
+          Информация о статье
+        </div>
+        <div class="t-aside__content">
+          <div class="t-aside__item">
+            <i class="fa fa-calendar"></i>
+            <div>
+              <strong>Дата публикации</strong>
+              <span>{{ post.pub_date|date:"d.m.Y H:i" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="t-aside__box">
+        <div class="t-aside__title">
+          <i class="fa fa-phone"></i>
+          Нужна помощь?
+        </div>
+        <div class="t-aside__content">
+          <div class="t-contact-info">
+            <div class="t-contact-item">
+              <i class="fa fa-phone"></i>
+              <a href="tel:+66812345678">+66 81 234 5678</a>
+            </div>
+            <div class="t-contact-item">
+              <i class="fa fa-whatsapp"></i>
+              <a href="https://wa.me/66812345678" target="_blank">WhatsApp</a>
+            </div>
+            <div class="t-contact-item">
+              <i class="fa fa-envelope"></i>
+              <a href="mailto:info@phuket-tours.com">info@phuket-tours.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
 </div>
 {% endblock %}

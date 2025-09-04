@@ -28,6 +28,42 @@
   display:inline-flex; align-items:center; line-height:1;
   font-family:'Oswald',sans-serif; font-size:16px; font-weight:400;
   color:#fff; text-decoration:none; white-space:nowrap;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+
+.main_nav ul li a:hover{
+  transform: scale(1.05);
+  color: #E76700;
+  background: rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+}
+
+.main_nav ul li a::after{
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #E76700;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.main_nav ul li a:hover::after{
+  width: 80%;
+}
+
+.main_nav ul li.active a{
+  color: #E76700;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.main_nav ul li.active a::after{
+  width: 80%;
 }
 
 /* Правая панель: соцсети + кнопка */
@@ -39,9 +75,15 @@
   width:36px; height:36px; border-radius:50%;
   display:inline-flex; align-items:center; justify-content:center;
   border:1.5px solid #fff; color:#fff; text-decoration:none; opacity:.95;
-  transition:all .2s ease;
+  transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.socials .soc:hover{ transform:translateY(-1px); opacity:1; background:#fff; color:#111; }
+.socials .soc:hover{ 
+  transform: translateY(-2px) scale(1.1); 
+  opacity:1; 
+  background:#fff; 
+  color:#111;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+}
 
 /* Брендовые hover-цвета (по желанию) */
 .socials .tg:hover{ background:#229ED9; border-color:#229ED9; color:#fff; }
@@ -54,15 +96,40 @@
   height:40px; padding:0 18px; border-radius:8px;
   border:2px solid #E76700; color:#fff; text-decoration:none; font-weight:600;
   letter-spacing:.3px; text-transform:uppercase; font-size:13px;
-  background:#E76700; transition:all .2s ease;
+  background:#E76700; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
 }
 .order_btn:hover{
-  background:#fff; color:#E76700; transform:translateY(-1px);
+  background:#fff; color:#E76700; 
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(231, 103, 0, 0.3);
+  text-decoration: none;
+}
+.order_btn:active{
+  transform: translateY(-1px) scale(1.02);
 }
 
 /* Гамбургер: скрыть на десктопе */
-.hamburger{ display:none; }
-.hamburger i{ font-size:20px; color:rgba(255,255,255,.85); }
+.hamburger{ 
+  display:none; 
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+}
+.hamburger:hover{
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+.hamburger i{ 
+  font-size:20px; 
+  color:rgba(255,255,255,.85);
+  transition: all 0.3s ease;
+}
+.hamburger:hover i{
+  color: #E76700;
+}
 
 /* Сжатие при прокрутке */
 .header.scrolled .header_content_inner{ height:100%; }
@@ -146,6 +213,13 @@
   height: 22px;
   transform: rotate(45deg);
   cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.menu_close_container:hover{
+  background: rgba(231, 103, 0, 0.1);
+  transform: rotate(45deg) scale(1.1);
 }
 .menu_close{ width: 100%; height: 100%; }
 .menu_close div{
@@ -153,10 +227,13 @@
   left: 0; top: 10px;
   width: 100%; height: 2px;
   background: #333;
-  transition: background .2s ease;
+  transition: all 0.3s ease;
 }
 .menu_close div:last-of-type{ transform: rotate(90deg); }
-.menu_close_container:hover div{ background:#937c6f; }
+.menu_close_container:hover div{ 
+  background: #E76700;
+  box-shadow: 0 0 8px rgba(231, 103, 0, 0.3);
+}
 
 /* пункты */
 .menu_content{ padding: 20px; }
@@ -167,9 +244,44 @@
   font-weight: 500;
   font-family: 'Oswald', sans-serif;
   color:#111; text-decoration:none;
-  transition: color .2s ease;
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: block;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
 }
-.menu_content ul li a:hover{ color:#937c6f; }
+
+.menu_content ul li a:hover{ 
+  color: #E76700;
+  background: rgba(231, 103, 0, 0.1);
+  transform: translateX(8px);
+  text-decoration: none;
+}
+
+.menu_content ul li a::after{
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background: #E76700;
+  transition: all 0.3s ease;
+  transform: translateY(-50%);
+}
+
+.menu_content ul li a:hover::after{
+  width: 4px;
+}
+
+.menu_content ul li.active a{
+  color: #E76700;
+  background: rgba(231, 103, 0, 0.1);
+}
+
+.menu_content ul li.active a::after{
+  width: 4px;
+}
 
 /* низ панели */
 .menu_social{

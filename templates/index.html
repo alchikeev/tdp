@@ -59,30 +59,63 @@
   <!-- Tours grid on homepage -->
   <section class="container my-5">
     <div class="row">
-      <div class="col-12 mb-3">
-        <h2>Популярные туры</h2>
+      
+      <!-- Categories -->
+      <div class="col-12 mb-4">
+        <div class="home-categories">
+          <button class="home-category-btn active" onclick="showAllTours()">
+            Все туры
+            <span class="category-count">({{ total_tours_count }})</span>
+          </button>
+          {% for category in parent_categories %}
+            <button class="home-category-btn" 
+                    data-category-id="{{ category.id }}"
+                    onclick="toggleSubcategories({{ category.id }})">
+              {{ category.name }}
+              <span class="category-count">({{ category.tours_count }})</span>
+            </button>
+          {% endfor %}
+        </div>
+        
+        <!-- Subcategories (hidden by default) -->
+        <div class="home-subcategories" id="subcategories-container" style="display: none;">
+          <div class="subcategories-content"></div>
+        </div>
       </div>
-      {% for t in tours %}
-        <div class="col-md-4 mb-4">
-          <a href="{{ t.get_absolute_url }}" class="card h-100 text-decoration-none">
-            {% if t.cover %}
-              <img src="{{ t.cover.url }}" class="card-img-top" alt="{{ t.title }}">
-            {% endif %}
-            <div class="card-body">
-              <h5 class="card-title">{{ t.title }}</h5>
-              {% if t.short_desc %}
-                <p class="card-text">{{ t.short_desc|truncatechars:120 }}</p>
-              {% endif %}
-              <div class="small text-muted">
-                Взрослые: {{ t.price_adult|floatformat:0 }} сом
-                {% if t.price_child %} · Дети: {{ t.price_child|floatformat:0 }} сом{% endif %}
+      
+      <!-- Tours Grid -->
+      <div class="col-12">
+        <div class="tours-grid">
+          {% for t in tours %}
+            <div class="tour-card-wrapper">
+              <div class="home-tour-card" 
+                   style="background-image: url({% if t.cover %}{{ t.cover.url }}{% else %}{% static 'images/travello.jpg' %}{% endif %});"
+                   onclick="location.href='{{ t.get_absolute_url }}'">
+                
+                <!-- Top badges and rating -->
+                <div class="home-tour-card__top">
+                  {% if t.is_popular %}<span class="home-tour-badge home-tour-badge--hit">Хит</span>{% endif %}
+                  {% if t.has_discount %}<span class="home-tour-badge home-tour-badge--discount">Скидка</span>{% endif %}
+                  <div class="home-tour-rating">
+                    <i class="fa fa-star"></i>
+                    <span>{{ t.rating|default:"4.5" }}</span>
+                  </div>
+                </div>
+
+                <!-- Bottom content -->
+                <div class="home-tour-card__bottom">
+                  <h3 class="home-tour-title">{{ t.title|upper }}</h3>
+                  <div class="home-tour-meta">
+                    {% if t.location %}<span class="home-tour-location">{{ t.location }}</span>{% endif %}
+                  </div>
+                </div>
               </div>
             </div>
-          </a>
+          {% empty %}
+            <div class="no-tours"><p>Пока нет туров.</p></div>
+          {% endfor %}
         </div>
-      {% empty %}
-        <div class="col-12"><p>Пока нет туров.</p></div>
-      {% endfor %}
+      </div>
     </div>
   </section>
 
@@ -98,18 +131,23 @@
       </div>
       {% for s in services %}
         <div class="col-md-4 mb-4">
-          <a href="{{ s.get_absolute_url }}" class="card h-100 text-decoration-none">
-            {% if s.cover %}
-              <img src="{{ s.cover.url }}" class="card-img-top" alt="{{ s.title }}">
-            {% endif %}
-            <div class="card-body">
-              <h5 class="card-title">{{ s.title }}</h5>
-              {% if s.short_desc %}
-                <p class="card-text">{{ s.short_desc|truncatechars:120 }}</p>
-              {% endif %}
-              <div class="small text-muted">Цена: {{ s.price_adult|floatformat:0 }} сом</div>
+          <div class="home-tour-card" 
+               style="background-image: url({% if s.cover %}{{ s.cover.url }}{% else %}{% static 'images/travello.jpg' %}{% endif %});"
+               onclick="location.href='{{ s.get_absolute_url }}'">
+            
+            <!-- Top badges -->
+            <div class="home-tour-card__top">
+              <div class="home-tour-badge home-tour-badge--service">Услуга</div>
             </div>
-          </a>
+
+            <!-- Bottom content -->
+            <div class="home-tour-card__bottom">
+              <h3 class="home-tour-title">{{ s.title|upper }}</h3>
+              <div class="home-tour-meta">
+                <span class="home-tour-location">Цена: {{ s.price_adult|floatformat:0 }} сом</span>
+              </div>
+            </div>
+          </div>
         </div>
       {% empty %}
         <div class="col-12"><p>Пока нет услуг.</p></div>
@@ -516,5 +554,114 @@
     })();
   </script>
   <script src="{% static 'js/how-it-works.js' %}"></script>
+  
+  <!-- Categories functionality -->
+  <script>
+    function toggleSubcategories(categoryId) {
+      const container = document.getElementById('subcategories-container');
+      const content = container.querySelector('.subcategories-content');
+      const btn = document.querySelector(`[data-category-id="${categoryId}"]`);
+      
+      // Toggle active state
+      document.querySelectorAll('.home-category-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Filter tours by category
+      filterToursByCategory(categoryId);
+      
+      // Show/hide subcategories
+      if (container.style.display === 'none') {
+        // Load subcategories via AJAX
+        fetch(`/api/categories/${categoryId}/subcategories/`)
+          .then(response => response.json())
+          .then(data => {
+            content.innerHTML = data.html;
+            container.style.display = 'block';
+          })
+          .catch(error => {
+            console.error('Error loading subcategories:', error);
+          });
+      } else {
+        container.style.display = 'none';
+        btn.classList.remove('active');
+        // Show all tours when hiding subcategories
+        showAllTours();
+      }
+    }
+    
+    function filterToursByCategory(categoryId) {
+      // Load filtered tours via AJAX
+      fetch(`/api/categories/${categoryId}/tours/`)
+        .then(response => response.json())
+        .then(data => {
+          updateToursGrid(data.tours);
+        })
+        .catch(error => {
+          console.error('Error loading tours:', error);
+        });
+    }
+    
+    function showAllTours() {
+      // Set active state
+      document.querySelectorAll('.home-category-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.home-category-btn[onclick="showAllTours()"]').classList.add('active');
+      
+      // Hide subcategories
+      const container = document.getElementById('subcategories-container');
+      container.style.display = 'none';
+      
+      // Load all tours via AJAX
+      fetch('/api/tours/all/')
+        .then(response => response.json())
+        .then(data => {
+          updateToursGrid(data.tours);
+        })
+        .catch(error => {
+          console.error('Error loading all tours:', error);
+        });
+    }
+    
+    function updateToursGrid(tours) {
+      const toursContainer = document.querySelector('.tours-grid');
+      if (!toursContainer) return;
+      
+      toursContainer.innerHTML = '';
+      
+      tours.forEach(tour => {
+        const tourCard = createTourCard(tour);
+        toursContainer.appendChild(tourCard);
+      });
+    }
+    
+    function createTourCard(tour) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'tour-card-wrapper';
+      
+      const card = document.createElement('div');
+      card.className = 'home-tour-card';
+      card.style.backgroundImage = `url(${tour.cover || '/static/images/travello.jpg'})`;
+      card.onclick = () => window.location.href = tour.url;
+      
+      card.innerHTML = `
+        <div class="home-tour-card__top">
+          ${tour.is_popular ? '<span class="home-tour-badge home-tour-badge--hit">Хит</span>' : ''}
+          ${tour.has_discount ? '<span class="home-tour-badge home-tour-badge--discount">Скидка</span>' : ''}
+          <div class="home-tour-rating">
+            <i class="fa fa-star"></i>
+            <span>${tour.rating || '4.5'}</span>
+          </div>
+        </div>
+        <div class="home-tour-card__bottom">
+          <h3 class="home-tour-title">${tour.title.toUpperCase()}</h3>
+          <div class="home-tour-meta">
+            ${tour.location ? `<span class="home-tour-location">${tour.location}</span>` : ''}
+          </div>
+        </div>
+      `;
+      
+      wrapper.appendChild(card);
+      return wrapper;
+    }
+  </script>
 {% endblock %}
 

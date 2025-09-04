@@ -18,11 +18,12 @@
 		<!-- ЦЕНТР (МЕНЮ) -->
 		<nav class="main_nav">
 		<ul>
-			<li class="active"><a href="/">Главная</a></li>
-			<li><a href="{% url 'tours:list' %}">Экскурсии</a></li>
-			<li><a href="{% url 'services:list' %}">Услуги</a></li>
-      <li><a href="{% url 'prices:list' %}">Цены</a></li>
-			<li><a href="{% url 'reviews:list' %}">Отзывы</a></li>
+			<li{% if active_page == 'home' %} class="active"{% endif %}><a href="/">Главная</a></li>
+			<li{% if active_page == 'tours' %} class="active"{% endif %}><a href="{% url 'tours:list' %}">Экскурсии</a></li>
+			<li{% if active_page == 'services' %} class="active"{% endif %}><a href="{% url 'services:list' %}">Услуги</a></li>
+      <li{% if active_page == 'prices' %} class="active"{% endif %}><a href="{% url 'prices:list' %}">Цены</a></li>
+			<li{% if active_page == 'blog' %} class="active"{% endif %}><a href="{% url 'blog:list' %}">Блог</a></li>
+			<li{% if active_page == 'reviews' %} class="active"{% endif %}><a href="{% url 'reviews:list' %}">Отзывы</a></li>
 		</ul>
 		</nav>
 
@@ -74,11 +75,12 @@
 
   <div class="menu_content">
     <ul>
-      <li class="active"><a href="/">Главная</a></li>
-      <li><a href="{% url 'tours:list' %}">Экскурсии</a></li>
-      <li><a href="{% url 'services:list' %}">Услуги</a></li>
-  <li><a href="{% url 'prices:list' %}">Цены</a></li>
-      <li><a href="{% url 'reviews:list' %}">Отзывы</a></li>
+      <li{% if active_page == 'home' %} class="active"{% endif %}><a href="/">Главная</a></li>
+      <li{% if active_page == 'tours' %} class="active"{% endif %}><a href="{% url 'tours:list' %}">Экскурсии</a></li>
+      <li{% if active_page == 'services' %} class="active"{% endif %}><a href="{% url 'services:list' %}">Услуги</a></li>
+      <li{% if active_page == 'prices' %} class="active"{% endif %}><a href="{% url 'prices:list' %}">Цены</a></li>
+      <li{% if active_page == 'blog' %} class="active"{% endif %}><a href="{% url 'blog:list' %}">Блог</a></li>
+      <li{% if active_page == 'reviews' %} class="active"{% endif %}><a href="{% url 'reviews:list' %}">Отзывы</a></li>
     </ul>
   </div>
 
