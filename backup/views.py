@@ -310,12 +310,19 @@ def backup_restore(request):
                 # 6) media/*
                 media_src = tmp_p / "media"
                 if media_src.exists():
+                    # Убеждаемся, что MEDIA_ROOT существует и доступен для записи
+                    MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+                    
                     for root, dirs, files in os.walk(media_src):
                         for f in files:
                             src = Path(root) / f
                             rel = src.relative_to(media_src)
                             dst = MEDIA_ROOT / rel
+                            
+                            # Создаем директорию с правами на запись
                             dst.parent.mkdir(parents=True, exist_ok=True)
+                            
+                            # Копируем файл
                             shutil.copy2(src, dst)
                             report["files"].append(str(rel))
 
@@ -326,7 +333,10 @@ def backup_restore(request):
         messages.error(request, f"Ошибка восстановления: {e}")
         return redirect(reverse("admin:backup_backup_changelist"))
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
         messages.error(request, f"Непредвиденная ошибка восстановления: {e}")
+        print(f"Ошибка восстановления: {error_details}")  # Для отладки
         return redirect(reverse("admin:backup_backup_changelist"))
 
     imp = report["imported"]

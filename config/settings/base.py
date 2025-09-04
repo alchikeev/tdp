@@ -80,8 +80,8 @@ DATABASES = {
 # статика/медиа
 STATIC_URL = env('STATIC_URL', default='/static/')
 MEDIA_URL  = env('MEDIA_URL',  default='/media/')
-STATIC_ROOT = env('STATIC_ROOT', default='/app/static')
-MEDIA_ROOT  = env('MEDIA_ROOT',  default='/app/media')
+STATIC_ROOT = env('STATIC_ROOT', default=BASE_DIR / 'staticfiles')
+MEDIA_ROOT  = env('MEDIA_ROOT',  default=BASE_DIR / 'media')
 # Папка с общими статическими файлами проекта (CSS, JS, изображения и т.д.)
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
