@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     environment:
-      DJANGO_SETTINGS_MODULE: config.settings.prod
+      - DJANGO_SETTINGS_MODULE=config.settings.prod
     working_dir: /app
     volumes:
       - tdp_static_data:/app/staticfiles

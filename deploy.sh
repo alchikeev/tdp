@@ -47,11 +47,11 @@ docker compose build --no-cache
 
 # Применяем миграции
 echo "🗄️ Применяем миграции базы данных..."
-docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py migrate
+docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py migrate
 
 # Собираем статику
 echo "📦 Собираем статические файлы..."
-docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod web python manage.py collectstatic --noinput
+docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py collectstatic --noinput
 
 # Запускаем контейнер
 echo "🐳 Запускаем контейнер..."
@@ -74,4 +74,4 @@ docker image prune -f
 echo "✅ Деплой завершен!"
 echo "🌐 Приложение доступно по адресу: https://thaidreamphuket.com"
 echo "📊 Проверить статус: docker compose ps"
-echo "📋 Логи: docker compose logs -f web"
+echo "📋 Логи: docker compose logs -f tdp-web"
