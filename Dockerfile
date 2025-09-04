@@ -7,8 +7,8 @@ RUN apt-get update \
         wget \
         && rm -rf /var/lib/apt/lists/*
 
-# Создаем непривилегированного пользователя
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+# Создаем непривилегированного пользователя с фиксированным UID/GID
+RUN groupadd -r -g 1000 appuser && useradd -r -u 1000 -g appuser appuser
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -28,6 +28,9 @@ RUN chown -R appuser:appuser /app
 
 # Переключаемся на непривилегированного пользователя
 USER appuser
+
+# Устанавливаем права на запись для директории приложения
+RUN chmod -R 755 /app
 
 # Экспонируем порт
 EXPOSE 8000

@@ -13,6 +13,7 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.prod
     working_dir: /app
+    user: "1000:1000"
     volumes:
       - tdp_static_data:/app/staticfiles
       - tdp_media_data:/app/media
