@@ -1,46 +1,52 @@
-# Исправление проблемы с базой данных
+# Исправление проблем с базой данных
 
-## Проблема
-Ошибка `attempt to write a readonly database` возникает из-за неправильных прав доступа к базе данных SQLite.
+## Проблемы
+1. `attempt to write a readonly database` - неправильные права доступа к БД
+2. `no such table: tours_tour` - не применены миграции
 
-## Решение
+## Быстрое решение
 
-### 1. Остановите контейнер
+### Автоматическое исправление
+```bash
+# Запустите скрипт исправления
+./fix-database.sh
+```
+
+### Ручное исправление
+
+#### 1. Остановите контейнер
 ```bash
 docker compose down
 ```
 
-### 2. Создайте необходимые volumes
+#### 2. Удалите старую базу данных
 ```bash
-docker volume create tdp_static_data
-docker volume create tdp_media_data
+docker volume rm tdp_data
+```
+
+#### 3. Создайте новую базу данных
+```bash
 docker volume create tdp_data
 ```
 
-### 3. Запустите обновленный скрипт деплоя
+#### 4. Запустите контейнер
 ```bash
-./deploy.sh
+docker compose up -d
 ```
 
-## Альтернативное решение (если проблема остается)
-
-### 1. Создайте директорию для данных
+#### 5. Примените миграции
 ```bash
-mkdir -p /srv/tdp/data
-chmod 777 /srv/tdp/data
+docker compose exec web python manage.py migrate --run-syncdb
 ```
 
-### 2. Обновите compose.yml для использования bind mount
-```yaml
-volumes:
-  - tdp_static_data:/app/staticfiles
-  - tdp_media_data:/app/media
-  - ./data:/app/data
+#### 6. Создайте суперпользователя
+```bash
+docker compose exec web python manage.py createsuperuser
 ```
 
-### 3. Запустите деплой
+#### 7. Соберите статику
 ```bash
-./deploy.sh
+docker compose exec web python manage.py collectstatic --noinput
 ```
 
 ## Проверка
@@ -48,3 +54,5 @@ volumes:
 - Статус: `docker compose ps`
 - Логи: `docker compose logs -f web`
 - База данных: `docker compose exec web ls -la /app/data/`
+- Сайт: https://thaidreamphuket.com
+- Админка: https://thaidreamphuket.com/admin
