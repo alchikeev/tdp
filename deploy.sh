@@ -41,9 +41,18 @@ docker volume create tdp_static_data
 docker volume create tdp_media_data
 docker volume create tdp_data
 
-# Очищаем кэш Docker Compose
+# Очищаем кэш Docker Compose и удаляем override файлы
 echo "🧹 Очищаем кэш Docker Compose..."
 docker compose config > /dev/null 2>&1 || true
+
+# Удаляем возможные override файлы
+echo "🧹 Удаляем override файлы..."
+rm -f docker-compose.override.yml 2>/dev/null || true
+rm -f .docker-compose.override.yml 2>/dev/null || true
+
+# Очищаем кэш Docker Compose полностью
+echo "🧹 Очищаем кэш Docker Compose полностью..."
+docker compose down --remove-orphans 2>/dev/null || true
 
 # Собираем новый образ
 echo "🔨 Собираем Docker образ..."
