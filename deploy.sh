@@ -41,6 +41,12 @@ docker volume create tdp_static_data
 docker volume create tdp_media_data
 docker volume create tdp_data
 
+# Устанавливаем правильные права доступа для volumes
+echo "🔧 Устанавливаем права доступа для volumes..."
+docker run --rm -v tdp_static_data:/data alpine chown -R 1000:1000 /data
+docker run --rm -v tdp_media_data:/data alpine chown -R 1000:1000 /data
+docker run --rm -v tdp_data:/data alpine chown -R 1000:1000 /data
+
 # Очищаем кэш Docker Compose и удаляем override файлы
 echo "🧹 Очищаем кэш Docker Compose..."
 docker compose config > /dev/null 2>&1 || true
@@ -74,14 +80,15 @@ docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web p
 echo "🐳 Запускаем контейнер..."
 docker compose up -d
 
-# Проверяем, что запустился только один контейнер
+# Проверяем, что запустился контейнер
 echo "📊 Проверяем запущенные контейнеры..."
-CONTAINER_COUNT=$(docker ps --filter "name=tdp" --format "{{.Names}}" | wc -l)
-if [ "$CONTAINER_COUNT" -gt 1 ]; then
-    echo "⚠️  Внимание: Запущено $CONTAINER_COUNT контейнеров с именем tdp"
-    docker ps --filter "name=tdp" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+CONTAINER_COUNT=$(docker ps --filter "name=tdp-web" --format "{{.Names}}" | wc -l)
+if [ "$CONTAINER_COUNT" -eq 1 ]; then
+    echo "✅ Запущен контейнер:"
+    docker ps --filter "name=tdp-web" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 else
-    echo "✅ Запущен 1 контейнер: $(docker ps --filter "name=tdp" --format "{{.Names}}")"
+    echo "⚠️  Внимание: Запущено $CONTAINER_COUNT контейнеров с именем tdp-web (ожидается 1)"
+    docker ps --filter "name=tdp" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 fi
 
 # Очищаем старые образы

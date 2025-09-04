@@ -28,12 +28,12 @@ services:
 
 volumes:
   tdp_static_data:
-    external: true
+    driver: local
   tdp_media_data:
-    external: true
+    driver: local
   tdp_data:
-    external: true
+    driver: local
 
 networks:
   web:
-    external: true
+    driver: bridge
