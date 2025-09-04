@@ -25,30 +25,30 @@
 
 ```bash
 # Собрать статику
-docker-compose run --rm tdp python manage.py collectstatic --noinput
+docker compose run --rm web python manage.py collectstatic --noinput
 
 # Применить миграции
-docker-compose run --rm tdp python manage.py migrate
+docker compose run --rm web python manage.py migrate
 
 # Запустить контейнер
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Проверка
 
-- Статус: `docker-compose ps`
-- Логи: `docker-compose logs -f web`
+- Статус: `docker compose ps`
+- Логи: `docker compose logs -f web`
 - Health check: `curl http://localhost:8000/health/`
 
 ## Обновление
 
 ```bash
 # Остановить контейнер
-docker-compose down
+docker compose down
 
 # Обновить код
 git pull
 
 # Пересобрать и запустить
-docker-compose up -d --build
+docker compose up -d --build
 ```
