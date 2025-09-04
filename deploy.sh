@@ -41,9 +41,17 @@ docker volume create tdp_static_data
 docker volume create tdp_media_data
 docker volume create tdp_data
 
+# Очищаем кэш Docker Compose
+echo "🧹 Очищаем кэш Docker Compose..."
+docker compose config > /dev/null 2>&1 || true
+
 # Собираем новый образ
 echo "🔨 Собираем Docker образ..."
 docker compose build --no-cache
+
+# Проверяем конфигурацию и доступные сервисы
+echo "📋 Проверяем конфигурацию Docker Compose..."
+docker compose config --services
 
 # Применяем миграции
 echo "🗄️ Применяем миграции базы данных..."
