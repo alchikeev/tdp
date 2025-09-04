@@ -47,5 +47,7 @@ pnpm-lock.yaml
 # Mac
 __MACOSX/
 
-# Caddy
+# Caddy / Proxy
 Caddyfile
+docker-compose.caddy.yml
+caddy/

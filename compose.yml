@@ -1,28 +1,28 @@
-# compose.yml
+# compose.yml - Продакшн конфигурация для VPS
+name: tdp
+
 services:
   web:
-    image: ghcr.io/alchikeev/tdp:latest   # при необходимости замени на build: .
+    # Для продакшена используем сборку из локального кода
+    build: .
+    # Для использования готового образа раскомментируйте:
+    # image: ghcr.io/adilet/tdp:latest
     container_name: thaidream-web
     env_file:
       - .env
+    working_dir: /app
     volumes:
-      - tdp_static_data:/app/static
+      - tdp_static_data:/app/staticfiles
       - tdp_media_data:/app/media
+      - ./data:/app/data
     networks: [web]
     restart: unless-stopped
     healthcheck:
-      # Если есть эндпоинт /health — используем его:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8000/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/health/ || exit 1"]
       interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-    # Если образ уже запускает gunicorn, команду можно не задавать.
-    # Если нет — раскомментируй команду ниже и подставь правильный wsgi-модуль:
-    # command: >
-    #   sh -c "python manage.py migrate &&
-    #          python manage.py collectstatic --noinput &&
-    #          gunicorn core.wsgi:application -b 0.0.0.0:8000 -w 3"
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   tdp_static_data:
