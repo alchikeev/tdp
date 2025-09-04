@@ -1,13 +1,9 @@
-# compose.yml - Продакшн конфигурация для VPS
+# compose.yml
 name: tdp
 
 services:
-  web:
-    # Для продакшена используем сборку из локального кода
+  tdp-web:
     build: .
-    # Для использования готового образа раскомментируйте:
-    # image: ghcr.io/adilet/tdp:latest
-    container_name: tdp-web
     env_file:
       - .env
     environment:
@@ -25,15 +21,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-volumes:
-  tdp_static_data:
-    external: true
-  tdp_media_data:
-    external: true
-  tdp_data:
-    external: true
-
-networks:
-  web:
-    external: true
