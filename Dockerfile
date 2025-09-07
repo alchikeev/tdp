@@ -23,6 +23,9 @@ COPY . .
 # Создаем необходимые директории
 RUN mkdir -p /app/staticfiles /app/media /app/data
 
+# Убеждаемся что папка static существует
+RUN mkdir -p /app/static
+
 # Устанавливаем права доступа
 RUN chown -R appuser:appuser /app
 
@@ -37,7 +40,7 @@ EXPOSE 8000
 
 # Добавляем healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD wget -qO- http://localhost:8000/health/ || exit 1
+  CMD wget -qO- http://localhost:8000/health/ || exit 1
 
 # Запускаем приложение через gunicorn
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "--keep-alive", "5", "--max-requests", "1000", "--max-requests-jitter", "100", "--access-logfile", "-", "--error-logfile", "-"]

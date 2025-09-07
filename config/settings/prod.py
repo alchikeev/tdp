@@ -25,8 +25,10 @@ STATIC_ROOT = env('STATIC_ROOT', default=BASE_DIR / "staticfiles")
 MEDIA_URL = env('MEDIA_URL', default='/media/')
 MEDIA_ROOT = env('MEDIA_ROOT', default=BASE_DIR / "media")
 
-# Убираем STATICFILES_DIRS для продакшена, так как статика собирается в STATIC_ROOT
-STATICFILES_DIRS = []
+# Статические файлы проекта
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Настройки для раздачи статики в продакшене
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
