@@ -51,3 +51,4 @@ __MACOSX/
 Caddyfile
 docker-compose.caddy.yml
 caddy/
+.env.bak.*
