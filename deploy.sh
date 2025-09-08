@@ -92,11 +92,50 @@ docker compose config --services
 
 # Применяем миграции
 echo "🗄️ Применяем миграции базы данных..."
-docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py migrate
+
+# Проверяем, существует ли база данных
+echo "🔍 Проверяем наличие базы данных..."
+if [ ! -f "/srv/tdp-data/data/db.sqlite3" ]; then
+    echo "📝 База данных не найдена, создаем новую..."
+    # Создаем пустую базу данных
+    docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py migrate --run-syncdb
+else
+    echo "✅ База данных найдена, применяем миграции..."
+    docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py migrate
+fi
 
 # Собираем статику
 echo "📦 Собираем статические файлы..."
 docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py collectstatic --noinput
+
+# Проверяем, что база данных создалась успешно
+echo "🔍 Проверяем создание базы данных..."
+if [ -f "/srv/tdp-data/data/db.sqlite3" ] && [ -s "/srv/tdp-data/data/db.sqlite3" ]; then
+    echo "✅ База данных создана успешно"
+    
+    # Проверяем, есть ли таблицы в базе данных
+    TABLE_COUNT=$(docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python -c "
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
+import django
+django.setup()
+from django.db import connection
+with connection.cursor() as cursor:
+    cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table';\")
+    tables = cursor.fetchall()
+    print(len(tables))
+" 2>/dev/null || echo "0")
+    
+    if [ "$TABLE_COUNT" -gt 0 ]; then
+        echo "✅ В базе данных найдено $TABLE_COUNT таблиц"
+    else
+        echo "⚠️  База данных пуста, рекомендуется создать суперпользователя:"
+        echo "   docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py createsuperuser"
+    fi
+else
+    echo "❌ Ошибка: База данных не была создана"
+    exit 1
+fi
 
 # Запускаем контейнер
 echo "🐳 Запускаем контейнер..."
