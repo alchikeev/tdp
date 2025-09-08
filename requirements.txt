@@ -6,3 +6,4 @@ django-taggit==5.0.1
 sqlparse==0.5.1
 asgiref==3.8.1
 gunicorn==23.0.0
+python-dotenv==1.0.0

@@ -1,42 +1,56 @@
-# config/settings/prod.py
-from .base import *
+import os
+from pathlib import Path
 
-# Используем переменные окружения для продакшена
-DEBUG = env.bool('DEBUG', default=False)
-SECRET_KEY = env('SECRET_KEY', default='unsafe-dev-key-change-in-production')
+# Настройки для продакшена
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Домены для продакшена из переменных окружения
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['thaidreamphuket.com', 'www.thaidreamphuket.com'])
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['https://thaidreamphuket.com', 'https://www.thaidreamphuket.com'])
+DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'unsafe-dev-key-change-in-production')
+
+# Домены для продакшена
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'thaidreamphuket.com,www.thaidreamphuket.com').split(',')
+CSRF_TRUSTED_ORIGINS = [f'https://{host}' for host in ALLOWED_HOSTS]
 
 # cookies по https
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# если весь сайт только по https и у тебя Caddy/Nginx с TLS:
-SECURE_SSL_REDIRECT = True
+# Временно отключаем принудительное перенаправление на HTTPS
+SECURE_SSL_REDIRECT = False
 SECURE_HSTS_SECONDS = 31536000  # 1 год
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# Статика и медиа для продакшена из переменных окружения
-STATIC_URL = env('STATIC_URL', default='/static/')
-STATIC_ROOT = env('STATIC_ROOT', default='/app/staticfiles')
-MEDIA_URL = env('MEDIA_URL', default='/media/')
-MEDIA_ROOT = env('MEDIA_ROOT', default='/app/media')
+# Статика и медиа для продакшена
+STATIC_URL = '/static/'
+STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT', '/app/staticfiles')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT', '/app/media')
 
 # Статические файлы проекта
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Настройки для раздачи статики в продакшене
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+# Django apps
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    # твои приложения:
+    'core', 'tours', 'services', 'reviews', 'prices', 'backup',
+    # новые приложения
+    'news',
+    'blog',
+]
 
-# Добавляем whitenoise для раздачи статики в продакшене
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Добавляем whitenoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -45,24 +59,43 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# База данных для продакшена из переменных окружения
+ROOT_URLCONF = 'config.urls'
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "core.context_processors.site_settings",
+                "core.context_processors.active_page",
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'config.wsgi.application'
+
+# База данных для продакшена
 DATABASES = {
-    'default': env.db(
-        'DATABASE_URL',
-        default="sqlite:////app/data/db.sqlite3"
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.getenv('DJANGO_DB_NAME', '/data/db.sqlite3'),
+    }
 }
 
 # Создаем директорию для базы данных если её нет
-import os
 try:
-    os.makedirs('/app/data', exist_ok=True)
+    os.makedirs(os.path.dirname(DATABASES['default']['NAME']), exist_ok=True)
 except OSError:
-    # Игнорируем ошибки создания папки (например, в тестах)
     pass
 
-# Логирование для продакшена из переменных окружения
-LOG_LEVEL = env('LOG_LEVEL', default='INFO')
+# Логирование для продакшена
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -79,13 +112,20 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': LOG_LEVEL,
+        'level': 'INFO',
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': LOG_LEVEL,
+            'level': 'INFO',
             'propagate': False,
         },
     },
 }
+
+# Остальные настройки
+LANGUAGE_CODE = 'ru'
+TIME_ZONE = 'Asia/Bishkek'
+USE_I18N = True
+USE_TZ = True
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

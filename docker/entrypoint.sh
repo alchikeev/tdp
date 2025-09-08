@@ -2,19 +2,22 @@
 set -e
 
 # Создаем директории для статики и медиа из переменных окружения
-STATIC_ROOT=${DJANGO_STATIC_ROOT:-/app/static_collected}
+STATIC_ROOT=${DJANGO_STATIC_ROOT:-/app/staticfiles}
 MEDIA_ROOT=${DJANGO_MEDIA_ROOT:-/app/media}
 
 echo "Creating directories: $STATIC_ROOT, $MEDIA_ROOT"
 mkdir -p "$STATIC_ROOT" "$MEDIA_ROOT"
 
-# Устанавливаем права на директории
+# Устанавливаем права на директории (только если это не смонтированные папки)
 echo "Setting ownership to appuser:appuser"
-chown -R appuser:appuser "$STATIC_ROOT" "$MEDIA_ROOT"
+if [[ "$STATIC_ROOT" != /app/staticfiles ]] && [[ "$MEDIA_ROOT" != /app/media ]]; then
+    chown -R appuser:appuser "$STATIC_ROOT" "$MEDIA_ROOT"
+else
+    echo "Skipping chown for mounted directories: $STATIC_ROOT, $MEDIA_ROOT"
+fi
 
-# Выполняем миграции
-echo "Running migrations..."
-python manage.py migrate --noinput
+# Пропускаем миграции для диагностики
+echo "Skipping migrations for debugging..."
 
 # Собираем статику
 echo "Collecting static files..."

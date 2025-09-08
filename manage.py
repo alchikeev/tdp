@@ -3,19 +3,21 @@
 import os
 import sys
 from pathlib import Path
-import environ
+from dotenv import load_dotenv
 
 
 def main():
     """Run administrative tasks."""
     # Загружаем переменные окружения из .env
     BASE_DIR = Path(__file__).resolve().parent
-    env = environ.Env()
-    environ.Env.read_env(BASE_DIR / '.env')
+    DJANGO_ENV = os.environ.get('DJANGO_ENV', 'dev')
+    env_file = '.env.dev' if DJANGO_ENV == 'dev' else '.env.prod'
+    load_dotenv(dotenv_path=BASE_DIR / env_file)
+    
     # Выбираем модуль настроек из переменной окружения или по умолчанию dev
     os.environ.setdefault(
         'DJANGO_SETTINGS_MODULE',
-        env('DJANGO_SETTINGS_MODULE', default='config.settings.dev')
+        'config.settings.dev' if DJANGO_ENV == 'dev' else 'config.settings.prod'
     )
     try:
         from django.core.management import execute_from_command_line
