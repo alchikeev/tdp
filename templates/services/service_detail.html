@@ -414,15 +414,15 @@
               <div class="t-contact-info">
                 <div class="t-contact-item">
                   <i class="fa fa-phone"></i>
-                  <a href="tel:+66812345678">+66 81 234 5678</a>
+                  <a href="tel:{{ site_settings.phone|default:'+66812345678' }}">{{ site_settings.phone|default:'+66 81 234 5678' }}</a>
                 </div>
                 <div class="t-contact-item">
                   <i class="fa fa-whatsapp"></i>
-                  <a href="https://wa.me/66812345678" target="_blank">WhatsApp</a>
+                  <a href="{{ site_settings.whatsapp|default:'https://wa.me/66812345678' }}" target="_blank">WhatsApp</a>
                 </div>
                 <div class="t-contact-item">
                   <i class="fa fa-envelope"></i>
-                  <a href="mailto:info@phuket-tours.com">info@phuket-tours.com</a>
+                  <a href="mailto:{{ site_settings.email|default:'info@thaidreamphuket.com' }}">{{ site_settings.email|default:'info@thaidreamphuket.com' }}</a>
                 </div>
               </div>
             </div>

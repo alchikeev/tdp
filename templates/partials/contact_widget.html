@@ -8,10 +8,10 @@
   </button>
 
   <div class="cw-popup" id="cwPopup" role="menu" aria-label="Выбор мессенджера">
-    <a class="cw-item cw-wa" href="https://wa.me/{{ WA|default:'+66891234567'|urlencode }}" target="_blank" rel="noopener" role="menuitem">
+    <a class="cw-item cw-wa" href="{{ site_settings.whatsapp|default:'https://wa.me/66812345678' }}" target="_blank" rel="noopener" role="menuitem">
       <i class="fa fa-whatsapp" aria-hidden="true"></i> Whatsapp
     </a>
-    <a class="cw-item cw-tg" href="https://t.me/{{ TG|default:'ThaiDreamPhuket' }}" target="_blank" rel="noopener" role="menuitem">
+    <a class="cw-item cw-tg" href="{{ site_settings.telegram|default:'https://t.me/ThaiDreamPhuket' }}" target="_blank" rel="noopener" role="menuitem">
       <i class="fa fa-telegram" aria-hidden="true"></i> Telegram
     </a>
   </div>

@@ -30,22 +30,44 @@ echo "🧹 Удаляем все контейнеры проекта tdp..."
 docker container prune -f
 docker ps -a --filter "name=tdp" --format "{{.Names}}" | xargs -r docker rm -f
 
-# Удаляем старые volumes и создаем новые (исправляем права доступа)
-echo "🧹 Удаляем старые volumes и создаем новые..."
-docker volume rm tdp_static_data 2>/dev/null || true
-docker volume rm tdp_media_data 2>/dev/null || true
-docker volume rm tdp_data 2>/dev/null || true
+# Инициализируем структуру папок
+echo "📁 Инициализируем структуру папок..."
 
-echo "📦 Создаем необходимые volumes..."
-docker volume create tdp_static_data
-docker volume create tdp_media_data
-docker volume create tdp_data
+# Создаем папку для статических файлов
+if [ ! -d "/srv/tdp-static" ]; then
+    echo "🔧 Создаем папку для статических файлов..."
+    sudo mkdir -p /srv/tdp-static
+    echo "✅ Папка /srv/tdp-static создана"
+else
+    echo "✅ Папка /srv/tdp-static уже существует"
+fi
 
-# Устанавливаем правильные права доступа для volumes
-echo "🔧 Устанавливаем права доступа для volumes..."
-docker run --rm -v tdp_static_data:/data alpine chown -R 1000:1000 /data
-docker run --rm -v tdp_media_data:/data alpine chown -R 1000:1000 /data
-docker run --rm -v tdp_data:/data alpine chown -R 1000:1000 /data
+# Создаем папку для данных
+if [ ! -d "/srv/tdp-data" ]; then
+    echo "🔧 Создаем структуру папок для данных..."
+    sudo mkdir -p /srv/tdp-data/{media,data}
+    echo "✅ Структура папок /srv/tdp-data создана"
+else
+    echo "✅ Структура папок /srv/tdp-data уже существует"
+    # Убеждаемся, что все подпапки существуют
+    sudo mkdir -p /srv/tdp-data/media
+    sudo mkdir -p /srv/tdp-data/data
+fi
+
+# Проверяем права доступа
+echo "🔧 Проверяем права доступа..."
+sudo chown -R 1000:1000 /srv/tdp-static
+sudo chown -R 1000:1000 /srv/tdp-data
+sudo chmod -R 755 /srv/tdp-static
+sudo chmod -R 755 /srv/tdp-data
+
+# Проверяем, что папки созданы и доступны
+if [ ! -d "/srv/tdp-static" ] || [ ! -d "/srv/tdp-data/media" ] || [ ! -d "/srv/tdp-data/data" ]; then
+    echo "❌ Ошибка: Не удалось создать все необходимые папки"
+    exit 1
+fi
+
+echo "✅ Все папки созданы и настроены правильно"
 
 # Очищаем кэш Docker Compose и удаляем override файлы
 echo "🧹 Очищаем кэш Docker Compose..."
@@ -80,14 +102,16 @@ docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web p
 echo "🐳 Запускаем контейнер..."
 docker compose up -d
 
-# Проверяем, что запустился контейнер
+# Проверяем, что запустились контейнеры
 echo "📊 Проверяем запущенные контейнеры..."
-CONTAINER_COUNT=$(docker ps --filter "name=tdp-web" --format "{{.Names}}" | wc -l)
-if [ "$CONTAINER_COUNT" -eq 1 ]; then
-    echo "✅ Запущен контейнер:"
-    docker ps --filter "name=tdp-web" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+WEB_CONTAINER_COUNT=$(docker ps --filter "name=tdp-web" --format "{{.Names}}" | wc -l)
+CADDY_CONTAINER_COUNT=$(docker ps --filter "name=tdp-caddy" --format "{{.Names}}" | wc -l)
+
+if [ "$WEB_CONTAINER_COUNT" -eq 1 ] && [ "$CADDY_CONTAINER_COUNT" -eq 1 ]; then
+    echo "✅ Запущены контейнеры:"
+    docker ps --filter "name=tdp" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 else
-    echo "⚠️  Внимание: Запущено $CONTAINER_COUNT контейнеров с именем tdp-web (ожидается 1)"
+    echo "⚠️  Внимание: Запущено $WEB_CONTAINER_COUNT web контейнеров и $CADDY_CONTAINER_COUNT caddy контейнеров"
     docker ps --filter "name=tdp" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 fi
 

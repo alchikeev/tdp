@@ -21,9 +21,9 @@ SECURE_HSTS_PRELOAD = True
 
 # Статика и медиа для продакшена из переменных окружения
 STATIC_URL = env('STATIC_URL', default='/static/')
-STATIC_ROOT = env('STATIC_ROOT', default=BASE_DIR / "staticfiles")
+STATIC_ROOT = env('STATIC_ROOT', default='/app/staticfiles')
 MEDIA_URL = env('MEDIA_URL', default='/media/')
-MEDIA_ROOT = env('MEDIA_ROOT', default=BASE_DIR / "media")
+MEDIA_ROOT = env('MEDIA_ROOT', default='/app/media')
 
 # Статические файлы проекта
 STATICFILES_DIRS = [
@@ -49,13 +49,17 @@ MIDDLEWARE = [
 DATABASES = {
     'default': env.db(
         'DATABASE_URL',
-        default=f"sqlite:///{BASE_DIR / 'data' / 'db.sqlite3'}"
+        default="sqlite:////app/data/db.sqlite3"
     )
 }
 
 # Создаем директорию для базы данных если её нет
 import os
-os.makedirs(BASE_DIR / 'data', exist_ok=True)
+try:
+    os.makedirs('/app/data', exist_ok=True)
+except OSError:
+    # Игнорируем ошибки создания папки (например, в тестах)
+    pass
 
 # Логирование для продакшена из переменных окружения
 LOG_LEVEL = env('LOG_LEVEL', default='INFO')

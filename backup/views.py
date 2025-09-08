@@ -26,7 +26,44 @@ from blog.models import BlogPost
 from prices.models import PricePDF
 from core.models import Category, Tag, SiteSettings
 
-MEDIA_ROOT = Path(settings.MEDIA_ROOT)
+
+def get_media_root():
+    """Получает правильный путь к медиа файлам в зависимости от окружения"""
+    if settings.DEBUG:
+        # В dev режиме используем локальную папку
+        path = Path(settings.MEDIA_ROOT)
+    else:
+        # В prod режиме используем путь в контейнере
+        path = Path(settings.MEDIA_ROOT)
+    
+    print(f"DEBUG: MEDIA_ROOT = {path} (DEBUG={settings.DEBUG})")
+    return path
+
+
+def get_data_root():
+    """Получает правильный путь к базе данных в зависимости от окружения"""
+    if settings.DEBUG:
+        # В dev режиме используем локальную папку
+        path = Path(settings.BASE_DIR) / "db.sqlite3"
+    else:
+        # В prod режиме используем путь в контейнере
+        path = Path("/app/data/db.sqlite3")
+    
+    print(f"DEBUG: DATA_ROOT = {path} (DEBUG={settings.DEBUG})")
+    return path
+
+
+def get_static_root():
+    """Получает правильный путь к статическим файлам в зависимости от окружения"""
+    if settings.DEBUG:
+        # В dev режиме используем локальную папку
+        path = Path(settings.STATIC_ROOT)
+    else:
+        # В prod режиме используем путь в контейнере
+        path = Path(settings.STATIC_ROOT)
+    
+    print(f"DEBUG: STATIC_ROOT = {path} (DEBUG={settings.DEBUG})")
+    return path
 
 
 def _check_access(request):
@@ -119,12 +156,19 @@ def backup_download(request):
             z.writestr("data/site_settings.json", json.dumps(ss_data, ensure_ascii=False, indent=2))
 
         # media/*
-        if MEDIA_ROOT.exists():
-            for root, dirs, files in os.walk(MEDIA_ROOT):
+        media_root = get_media_root()
+        if media_root.exists():
+            for root, dirs, files in os.walk(media_root):
                 for f in files:
                     full = Path(root) / f
-                    arc = str(full.relative_to(MEDIA_ROOT))
+                    arc = str(full.relative_to(media_root))
                     z.write(full, arcname=os.path.join("media", arc))
+
+        # database/*
+        data_root = get_data_root()
+        if data_root.exists():
+            # Копируем базу данных
+            z.write(data_root, arcname="data/db.sqlite3")
 
     buf.seek(0)
     return FileResponse(buf, as_attachment=True, filename=archive_name)
@@ -311,13 +355,14 @@ def backup_restore(request):
                 media_src = tmp_p / "media"
                 if media_src.exists():
                     # Убеждаемся, что MEDIA_ROOT существует и доступен для записи
-                    MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+                    media_root = get_media_root()
+                    media_root.mkdir(parents=True, exist_ok=True)
                     
                     for root, dirs, files in os.walk(media_src):
                         for f in files:
                             src = Path(root) / f
                             rel = src.relative_to(media_src)
-                            dst = MEDIA_ROOT / rel
+                            dst = media_root / rel
                             
                             # Создаем директорию с правами на запись
                             dst.parent.mkdir(parents=True, exist_ok=True)
@@ -325,6 +370,17 @@ def backup_restore(request):
                             # Копируем файл
                             shutil.copy2(src, dst)
                             report["files"].append(str(rel))
+
+                # 7) database/*
+                db_src = tmp_p / "data" / "db.sqlite3"
+                if db_src.exists():
+                    # Убеждаемся, что директория для базы данных существует
+                    data_root = get_data_root()
+                    data_root.parent.mkdir(parents=True, exist_ok=True)
+                    
+                    # Копируем базу данных
+                    shutil.copy2(db_src, data_root)
+                    report["files"].append("db.sqlite3")
 
             finally:
                 shutil.rmtree(tmpdir, ignore_errors=True)

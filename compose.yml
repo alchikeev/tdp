@@ -13,9 +13,9 @@ services:
       - DJANGO_SETTINGS_MODULE=config.settings.prod
     working_dir: /app
     volumes:
-      - tdp_static_data:/app/staticfiles
-      - tdp_media_data:/app/media
-      - tdp_data:/app/data
+      - /srv/tdp-static:/app/staticfiles
+      - /srv/tdp-data/media:/app/media
+      - /srv/tdp-data/data:/app/data
     networks:
       - web
     restart: unless-stopped
@@ -28,12 +28,26 @@ services:
       retries: 3
       start_period: 40s
 
+  caddy:                  # Caddy для раздачи статики и медиа
+    container_name: tdp-caddy
+    image: caddy:2-alpine
+    volumes:
+      - ./tdp.caddy:/etc/caddy/Caddyfile
+      - /srv/tdp-data:/srv/tdp-data:ro  # Медиа файлы
+      - /srv/tdp-static:/srv/tdp-static:ro  # Статические файлы
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+
 volumes:
-  tdp_static_data:
+  caddy_data:
     driver: local
-  tdp_media_data:
-    driver: local
-  tdp_data:
+  caddy_config:
     driver: local
 
 networks:

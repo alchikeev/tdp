@@ -33,6 +33,12 @@ uploads/
 logs/
 *.log
 
+# Server data (не должно быть в репозитории)
+tdp-data/
+tdp-static/
+/srv/tdp-data/
+/srv/tdp-static/
+
 # ENV
 .env
 .env.local

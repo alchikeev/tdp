@@ -15,6 +15,19 @@ thaidreamphuket.com, www.thaidreamphuket.com {
     }
     respond @sensitive 404
 
+    # Раздача медиа файлов напрямую из /srv/tdp-data/media
+    handle_path /media/* {
+        root * /srv/tdp-data
+        file_server
+    }
+
+    # Раздача статических файлов напрямую из /srv/tdp-static
+    handle_path /static/* {
+        root * /srv/tdp-static
+        file_server
+    }
+
+    # Все остальное через Django
     reverse_proxy tdp-web:8000
 
     request_body {
