@@ -21,19 +21,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Создаем необходимые директории
-RUN mkdir -p /app/staticfiles /app/media /app/data
-
-# Убеждаемся что папка static существует
-RUN mkdir -p /app/static
+RUN mkdir -p /app/static /app/data
 
 # Устанавливаем права доступа
 RUN chown -R appuser:appuser /app
 
 # Переключаемся на непривилегированного пользователя
 USER appuser
-
-# Устанавливаем права на запись для директории приложения
-RUN chmod -R 755 /app
 
 # Экспонируем порт
 EXPOSE 8000
@@ -42,5 +36,9 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget -qO- http://localhost:8000/health/ || exit 1
 
-# Запускаем приложение через gunicorn
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "--keep-alive", "5", "--max-requests", "1000", "--max-requests-jitter", "100", "--access-logfile", "-", "--error-logfile", "-"]
+# Копируем и делаем исполняемым entrypoint скрипт
+COPY --chown=appuser:appuser docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Запускаем через entrypoint скрипт
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

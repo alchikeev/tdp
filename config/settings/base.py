@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',  # enable humanize template tags
     # твои приложения:
-    'core', 'tours', 'services', 'reviews', 'prices', 'backup',
+    'core', 'tours.apps.ToursConfig', 'services', 'reviews', 'prices', 'backup',
     # новые приложения
     'news',
     'blog',
@@ -78,14 +78,16 @@ DATABASES = {
 }
 
 # статика/медиа
-STATIC_URL = env('STATIC_URL', default='/static/')
-MEDIA_URL  = env('MEDIA_URL',  default='/media/')
-STATIC_ROOT = env('STATIC_ROOT', default=BASE_DIR / 'staticfiles')
-MEDIA_ROOT  = env('MEDIA_ROOT',  default=BASE_DIR / 'media')
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
+STATIC_ROOT = os.getenv("DJANGO_STATIC_ROOT", BASE_DIR / "static_collected")
+MEDIA_ROOT = os.getenv("DJANGO_MEDIA_ROOT", BASE_DIR / "media")
 # Папка с общими статическими файлами проекта (CSS, JS, изображения и т.д.)
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+# Используем ManifestStaticFilesStorage для продакшена
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'Asia/Bishkek'

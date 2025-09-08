@@ -243,31 +243,3 @@ class Tour(models.Model):
         return self.price_child is not None
 
 
-class TourImage(models.Model):
-    tour = models.ForeignKey(
-        Tour,
-        on_delete=models.CASCADE,
-        related_name="images",
-        verbose_name="Тур",
-    )
-    image = models.ImageField("Изображение", upload_to="tours/gallery/")
-    caption = models.CharField("Подпись", max_length=200, blank=True)
-    order = models.PositiveIntegerField("Порядок", default=0)
-
-    class Meta:
-        verbose_name = "Фото тура"
-        verbose_name_plural = "Фото тура"
-        ordering = ["order", "id"]
-        indexes = [
-            models.Index(fields=["tour", "order"], name="tourimage_tour_order_idx"),
-        ]
-        constraints = [
-            # Порядок неотрицателен
-            models.CheckConstraint(
-                name="tourimage_order_nonnegative",
-                check=models.Q(order__gte=0),
-            )
-        ]
-
-    def __str__(self) -> str:
-        return f"{self.tour.title} #{self.pk}"

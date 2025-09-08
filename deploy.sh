@@ -33,41 +33,30 @@ docker ps -a --filter "name=tdp" --format "{{.Names}}" | xargs -r docker rm -f
 # Инициализируем структуру папок
 echo "📁 Инициализируем структуру папок..."
 
-# Создаем папку для статических файлов
-if [ ! -d "/srv/tdp-static" ]; then
-    echo "🔧 Создаем папку для статических файлов..."
-    sudo mkdir -p /srv/tdp-static
-    echo "✅ Папка /srv/tdp-static создана"
-else
-    echo "✅ Папка /srv/tdp-static уже существует"
-fi
-
-# Создаем папку для данных
+# Создаем папку для данных (только для базы данных)
 if [ ! -d "/srv/tdp-data" ]; then
-    echo "🔧 Создаем структуру папок для данных..."
-    sudo mkdir -p /srv/tdp-data/{media,data}
-    echo "✅ Структура папок /srv/tdp-data создана"
+    echo "🔧 Создаем папку для данных..."
+    sudo mkdir -p /srv/tdp-data/data
+    echo "✅ Папка /srv/tdp-data создана"
 else
-    echo "✅ Структура папок /srv/tdp-data уже существует"
-    # Убеждаемся, что все подпапки существуют
-    sudo mkdir -p /srv/tdp-data/media
+    echo "✅ Папка /srv/tdp-data уже существует"
+    # Убеждаемся, что подпапка существует
     sudo mkdir -p /srv/tdp-data/data
 fi
 
 # Проверяем права доступа
 echo "🔧 Проверяем права доступа..."
-sudo chown -R 1000:1000 /srv/tdp-static
 sudo chown -R 1000:1000 /srv/tdp-data
-sudo chmod -R 755 /srv/tdp-static
 sudo chmod -R 755 /srv/tdp-data
 
-# Проверяем, что папки созданы и доступны
-if [ ! -d "/srv/tdp-static" ] || [ ! -d "/srv/tdp-data/media" ] || [ ! -d "/srv/tdp-data/data" ]; then
-    echo "❌ Ошибка: Не удалось создать все необходимые папки"
+# Проверяем, что папка создана и доступна
+if [ ! -d "/srv/tdp-data/data" ]; then
+    echo "❌ Ошибка: Не удалось создать папку для данных"
     exit 1
 fi
 
-echo "✅ Все папки созданы и настроены правильно"
+echo "✅ Папка для данных создана и настроена правильно"
+echo "ℹ️  Статика и медиа теперь хранятся в Docker volumes"
 
 # Очищаем кэш Docker Compose и удаляем override файлы
 echo "🧹 Очищаем кэш Docker Compose..."
@@ -90,23 +79,23 @@ docker compose build --no-cache
 echo "📋 Проверяем конфигурацию Docker Compose..."
 docker compose config --services
 
-# Применяем миграции
-echo "🗄️ Применяем миграции базы данных..."
+# Применяем миграции и собираем статику
+echo "🗄️ Применяем миграции и собираем статику..."
 
 # Проверяем, существует ли база данных
 echo "🔍 Проверяем наличие базы данных..."
 if [ ! -f "/srv/tdp-data/data/db.sqlite3" ]; then
     echo "📝 База данных не найдена, создаем новую..."
     # Создаем пустую базу данных
-    docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py migrate --run-syncdb
+    docker compose run --rm web python manage.py migrate --run-syncdb
 else
     echo "✅ База данных найдена, применяем миграции..."
-    docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py migrate
+    docker compose run --rm web python manage.py migrate
 fi
 
 # Собираем статику
 echo "📦 Собираем статические файлы..."
-docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py collectstatic --noinput
+docker compose run --rm web python manage.py collectstatic --noinput
 
 # Проверяем, что база данных создалась успешно
 echo "🔍 Проверяем создание базы данных..."
@@ -114,7 +103,7 @@ if [ -f "/srv/tdp-data/data/db.sqlite3" ] && [ -s "/srv/tdp-data/data/db.sqlite3
     echo "✅ База данных создана успешно"
     
     # Проверяем, есть ли таблицы в базе данных
-    TABLE_COUNT=$(docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python -c "
+    TABLE_COUNT=$(docker compose run --rm web python -c "
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
 import django
@@ -130,7 +119,7 @@ with connection.cursor() as cursor:
         echo "✅ В базе данных найдено $TABLE_COUNT таблиц"
     else
         echo "⚠️  База данных пуста, рекомендуется создать суперпользователя:"
-        echo "   docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.prod tdp-web python manage.py createsuperuser"
+        echo "   docker compose run --rm web python manage.py createsuperuser"
     fi
 else
     echo "❌ Ошибка: База данных не была создана"
@@ -149,6 +138,9 @@ CADDY_CONTAINER_COUNT=$(docker ps --filter "name=tdp-caddy" --format "{{.Names}}
 if [ "$WEB_CONTAINER_COUNT" -eq 1 ] && [ "$CADDY_CONTAINER_COUNT" -eq 1 ]; then
     echo "✅ Запущены контейнеры:"
     docker ps --filter "name=tdp" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+    echo ""
+    echo "ℹ️  Web контейнер доступен только внутри Docker сети (порт 8000)"
+    echo "ℹ️  Caddy раздает статику и проксирует запросы (порты 80, 443)"
 else
     echo "⚠️  Внимание: Запущено $WEB_CONTAINER_COUNT web контейнеров и $CADDY_CONTAINER_COUNT caddy контейнеров"
     docker ps --filter "name=tdp" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
@@ -161,4 +153,5 @@ docker image prune -f
 echo "✅ Деплой завершен!"
 echo "🌐 Приложение доступно по адресу: https://thaidreamphuket.com"
 echo "📊 Проверить статус: docker compose ps"
-echo "📋 Логи: docker compose logs -f tdp-web"
+echo "📋 Логи: docker compose logs -f web"
+echo "🔧 Управление: make help"
