@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Управление резервными копиями</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .button { 
+            background: #007cba; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 3px; 
+            cursor: pointer; 
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .button:hover { background: #005a87; }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .upload-area.dragover {
+            border-color: #007cba;
+            background-color: #f0f8ff;
+        }
+        .messages {
+            margin: 10px 0;
+        }
+        .messages .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 3px;
+            margin: 5px 0;
+        }
+        .messages .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 3px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Управление резервными копиями</h1>
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Создание резервной копии -->
+        <div class="section">
+            <h2>Создать резервную копию</h2>
+            <p>Создает полную резервную копию базы данных, медиа файлов и статических файлов.</p>
+            <form method="post" action="{% url 'admin:backup_create' %}">
+                {% csrf_token %}
+                <button type="submit" class="button">Скачать архив</button>
+            </form>
+        </div>
+        
+        <!-- Восстановление из резервной копии -->
+        <div class="section">
+            <h2>Восстановить из резервной копии</h2>
+            <p>Загрузите ZIP архив для восстановления данных. ВНИМАНИЕ: Это заменит все текущие данные!</p>
+            
+            <form method="post" action="{% url 'admin:backup_restore' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="upload-area" id="uploadArea">
+                    <p>Перетащите ZIP файл сюда или нажмите для выбора</p>
+                    <input type="file" name="backup_file" accept=".zip" id="fileInput" style="display: none;">
+                    <div id="fileName"></div>
+                </div>
+                <button type="submit" class="button" id="restoreButton" disabled>Восстановить</button>
+            </form>
+        </div>
+        
+        <!-- Информация -->
+        <div class="section">
+            <h2>Информация</h2>
+            <p><strong>База данных:</strong> {{ db_path }}</p>
+            <p><strong>Медиа файлы:</strong> {{ media_path }}</p>
+            <p><strong>Статические файлы:</strong> {{ static_path }}</p>
+        </div>
+    </div>
+    
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const restoreButton = document.getElementById('restoreButton');
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileName();
+            }
+        });
+        
+        fileInput.addEventListener('change', updateFileName);
+        
+        function updateFileName() {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileName.textContent = `Выбран файл: ${file.name}`;
+                restoreButton.disabled = false;
+            } else {
+                fileName.textContent = '';
+                restoreButton.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,16 +1,20 @@
 import os
-from pathlib import Path
-import environ
-
-# Загружаем переменные окружения и выбираем модуль настроек из .env
-BASE_DIR = Path(__file__).resolve().parent.parent
-env = environ.Env()
-env.read_env(BASE_DIR / '.env')
-os.environ.setdefault(
-	'DJANGO_SETTINGS_MODULE',
-	env('DJANGO_SETTINGS_MODULE', default='config.settings.dev')
-)
-
 from django.core.asgi import get_asgi_application
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
 
-application = get_asgi_application()
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
+
+django_asgi_app = get_asgi_application()
+
+# Импортируем routing после настройки Django
+from backup.routing import websocket_urlpatterns
+
+application = ProtocolTypeRouter({
+    "http": django_asgi_app,
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            websocket_urlpatterns
+        )
+    ),
+})
