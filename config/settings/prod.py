@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     # твои приложения:
-    'core', 'tours', 'services', 'reviews', 'prices', 'backup', 'channels',
+    'core', 'tours', 'services', 'reviews', 'prices', 'channels',
     # новые приложения
     'news',
     'blog',
@@ -135,19 +135,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50MB
 FILE_UPLOAD_PERMISSIONS = 0o644
 
-# Celery Configuration
-CELERY_BROKER_URL = 'redis://79.133.181.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://79.133.181.1:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Asia/Bishkek'
-CELERY_ENABLE_UTC = True
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 минут
-CELERY_TASK_SOFT_TIME_LIMIT = 25 * 60  # 25 минут
-CELERY_WORKER_PREFETCH_MULTIPLIER = 1
-CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
+# Celery Configuration removed
 
 # Channels Configuration (для WebSocket)
 ASGI_APPLICATION = 'config.asgi.application'

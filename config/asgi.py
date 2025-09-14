@@ -7,8 +7,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
 
 django_asgi_app = get_asgi_application()
 
-# Импортируем routing после настройки Django
-from backup.routing import websocket_urlpatterns
+# WebSocket routing (backup routing removed)
+websocket_urlpatterns = []
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
