@@ -1,15 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import render
-
-def backup_page(request):
-    """Страница управления резервными копиями"""
-    return render(request, 'admin/backup/backup_page.html')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('admin/backup/', backup_page, name='backup_page'),
-    path('admin/backup/restore/', include('backup.urls')),
     
     # Основные URL-ы приложений
     path('', include('core.urls')),

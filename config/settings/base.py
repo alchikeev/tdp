@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',  # enable humanize template tags
     # твои приложения:
-    'core', 'tours.apps.ToursConfig', 'services', 'reviews', 'prices', 'backup',
+    'core', 'tours.apps.ToursConfig', 'services', 'reviews', 'prices',
     # новые приложения
     'news',
     'blog',
