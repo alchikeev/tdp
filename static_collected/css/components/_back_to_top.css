@@ -1,0 +1,50 @@
+/* back-to-top component */
+.back-to-top {
+  position: fixed;
+  right: 16px;
+  bottom: calc(22px + env(safe-area-inset-bottom)); /* default, will be adjusted by JS if chat exists */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  /* 60% opacity background */
+  background: rgba(255,138,0,0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease, box-shadow .12s ease;
+  z-index: 1000;
+}
+
+.back-to-top svg { width: 60%; height: 60%; display:block; }
+
+.back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.back-to-top:hover,
+.back-to-top:focus {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+  outline: none;
+}
+
+.back-to-top:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255,138,0,0.18), 0 10px 25px rgba(0,0,0,0.18);
+}
+
+@media (max-width: 375px) {
+  .back-to-top { right: 12px; bottom: calc(80px + env(safe-area-inset-bottom)); width: 44px; height: 44px; }
+  .back-to-top svg { width: 20px; height: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top, .back-to-top.is-visible { transition: none; }
+}

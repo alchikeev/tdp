@@ -1,0 +1,113 @@
+.t-cta-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px env(safe-area-inset-bottom);
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: saturate(150%) blur(6px);
+  border-top: 1px solid #e2e8f0;
+}
+
+.t-cta-bar--bottom { bottom: 0; }
+
+.t-cta-bar--top {
+  top: var(--cta-top, 56px);
+  border-top: none;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* mobile anchor spacing under header when pinned */
+#tCtaAnchor { height: 0; }
+@media (max-width: 991.98px) {
+  .t-cta-bar--top + .row { margin-top: 8px; }
+}
+
+.t-top-cta__price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.t-top-cta__price .t-price__old {
+  color: #94a3b8;
+  text-decoration: line-through;
+  font-size: 14px;
+}
+
+.t-top-cta__price .t-price__new {
+  color: #111827;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.t-top-cta__btn {
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  background: #ff7a00;
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 16px;
+  width: 100%;
+  box-shadow: 0 6px 14px rgba(255, 122, 0, 0.3);
+}
+
+@media (min-width: 992px) {
+  .t-cta-bar { display: none; }
+}
+
+/* highlight chips */
+.t-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.t-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.t-chip i { color: #3b82f6; }
+
+/* related horizontal scroller */
+.t-related__title { font-weight: 700; font-size: 18px; margin-bottom: 10px; }
+.t-related__scroller {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 78%;
+  gap: 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+}
+
+.t-related__scroller::-webkit-scrollbar { height: 6px; }
+.t-related__scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
+
+.t-card--hscroll { scroll-snap-align: start; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+
+@media (min-width: 576px) {
+  .t-related__scroller { grid-auto-columns: 50%; }
+}
+
+@media (min-width: 992px) {
+  .t-related__scroller { display: grid; grid-auto-flow: initial; grid-template-columns: repeat(3, 1fr); overflow: visible; }
+}
+
+

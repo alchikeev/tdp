@@ -1,7 +1,8 @@
 {% load static %}
 {% include "partials/lead_modal.html" %}
 <header class="header">
-<link rel="stylesheet" type="text/css" href="{% static 'styles/header.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'styles/header.css' %}?v=2.0">
+<link rel="stylesheet" type="text/css" href="{% static 'styles/mobile-accordion.css' %}?v=1.1">
 <div class="container">
 	<div class="header_content">
 	<div class="header_content_inner">
@@ -69,27 +70,76 @@
       <a href="/">{{ site_settings.site_name|default:"Thai Dream Phuket" }}</a>
     </div>
     <div class="menu_close_container">
-      <div class="menu_close"><div></div><div></div></div>
+      <div class="menu_close" onclick="closeMobileMenu()">×</div>
     </div>
   </div>
 
   <div class="menu_content">
     <ul>
       <li{% if active_page == 'home' %} class="active"{% endif %}><a href="/">Главная</a></li>
-      <li{% if active_page == 'tours' %} class="active"{% endif %}><a href="{% url 'tours:list' %}">Экскурсии</a></li>
-      <li{% if active_page == 'services' %} class="active"{% endif %}><a href="{% url 'services:list' %}">Услуги</a></li>
+      
+      <!-- Экскурсии с аккордеоном -->
+      <li class="menu-item-with-accordion{% if active_page == 'tours' %} active{% endif %}">
+        <div class="menu-item-header">
+          <a href="{% url 'tours:list' %}" class="main-link">Экскурсии</a>
+          {% if nav_tour_categories %}
+            <span class="accordion-toggle" aria-expanded="false">
+              <i class="fa fa-chevron-down"></i>
+            </span>
+          {% endif %}
+        </div>
+        {% if nav_tour_categories %}
+          <ul class="accordion-content">
+            {% for category in nav_tour_categories %}
+              <li><a href="{% url 'tours:by_category' category.slug %}">{{ category.name }} ({{ category.tours_count }})</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+      
+      <!-- Услуги с аккордеоном -->
+      <li class="menu-item-with-accordion{% if active_page == 'services' %} active{% endif %}">
+        <div class="menu-item-header">
+          <a href="{% url 'services:list' %}" class="main-link">Услуги</a>
+          {% if nav_service_categories %}
+            <span class="accordion-toggle" aria-expanded="false">
+              <i class="fa fa-chevron-down"></i>
+            </span>
+          {% endif %}
+        </div>
+        {% if nav_service_categories %}
+          <ul class="accordion-content">
+            {% for category in nav_service_categories %}
+              <li><a href="{% url 'services:by_category' category.slug %}">{{ category.name }} ({{ category.services_count }})</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+      
       <li{% if active_page == 'prices' %} class="active"{% endif %}><a href="{% url 'prices:list' %}">Цены</a></li>
+      <li{% if active_page == 'news' %} class="active"{% endif %}><a href="{% url 'news:list' %}">Новости</a></li>
       <li{% if active_page == 'blog' %} class="active"{% endif %}><a href="{% url 'blog:list' %}">Блог</a></li>
       <li{% if active_page == 'reviews' %} class="active"{% endif %}><a href="{% url 'reviews:list' %}">Отзывы</a></li>
     </ul>
   </div>
 
   <div class="menu_social">
+    <div class="menu_socials">
+      {% if site_settings.telegram %}
+        <a class="menu_soc tg" href="{{ site_settings.telegram }}" target="_blank" rel="noreferrer"><i class="fa fa-telegram"></i></a>
+      {% endif %}
+      {% if site_settings.whatsapp %}
+        <a class="menu_soc wa" href="{{ site_settings.whatsapp }}" target="_blank" rel="noreferrer"><i class="fa fa-whatsapp"></i></a>
+      {% endif %}
+      {% if site_settings.instagram %}
+        <a class="menu_soc ig" href="{{ site_settings.instagram }}" target="_blank" rel="noreferrer"><i class="fa fa-instagram"></i></a>
+      {% endif %}
+    </div>
     {% if site_settings.phone %}
-      <div class="menu_phone">Наш номер: {{ site_settings.phone }}</div>
+      <div class="menu_phone">{{ site_settings.phone }}</div>
     {% endif %}
   </div>
 </div>
 
-<!-- <script src="{% static 'js/menu.js' %}"></script> -->
+<script src="{% static 'js/mobile-menu.js' %}?v=2.1"></script>
 

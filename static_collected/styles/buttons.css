@@ -1,0 +1,331 @@
+/* Modern Button Styles for Thai Dream Phuket */
+
+/* CSS Variables for consistent theming */
+:root {
+    --btn-primary-color: #E76700;        /* Dark orange */
+    --btn-primary-hover: #ffffff;        /* White on hover */
+    --btn-primary-text: #ffffff;         /* White text */
+    --btn-primary-text-hover: #E76700;   /* Orange text on hover */
+    --btn-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --btn-shadow: 0 4px 12px rgba(231, 103, 0, 0.3);
+    --btn-shadow-hover: 0 8px 24px rgba(231, 103, 0, 0.4);
+}
+
+/* Base button styles - applies to all buttons */
+.btn, 
+button, 
+.button,
+.btn-hero,
+.btn-primary,
+.btn-outline-primary,
+.btn-secondary,
+.btn-outline-secondary,
+.home_search_button,
+.newsletter_button,
+.contact_button,
+.load_more_button,
+.order_btn,
+.btn-more,
+.hiw-form button[type=submit] {
+    /* Reset default styles */
+    border: none !important;
+    outline: none !important;
+    text-decoration: none !important;
+    
+    /* Base styling */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    /* Typography */
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    
+    /* Layout */
+    padding: 12px 24px;
+    min-height: 44px;
+    border-radius: 12px;
+    
+    /* Colors */
+    background: var(--btn-primary-color);
+    color: var(--btn-primary-text);
+    
+    /* Effects */
+    box-shadow: var(--btn-shadow);
+    transition: var(--btn-transition);
+    cursor: pointer;
+    user-select: none;
+    
+    /* Prevent text selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Hover effects */
+.btn:hover, 
+button:hover, 
+.button:hover,
+.btn-hero:hover,
+.btn-primary:hover,
+.btn-outline-primary:hover,
+.btn-secondary:hover,
+.btn-outline-secondary:hover,
+.home_search_button:hover,
+.newsletter_button:hover,
+.contact_button:hover,
+.load_more_button:hover,
+.order_btn:hover,
+.btn-more:hover,
+.hiw-form button[type=submit]:hover {
+    background: var(--btn-primary-hover) !important;
+    color: var(--btn-primary-text-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--btn-shadow-hover);
+}
+
+/* Active state */
+.btn:active, 
+button:active, 
+.button:active,
+.btn-hero:active,
+.btn-primary:active,
+.btn-outline-primary:active,
+.btn-secondary:active,
+.btn-outline-secondary:active,
+.home_search_button:active,
+.newsletter_button:active,
+.contact_button:active,
+.load_more_button:active,
+.order_btn:active,
+.btn-more:active,
+.hiw-form button[type=submit]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(231, 103, 0, 0.3);
+}
+
+/* Focus state for accessibility */
+.btn:focus, 
+button:focus, 
+.button:focus,
+.btn-hero:focus,
+.btn-primary:focus,
+.btn-outline-primary:focus,
+.btn-secondary:focus,
+.btn-outline-secondary:focus,
+.home_search_button:focus,
+.newsletter_button:focus,
+.contact_button:focus,
+.load_more_button:focus,
+.order_btn:focus,
+.btn-more:focus,
+.hiw-form button[type=submit]:focus {
+    outline: 2px solid var(--btn-primary-color);
+    outline-offset: 2px;
+}
+
+/* Disabled state */
+.btn:disabled, 
+button:disabled, 
+.button:disabled,
+.btn-hero:disabled,
+.btn-primary:disabled,
+.btn-outline-primary:disabled,
+.btn-secondary:disabled,
+.btn-outline-secondary:disabled,
+.home_search_button:disabled,
+.newsletter_button:disabled,
+.contact_button:disabled,
+.load_more_button:disabled,
+.order_btn:disabled,
+.btn-more:disabled,
+.hiw-form button[type=submit]:disabled {
+    background: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Special button variants */
+
+/* Large buttons */
+.btn-lg,
+.btn-hero {
+    padding: 16px 32px;
+    font-size: 16px;
+    min-height: 52px;
+    border-radius: 16px;
+}
+
+/* Small buttons */
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 12px;
+    min-height: 36px;
+    border-radius: 8px;
+}
+
+/* Button links (anchor tags styled as buttons) */
+a.btn,
+a.button,
+a.btn-hero,
+a.btn-primary,
+a.btn-outline-primary,
+a.btn-secondary,
+a.btn-outline-secondary {
+    text-decoration: none !important;
+    display: inline-flex;
+}
+
+/* Button groups */
+.btn-group {
+    display: inline-flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn, 
+    button, 
+    .button,
+    .btn-hero,
+    .btn-primary,
+    .btn-outline-primary,
+    .btn-secondary,
+    .btn-outline-secondary,
+    .home_search_button,
+    .newsletter_button,
+    .contact_button,
+    .load_more_button,
+    .order_btn,
+    .btn-more,
+    .hiw-form button[type=submit] {
+        padding: 10px 20px;
+        font-size: 13px;
+        min-height: 40px;
+        border-radius: 10px;
+    }
+    
+    .btn-lg,
+    .btn-hero {
+        padding: 14px 28px;
+        font-size: 15px;
+        min-height: 48px;
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn, 
+    button, 
+    .button,
+    .btn-hero,
+    .btn-primary,
+    .btn-outline-primary,
+    .btn-secondary,
+    .btn-outline-secondary,
+    .home_search_button,
+    .newsletter_button,
+    .contact_button,
+    .load_more_button,
+    .order_btn,
+    .btn-more,
+    .hiw-form button[type=submit] {
+        padding: 8px 16px;
+        font-size: 12px;
+        min-height: 36px;
+        border-radius: 8px;
+    }
+    
+    .btn-lg,
+    .btn-hero {
+        padding: 12px 24px;
+        font-size: 14px;
+        min-height: 44px;
+        border-radius: 12px;
+    }
+}
+
+/* Animation keyframes for special effects */
+@keyframes buttonPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(231, 103, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(231, 103, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(231, 103, 0, 0);
+    }
+}
+
+/* Pulse animation for call-to-action buttons */
+.btn-hero.pulse {
+    animation: buttonPulse 2s infinite;
+}
+
+/* Loading state */
+.btn.loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: buttonSpin 1s linear infinite;
+}
+
+@keyframes buttonSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Override specific button styles that might conflict */
+.button a {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+.button:hover a {
+    color: inherit !important;
+}
+
+/* Fix for buttons inside forms */
+form .btn,
+form button,
+form .button {
+    width: auto;
+}
+
+/* Ensure buttons work well in flex containers */
+.flex-container .btn,
+.flex-container button,
+.flex-container .button {
+    flex-shrink: 0;
+}
+
+
+
+
+
+
+
+
+

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
   <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
   <link rel="stylesheet" href="{% static 'styles/tour-detail.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/tour-sticky-cta.css' %}">
 {% endblock %}
 {% block body_class %}has-inner-hero{% endblock %}
 
@@ -25,14 +26,38 @@
             <h1 class="hero-title">{{ tour.title }}</h1>
             <p class="hero-sub">{{ tour.location|default:"Пхукет" }}</p>
           </div>
-
-          <div class="hero-right">
-            <button class="btn-hero open-lead-modal"
-                    data-cta="Inner Hero — Tour Detail"
-                    data-related_type="tour" data-related_id="{{ tour.id }}"
-                    type="button">Записаться</button>
-          </div>
+          
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Блок категорий с автопрокруткой -->
+<section class="tour-categories-slider">
+  <div class="container">
+    <div class="categories-slider-wrapper">
+      <div class="categories-slider" id="categoriesSlider">
+        {% for category in categories %}
+          <a href="{% url 'tours:by_category' category.slug %}" class="category-item">
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-count">({{ category.items }})</span>
+          </a>
+        {% endfor %}
+        <!-- Дублируем категории для бесконечной прокрутки -->
+        {% for category in categories %}
+          <a href="{% url 'tours:by_category' category.slug %}" class="category-item">
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-count">({{ category.items }})</span>
+          </a>
+        {% endfor %}
+        <!-- Третья копия для более плавного кольца -->
+        {% for category in categories %}
+          <a href="{% url 'tours:by_category' category.slug %}" class="category-item">
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-count">({{ category.items }})</span>
+          </a>
+        {% endfor %}
       </div>
     </div>
   </div>
@@ -40,10 +65,113 @@
 
   <section class="t-detail">
     <div class="container" style="padding-top: 60px;">
+      <!-- Якорь для определения начала контента -->
+      <div id="contentStart" class="d-lg-none" style="height: 1px; margin-bottom: -1px;"></div>
+      <div id="tCtaAnchor" class="d-lg-none"></div>
       <div class="row">
 
         <!-- Основная колонка -->
         <div class="col-lg-8 col-xl-9">
+          
+          <!-- ФИКСИРОВАННЫЙ КОНТЕНТ: Основная информация о туре -->
+          <div class="t-fixed-content d-lg-none" id="fixedContent">
+            
+            <!-- Короткое описание (сразу под слайдом на мобиле) -->
+            {% if tour.short_desc %}
+              <div class="t-short-desc mb-3">
+                <p class="lead">{{ tour.short_desc }}</p>
+              </div>
+            {% endif %}
+
+            <!-- Короткие преимущества / highlights -->
+            <div class="t-highlights mb-3">
+              <span class="t-chip"><i class="fa fa-bus"></i> Трансфер включён</span>
+              <span class="t-chip"><i class="fa fa-shield"></i> Страховка</span>
+              {% if tour.duration %}
+                <span class="t-chip"><i class="fa fa-clock-o"></i> {{ tour.duration }}</span>
+              {% endif %}
+              <span class="t-chip"><i class="fa fa-users"></i> Малые группы</span>
+            </div>
+            
+          </div>
+          <!-- КОНЕЦ ФИКСИРОВАННОГО КОНТЕНТА -->
+
+          <!-- CTA bar: positioned after highlights, before detailed info -->
+          <div class="t-cta-bar d-lg-none" id="tCtaBar">
+            <div class="t-top-cta__price">
+              {% if tour.price_old_adult and tour.price_old_adult > tour.price_adult %}
+                <s class="t-price__old">{{ tour.price_old_adult|floatformat:0|intcomma }}฿</s>
+              {% endif %}
+              <strong class="t-price__new">{{ tour.price_adult|floatformat:0|intcomma }}฿</strong>
+            </div>
+            <button class="t-top-cta__btn open-lead-modal"
+                    data-cta="CTA — Tour Detail"
+                    data-related_type="tour" data-related_id="{{ tour.id }}"
+                    type="button">Оставить заявку</button>
+          </div>
+
+          <!-- ДОПОЛНИТЕЛЬНЫЙ КОНТЕНТ -->
+          <div class="t-additional-content d-lg-none">
+            
+            <!-- Основная информация о туре -->
+            <div class="t-info-grid mb-4">
+              <div class="row g-3">
+                {% if tour.duration %}
+                  <div class="col-md-6">
+                    <div class="t-info-item">
+                      <i class="fa fa-clock-o"></i>
+                      <div>
+                        <strong>Длительность</strong>
+                        <span>{{ tour.duration }}</span>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if tour.location %}
+                  <div class="col-md-6">
+                    <div class="t-info-item">
+                      <i class="fa fa-map-marker"></i>
+                      <div>
+                        <strong>Локация</strong>
+                        <span>{{ tour.location }}</span>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if tour.rating %}
+                  <div class="col-md-6">
+                    <div class="t-info-item">
+                      <i class="fa fa-star"></i>
+                      <div>
+                        <strong>Рейтинг</strong>
+                        <span>{{ tour.rating }}/5 ({{ tour.reviews_count }} отзывов)</span>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if tour.categories.all %}
+                  <div class="col-md-6">
+                    <div class="t-info-item">
+                      <i class="fa fa-tags"></i>
+                      <div>
+                        <strong>Категории</strong>
+                        <span>
+                          {% for cat in tour.categories.all %}
+                            <a href="{% url 'tours:by_category' slug=cat.slug %}">{{ cat.name }}</a>{% if not forloop.last %}, {% endif %}
+                          {% endfor %}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            
+          </div>
+          <!-- КОНЕЦ ДОПОЛНИТЕЛЬНОГО КОНТЕНТА -->
+
+
+          <!-- ОСТАЛЬНОЙ КОНТЕНТ -->
           
           <!-- Галерея изображений -->
           {% if tour.images.all %}
@@ -53,10 +181,6 @@
                   <img src="{{ img.image.url }}" alt="{{ img.caption|default:tour.title }} — фото {{ forloop.counter }}" loading="lazy">
                 </div>
               {% endfor %}
-            </div>
-          {% elif tour.cover %}
-            <div class="mb-4">
-              <img class="w-100 rounded" src="{{ tour.cover.url }}" alt="{{ tour.title }}">
             </div>
           {% endif %}
 
@@ -72,67 +196,6 @@
               </div>
             </div>
           {% endif %}
-
-          <!-- Краткое описание -->
-          {% if tour.short_desc %}
-            <div class="t-short-desc mb-4">
-              <p class="lead">{{ tour.short_desc }}</p>
-            </div>
-          {% endif %}
-
-          <!-- Основная информация о туре -->
-          <div class="t-info-grid mb-4">
-            <div class="row g-3">
-              {% if tour.duration %}
-                <div class="col-md-6">
-                  <div class="t-info-item">
-                    <i class="fa fa-clock-o"></i>
-                    <div>
-                      <strong>Длительность</strong>
-                      <span>{{ tour.duration }}</span>
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-              {% if tour.location %}
-                <div class="col-md-6">
-                  <div class="t-info-item">
-                    <i class="fa fa-map-marker"></i>
-                    <div>
-                      <strong>Локация</strong>
-                      <span>{{ tour.location }}</span>
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-              {% if tour.rating %}
-                <div class="col-md-6">
-                  <div class="t-info-item">
-                    <i class="fa fa-star"></i>
-                    <div>
-                      <strong>Рейтинг</strong>
-                      <span>{{ tour.rating }}/5 ({{ tour.reviews_count }} отзывов)</span>
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-              {% if tour.categories.all %}
-                <div class="col-md-6">
-                  <div class="t-info-item">
-                    <i class="fa fa-tags"></i>
-                    <div>
-                      <strong>Категории</strong>
-                      <span>
-                        {% for cat in tour.categories.all %}
-                          <a href="{% url 'tours:by_category' slug=cat.slug %}">{{ cat.name }}</a>{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-            </div>
-          </div>
 
           <!-- Полное описание -->
           {% if tour.description %}
@@ -176,43 +239,7 @@
             </div>
           {% endif %}
 
-          <!-- Программа тура (пример) -->
-          <div class="t-program mb-4">
-            <h3>Программа тура</h3>
-            <div class="t-program-timeline">
-              <div class="t-program-item">
-                <div class="t-program-time">09:00</div>
-                <div class="t-program-content">
-                  <h4>Встреча в отеле</h4>
-                  <p>Встреча с гидом в холле отеля, посадка в комфортабельный автобус.</p>
-                </div>
-              </div>
-              <div class="t-program-item">
-                <div class="t-program-time">10:30</div>
-                <div class="t-program-content">
-                  <h4>Прибытие на место</h4>
-                  <p>Прибытие к месту проведения экскурсии, знакомство с программой.</p>
-                </div>
-              </div>
-              <div class="t-program-item">
-                <div class="t-program-time">12:00</div>
-                <div class="t-program-content">
-                  <h4>Обед</h4>
-                  <p>Обед в местном ресторане с традиционной кухней.</p>
-                </div>
-              </div>
-              <div class="t-program-item">
-                <div class="t-program-time">16:00</div>
-                <div class="t-program-content">
-                  <h4>Возвращение</h4>
-                  <p>Возвращение в отель, окончание программы.</p>
-                </div>
-              </div>
-            </div>
-            <div class="t-program-note">
-              <p><em>Внимание: Программа может изменяться в зависимости от погодных условий и других факторов.</em></p>
-            </div>
-          </div>
+          {# Индивидуальный график: используем описание тура, без шаблонного таймлайна #}
 
           <!-- Важная информация -->
           {% if tour.info %}
@@ -273,66 +300,64 @@
           {% if related_tours %}
             <div class="t-related mt-5">
               <div class="t-related__title">Похожие туры</div>
-              <div class="row g-3">
+              <div class="t-related__scroller" role="region" aria-label="Похожие туры">
                 {% for r in related_tours %}
-                  <div class="col-12 col-sm-6 col-xl-4 d-flex">
-                    <article class="t-card h-100" style="cursor:pointer;" onclick="location.href='{{ r.get_absolute_url }}'">
-                      <div class="t-card__cover">
-                        {% if r.cover %}
-                          <img class="t-card__img" src="{{ r.cover.url }}" alt="{{ r.title }}" loading="lazy">
-                        {% else %}
-                          <img class="t-card__img" src="{% static 'images/travello.jpg' %}" alt="{{ r.title }}" loading="lazy">
-                        {% endif %}
-                        {% if r.has_discount %}<span class="badge badge--disc">Скидка</span>{% endif %}
-                        {% if r.is_popular %}<span class="badge badge--hit">Хит</span>{% endif %}
-                      </div>
-                      <div class="t-card__body">
-                        <div class="t-card__header">
-                          <h3 class="t-card__title">{{ r.title }}</h3>
-                          <div class="t-card__meta">
-                            {% if r.duration %}<span class="t-meta-item"><i class="fa fa-clock-o"></i> {{ r.duration }}</span>{% endif %}
-                            {% if r.location %}<span class="t-meta-item"><i class="fa fa-map-marker"></i> {{ r.location }}</span>{% endif %}
-                          </div>
-                        </div>
-
-                        <div class="t-card__price-section">
-                          <div class="t-card__price-main">
-                            <div class="t-price-group">
-                              <span class="t-price-label">Взрослые</span>
-                              <div class="t-price">
-                                {% if r.price_old_adult and r.price_old_adult > r.price_adult %}
-                                  <s class="t-price__old">{{ r.price_old_adult|floatformat:0|intcomma }}฿</s>
-                                {% endif %}
-                                <strong class="t-price__new">{{ r.price_adult|floatformat:0|intcomma }}฿</strong>
-                              </div>
-                            </div>
-                            {% if r.price_child %}
-                            <div class="t-price-group">
-                              <span class="t-price-label">Дети</span>
-                              <div class="t-price">
-                                {% if r.price_old_child and r.price_old_child > r.price_child %}
-                                  <s class="t-price__old">{{ r.price_old_child|floatformat:0|intcomma }}฿</s>
-                                {% endif %}
-                                <strong class="t-price__new">{{ r.price_child|floatformat:0|intcomma }}฿</strong>
-                              </div>
-                            </div>
-                            {% endif %}
-                          </div>
-                        </div>
-
-                        <div class="t-card__footer">
-                          <div class="t-rating">
-                            <i class="fa fa-star"></i>
-                            <span class="t-rating-value">{{ r.rating|default:"4.9" }}</span>
-                            {% if r.reviews_count %}<span class="t-reviews-count">({{ r.reviews_count }})</span>{% endif %}
-                          </div>
-                          <button class="order_btn open-lead-modal"
-                                  data-cta="Related — {{ r.title }}"
-                                  data-related_type="tour" data-related_id="{{ r.id }}">Заказать</button>
+                  <article class="t-card t-card--hscroll" style="cursor:pointer;" onclick="location.href='{{ r.get_absolute_url }}'">
+                    <div class="t-card__cover">
+                      {% if r.cover %}
+                        <img class="t-card__img" src="{{ r.cover.url }}" alt="{{ r.title }}" loading="lazy">
+                      {% else %}
+                        <img class="t-card__img" src="{% static 'images/travello.jpg' %}" alt="{{ r.title }}" loading="lazy">
+                      {% endif %}
+                      {% if r.has_discount %}<span class="badge badge--disc">Скидка</span>{% endif %}
+                      {% if r.is_popular %}<span class="badge badge--hit">Хит</span>{% endif %}
+                    </div>
+                    <div class="t-card__body">
+                      <div class="t-card__header">
+                        <h3 class="t-card__title">{{ r.title }}</h3>
+                        <div class="t-card__meta">
+                          {% if r.duration %}<span class="t-meta-item"><i class="fa fa-clock-o"></i> {{ r.duration }}</span>{% endif %}
+                          {% if r.location %}<span class="t-meta-item"><i class="fa fa-map-marker"></i> {{ r.location }}</span>{% endif %}
                         </div>
                       </div>
-                    </article>
-                  </div>
+
+                      <div class="t-card__price-section">
+                        <div class="t-card__price-main">
+                          <div class="t-price-group">
+                            <span class="t-price-label">Взрослые</span>
+                            <div class="t-price">
+                              {% if r.price_old_adult and r.price_old_adult > r.price_adult %}
+                                <s class="t-price__old">{{ r.price_old_adult|floatformat:0|intcomma }}฿</s>
+                              {% endif %}
+                              <strong class="t-price__new">{{ r.price_adult|floatformat:0|intcomma }}฿</strong>
+                            </div>
+                          </div>
+                          {% if r.price_child %}
+                          <div class="t-price-group">
+                            <span class="t-price-label">Дети</span>
+                            <div class="t-price">
+                              {% if r.price_old_child and r.price_old_child > r.price_child %}
+                                <s class="t-price__old">{{ r.price_old_child|floatformat:0|intcomma }}฿</s>
+                              {% endif %}
+                              <strong class="t-price__new">{{ r.price_child|floatformat:0|intcomma }}฿</strong>
+                            </div>
+                          </div>
+                          {% endif %}
+                        </div>
+                      </div>
+
+                      <div class="t-card__footer">
+                        <div class="t-rating">
+                          <i class="fa fa-star"></i>
+                          <span class="t-rating-value">{{ r.rating|default:"4.9" }}</span>
+                          {% if r.reviews_count %}<span class="t-reviews-count">({{ r.reviews_count }})</span>{% endif %}
+                        </div>
+                        <button class="order_btn open-lead-modal"
+                                data-cta="Related — {{ r.title }}"
+                                data-related_type="tour" data-related_id="{{ r.id }}">Заказать</button>
+                      </div>
+                    </div>
+                  </article>
                 {% endfor %}
               </div>
             </div>
@@ -524,6 +549,7 @@
 {% endblock %}
 
 {% block extra_js %}
+  <script src="{% static 'js/tour-detail.js' %}"></script>
   <script>
     (function() {
       var $ = window.jQuery || null;
@@ -533,6 +559,299 @@
       $('.t-gallery').owlCarousel({
         items: 1, loop: true, dots: true, nav: false, autoplay: true, autoplayTimeout: 5000
       });
+    })();
+    
+    // Управление бесконечным слайдером категорий
+    (function() {
+      var slider = document.getElementById('categoriesSlider');
+      if (!slider) return;
+      
+      var isUserInteracting = false;
+      var isDragging = false;
+      var startX = 0;
+      var currentTransform = 0;
+      var startTransform = 0;
+      var sliderWidth = 0;
+      var sectionWidth = 0;
+      var dragThreshold = 5; // Минимальное расстояние для считания драга
+      var hasDragged = false;
+      
+      // Рассчитываем размеры для бесконечной прокрутки
+      function calculateDimensions() {
+        var allItems = slider.children;
+        var itemsPerSection = allItems.length / 3; // У нас 3 копии
+        sliderWidth = slider.scrollWidth;
+        sectionWidth = sliderWidth / 3;
+      }
+      
+      // Получаем текущее значение transform из CSS анимации
+      function getCurrentTransform() {
+        var style = window.getComputedStyle(slider);
+        var matrix = style.transform;
+        if (matrix === 'none') return 0;
+        var values = matrix.match(/-?\d+\.?\d*/g);
+        return values ? parseFloat(values[4]) || 0 : 0;
+      }
+      
+      // Нормализуем позицию для бесконечной прокрутки (стартуем с -33.333%)
+      function normalizePosition(x) {
+        var startOffset = -sectionWidth / 3; // -33.333%
+        
+        // Если ушли слишком далеко влево от стартовой позиции
+        if (x > startOffset) {
+          x = x - sectionWidth;
+        }
+        // Если ушли слишком далеко вправо от стартовой позиции
+        else if (x < startOffset - sectionWidth) {
+          x = x + sectionWidth;
+        }
+        return x;
+      }
+      
+      // Устанавливаем transform с нормализацией
+      function setTransform(x, skipNormalization) {
+        if (!skipNormalization) {
+          x = normalizePosition(x);
+        }
+        slider.style.animation = 'none';
+        slider.style.transform = 'translateX(' + x + 'px)';
+        currentTransform = x;
+      }
+      
+      // Возобновляем анимацию плавно с текущей позиции
+      function resumeAnimation() {
+        // Получаем текущую позицию
+        var currentPos = currentTransform;
+        
+        // Нормализуем только если вышли за границы
+        var normalizedPos = normalizePosition(currentPos);
+        
+        // Если нужна нормализация, делаем плавный переход
+        if (Math.abs(normalizedPos - currentPos) > 10) {
+          slider.style.transition = 'transform 0.5s ease-out';
+          slider.style.transform = 'translateX(' + normalizedPos + 'px)';
+          
+          setTimeout(function() {
+            slider.style.transition = '';
+            // После нормализации продолжаем анимацию с новой позиции
+            continueAnimationFrom(normalizedPos);
+          }, 500);
+        } else {
+          // Продолжаем анимацию с текущей позиции
+          continueAnimationFrom(currentPos);
+        }
+      }
+      
+      // Продолжаем анимацию с заданной позиции
+      function continueAnimationFrom(fromPos) {
+        // Рассчитываем следующую целевую позицию
+        var targetPos = fromPos - sectionWidth;
+        
+        // Рассчитываем расстояние и время
+        var distance = Math.abs(targetPos - fromPos);
+        var fullDistance = sectionWidth;
+        var fullDuration = 90; // секунды
+        var remainingDuration = (distance / fullDistance) * fullDuration;
+        
+        // Создаем уникальное имя анимации
+        var animationName = 'continueSlide' + Date.now();
+        
+        // Создаем keyframes для продолжения
+        var keyframes = 
+          '@keyframes ' + animationName + ' {' +
+            '0% { transform: translateX(' + fromPos + 'px); }' +
+            '100% { transform: translateX(' + targetPos + 'px); }' +
+          '}';
+        
+        // Добавляем стили
+        var style = document.createElement('style');
+        style.textContent = keyframes;
+        document.head.appendChild(style);
+        
+        // Применяем анимацию
+        slider.style.animation = animationName + ' ' + remainingDuration + 's linear infinite';
+        
+        // Очищаем временные стили
+        setTimeout(function() {
+          if (style.parentNode) {
+            style.parentNode.removeChild(style);
+          }
+          // Возвращаемся к стандартной анимации
+          slider.style.animation = '';
+          slider.style.transform = '';
+        }, remainingDuration * 1000);
+      }
+      
+      // Пауза анимации при наведении
+      slider.addEventListener('mouseenter', function() {
+        if (!isUserInteracting) {
+          slider.style.animationPlayState = 'paused';
+        }
+      });
+      
+      slider.addEventListener('mouseleave', function() {
+        if (!isUserInteracting) {
+          slider.style.animationPlayState = 'running';
+        }
+      });
+      
+      // Ручное перетаскивание для десктопа
+      slider.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        isUserInteracting = true;
+        hasDragged = false;
+        slider.style.cursor = 'grabbing';
+        currentTransform = getCurrentTransform();
+        startTransform = currentTransform;
+        startX = e.pageX;
+        setTransform(currentTransform);
+        
+        // Предотвращаем клик только если это не категория
+        if (!e.target.closest('.category-item')) {
+          e.preventDefault();
+        }
+      });
+      
+      document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        
+        var deltaX = e.pageX - startX;
+        
+        // Проверяем, превышен ли порог для драга
+        if (Math.abs(deltaX) > dragThreshold) {
+          hasDragged = true;
+          var newTransform = startTransform + deltaX;
+          setTransform(newTransform, true); // Пропускаем нормализацию во время драга
+        }
+      });
+      
+      document.addEventListener('mouseup', function(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        slider.style.cursor = 'grab';
+        
+        // Если был драг, блокируем клик по ссылке
+        if (hasDragged) {
+          // Блокируем переход по ссылке если был драг
+          var categoryItem = e.target.closest('.category-item');
+          if (categoryItem) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          
+          setTimeout(function() {
+            isUserInteracting = false;
+            resumeAnimation();
+            slider.style.animationPlayState = 'running';
+          }, 2000);
+        } else {
+          // Если не было драга, сразу возобновляем (клик работает)
+          isUserInteracting = false;
+          slider.style.animationPlayState = 'running';
+        }
+      });
+      
+      // Поддержка тач-событий для мобильных
+      slider.addEventListener('touchstart', function(e) {
+        isUserInteracting = true;
+        hasDragged = false;
+        currentTransform = getCurrentTransform();
+        startTransform = currentTransform;
+        startX = e.touches[0].pageX;
+        setTransform(currentTransform);
+        
+        // Предотвращаем скролл только если это не категория
+        if (!e.target.closest('.category-item')) {
+          e.preventDefault();
+        }
+      });
+      
+      slider.addEventListener('touchmove', function(e) {
+        if (!isUserInteracting) return;
+        e.preventDefault();
+        
+        var deltaX = e.touches[0].pageX - startX;
+        
+        // Проверяем, превышен ли порог для свайпа
+        if (Math.abs(deltaX) > dragThreshold) {
+          hasDragged = true;
+          var newTransform = startTransform + deltaX;
+          setTransform(newTransform, true); // Пропускаем нормализацию во время свайпа
+        }
+      });
+      
+      slider.addEventListener('touchend', function(e) {
+        if (!isUserInteracting) return;
+        
+        // Если был свайп, блокируем клик по ссылке
+        if (hasDragged) {
+          // Блокируем переход по ссылке если был свайп
+          var categoryItem = e.target.closest('.category-item');
+          if (categoryItem) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          
+          setTimeout(function() {
+            isUserInteracting = false;
+            resumeAnimation();
+            slider.style.animationPlayState = 'running';
+          }, 2000);
+        } else {
+          // Если не было свайпа, сразу возобновляем (тап работает)
+          isUserInteracting = false;
+          slider.style.animationPlayState = 'running';
+        }
+      });
+      
+      // Дополнительная обработка кликов по категориям
+      slider.addEventListener('click', function(e) {
+        var categoryItem = e.target.closest('.category-item');
+        if (categoryItem && !hasDragged) {
+          // Если это клик по категории и не было драга, позволяем переход
+          return true;
+        } else if (hasDragged) {
+          // Если был драг, блокируем клик
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+      
+      // Инициализация
+      setTimeout(function() {
+        calculateDimensions();
+        
+        // Рандомизация порядка категорий при загрузке
+        var allItems = Array.from(slider.children);
+        var itemsPerSection = allItems.length / 3;
+        
+        if (itemsPerSection > 0) {
+          // Перемешиваем только первую секцию, остальные копируем
+          var firstSection = allItems.slice(0, itemsPerSection);
+          var shuffled = firstSection.slice();
+          
+          // Перемешиваем массив
+          for (var i = shuffled.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
+          }
+          
+          // Применяем перемешанный порядок ко всем трем секциям
+          for (var section = 0; section < 3; section++) {
+            for (var i = 0; i < itemsPerSection; i++) {
+              var originalIndex = section * itemsPerSection + i;
+              var newItem = shuffled[i].cloneNode(true);
+              slider.replaceChild(newItem, allItems[originalIndex]);
+            }
+          }
+          
+          // Пересчитываем размеры после перестановки
+          setTimeout(calculateDimensions, 100);
+        }
+      }, 100);
     })();
   </script>
 {% endblock %}

@@ -1,0 +1,153 @@
+/* ===== MOBILE ACCORDION STYLES ===== */
+/* Версия 1.0 - тестовый файл */
+
+.menu-item-with-accordion {
+  margin-bottom: 2px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.menu-item-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  position: relative !important;
+  cursor: pointer !important;
+  background: transparent !important;
+  transition: all 0.3s ease !important;
+  border-radius: 8px !important;
+  padding: 4px !important;
+}
+
+.menu-item-header:hover {
+  background: rgba(231, 103, 0, 0.08) !important;
+}
+
+.menu-item-header .main-link {
+  flex: 1 !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  font-family: 'Oswald', sans-serif !important;
+  color: #333 !important;
+  text-decoration: none !important;
+  background: transparent !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+.menu-item-header .main-link:hover {
+  color: #E76700 !important;
+}
+
+.accordion-toggle {
+  color: #ccc !important;
+  transition: all 0.3s ease !important;
+  font-size: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 24px !important;
+  height: 24px !important;
+  margin-right: 12px !important;
+  cursor: pointer !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid #eee !important;
+}
+
+.accordion-toggle:hover {
+  background: #E76700 !important;
+  color: #fff !important;
+  border-color: #E76700 !important;
+  transform: scale(1.1) !important;
+}
+
+.accordion-toggle i {
+  transition: transform 0.3s ease !important;
+  font-size: 8px !important;
+}
+
+.accordion-toggle[aria-expanded="true"] i {
+  transform: rotate(180deg) !important;
+}
+
+.accordion-toggle[aria-expanded="true"] {
+  background: #E76700 !important;
+  color: #fff !important;
+  border-color: #E76700 !important;
+}
+
+.accordion-content {
+  max-height: 0 !important;
+  overflow: hidden !important;
+  transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), padding 0.3s ease !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%) !important;
+  border-radius: 0 0 8px 8px !important;
+  margin-left: 12px !important;
+  margin-right: 12px !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06) !important;
+}
+
+.accordion-content.open {
+  max-height: 200px !important;
+  padding: 8px 0 12px 0 !important;
+}
+
+.accordion-content li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.accordion-content li a {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #555 !important;
+  text-decoration: none !important;
+  padding: 8px 20px !important;
+  margin: 0 2px !important;
+  display: block !important;
+  background: transparent !important;
+  border-radius: 6px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  position: relative !important;
+  border-left: 3px solid transparent !important;
+}
+
+.accordion-content li a:hover {
+  color: #E76700 !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  transform: translateX(4px) !important;
+  border-left-color: #E76700 !important;
+  box-shadow: 0 2px 8px rgba(231, 103, 0, 0.1) !important;
+}
+
+.accordion-content li a:active {
+  transform: translateX(2px) scale(0.98) !important;
+}
+
+/* Активный пункт меню с аккордеоном */
+.menu-item-with-accordion.active .menu-item-header {
+  background: linear-gradient(135deg, #E76700 0%, #ff8c42 100%) !important;
+  box-shadow: 0 4px 12px rgba(231, 103, 0, 0.3) !important;
+}
+
+.menu-item-with-accordion.active .menu-item-header .main-link {
+  color: #fff !important;
+}
+
+.menu-item-with-accordion.active .accordion-toggle {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.menu-item-with-accordion.active .accordion-toggle:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #E76700 !important;
+}

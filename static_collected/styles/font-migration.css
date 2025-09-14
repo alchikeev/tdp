@@ -1,0 +1,125 @@
+/* ============================
+   FONT MIGRATION
+   Переход со старых шрифтов на новую систему
+   ============================ */
+
+/* ============================
+   LEGACY FONT REPLACEMENTS
+   ============================ */
+
+/* Заменяем старые шрифты на новые переменные */
+
+/* Open Sans -> Inter (Primary) */
+.font-open-sans,
+[style*="font-family: 'Open Sans'"],
+[style*="font-family: Open Sans"] {
+  font-family: var(--font-primary) !important;
+}
+
+/* Oswald -> Poppins (Secondary) */
+.font-oswald,
+[style*="font-family: 'Oswald'"],
+[style*="font-family: Oswald"] {
+  font-family: var(--font-secondary) !important;
+}
+
+/* Roboto -> Inter (Primary) */
+.font-roboto,
+[style*="font-family: 'Roboto'"],
+[style*="font-family: Roboto"] {
+  font-family: var(--font-primary) !important;
+}
+
+/* ============================
+   COMPONENT-SPECIFIC MIGRATIONS
+   ============================ */
+
+/* Header Navigation */
+.thai a,
+.main_nav ul li a,
+.menu_content ul li a {
+  font-family: var(--font-secondary) !important;
+  font-weight: var(--font-weight-regular) !important;
+}
+
+/* Buttons */
+.order_btn,
+.btn,
+button {
+  font-family: var(--font-secondary) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  letter-spacing: var(--letter-spacing-wide) !important;
+}
+
+/* Headings in existing styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-secondary) !important;
+  font-weight: var(--font-weight-regular) !important;
+}
+
+/* Testimonials */
+.testimonial_author div {
+  font-family: var(--font-narrow) !important;
+  font-weight: var(--font-weight-medium) !important;
+}
+
+/* Footer */
+footer {
+  font-family: var(--font-primary) !important;
+}
+
+footer h1, footer h2, footer h3, footer h4, footer h5, footer h6 {
+  font-family: var(--font-narrow) !important;
+}
+
+/* ============================
+   SPECIFIC STYLE OVERRIDES
+   ============================ */
+
+/* Main styles overrides */
+body {
+  font-family: var(--font-primary) !important;
+}
+
+/* Lead modal */
+.lead_modal h2 {
+  font-family: var(--font-narrow) !important;
+  font-weight: var(--font-weight-bold) !important;
+}
+
+/* Contact widget */
+.contact_widget {
+  font-family: var(--font-narrow) !important;
+}
+
+/* ============================
+   RESPONSIVE ADJUSTMENTS
+   ============================ */
+
+@media (max-width: 768px) {
+  .thai a {
+    font-size: var(--font-size-lg) !important;
+  }
+  
+  .main_nav ul li a {
+    font-size: var(--font-size-sm) !important;
+  }
+  
+  .order_btn {
+    font-size: var(--font-size-sm) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .thai a {
+    font-size: var(--font-size-base) !important;
+  }
+  
+  .main_nav ul li a {
+    font-size: var(--font-size-xs) !important;
+  }
+  
+  .order_btn {
+    font-size: var(--font-size-xs) !important;
+  }
+}

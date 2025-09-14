@@ -8,6 +8,7 @@
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'styles/tours.css' %}">
   <link rel="stylesheet" href="{% static 'styles/slide.css' %}">
+  <link rel="stylesheet" href="{% static 'styles/tour-sticky-cta.css' %}">
 {% endblock %}
 
 {% block body_class %}has-inner-hero{% endblock %}
@@ -30,14 +31,8 @@
               {% else %}Экскурсии на Пхукете{% endif %}
             </h1>
             <p class="hero-sub">
-              Подберите идеальную экскурсию и оставьте заявку — перезвоним за 10–15 минут.
+              Подберите идеальную экскурсию для незабываемого отдыха на Пхукете.
             </p>
-          </div>
-
-          <div class="hero-right">
-            <button class="btn-hero open-lead-modal"
-                    data-cta="Inner Hero — Экскурсии"
-                    type="button">Оставить заявку</button>
           </div>
         </div>
       </div>
@@ -45,25 +40,80 @@
   </div>
 </section>
 
+<!-- Блок категорий с автопрокруткой -->
+<section class="tour-categories-slider">
+  <div class="container">
+    <div class="categories-slider-wrapper">
+      <div class="categories-slider" id="categoriesSlider">
+        {% for category in categories %}
+          <a href="{% url 'tours:by_category' category.slug %}" class="category-item">
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-count">({{ category.items }})</span>
+          </a>
+        {% endfor %}
+        <!-- Дублируем категории для бесконечной прокрутки -->
+        {% for category in categories %}
+          <a href="{% url 'tours:by_category' category.slug %}" class="category-item">
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-count">({{ category.items }})</span>
+          </a>
+        {% endfor %}
+        <!-- Третья копия для более плавного кольца -->
+        {% for category in categories %}
+          <a href="{% url 'tours:by_category' category.slug %}" class="category-item">
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-count">({{ category.items }})</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
 
-
-
-  {# ===== ФИЛЬТРЫ ===== #}
-  <section class="t-filters">
+  {# ===== КОМПАКТНЫЕ ФИЛЬТРЫ ===== #}
+  <section class="compact-filters">
     <div class="container">
-      <form class="t-filters__form" method="get" action="{% url 'tours:list' %}">
-        <div class="t-filters__row">
-          <div class="t-filters__search">
-            <i class="fa fa-search"></i>
-            <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Поиск по названию, месту, описанию">
+      <form class="compact-filters__form" method="get" action="{% url 'tours:list' %}">
+        
+        <!-- Основная строка: Фильтры/Поиск + Кнопки -->
+        <div class="compact-filters__main">
+          <div class="compact-filters__toggle" id="filtersToggle">
+            <span class="toggle-text" id="toggleText">Фильтры</span>
+            <i class="fa fa-chevron-down toggle-icon" id="toggleIcon"></i>
           </div>
-          <div class="t-filters__price">
+          
+          <!-- Поле поиска (скрыто по умолчанию) -->
+          <input type="search" 
+                 name="q" 
+                 value="{{ request.GET.q }}" 
+                 placeholder="Поиск по названию, месту, описанию"
+                 class="compact-filters__search-input"
+                 id="searchInput"
+                 style="display: none;">
+          
+          <!-- Кнопка выполнения поиска (скрыта по умолчанию) -->
+          <button type="submit" class="compact-filters__submit-search" id="submitSearchBtn" style="display: none;">
+            <i class="fa fa-search"></i>
+          </button>
+          
+          <!-- Кнопка переключения поиска -->
+          <button type="button" class="compact-filters__search-btn" id="searchToggle">
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+
+        <!-- Выдвижная панель фильтров -->
+        <div class="compact-filters__panel" id="filtersPanel">
+          <div class="compact-filters__row">
+            <div class="compact-filters__price">
             <label>Цена, ฿</label>
+              <div class="price-inputs">
             <input type="number" name="price_min" value="{{ request.GET.price_min }}" min="0" placeholder="от">
             <span>—</span>
             <input type="number" name="price_max" value="{{ request.GET.price_max }}" min="0" placeholder="до">
           </div>
-          <div class="t-filters__sort">
+            </div>
+            <div class="compact-filters__sort">
             <label>Сортировка</label>
             <select name="sort" onchange="this.form.submit()">
               <option value="" {% if not request.GET.sort %}selected{% endif %}>По популярности</option>
@@ -72,22 +122,12 @@
               <option value="newest"     {% if request.GET.sort == 'newest' %}selected{% endif %}>Сначала новые</option>
             </select>
           </div>
-          <div class="t-filters__submit">
-            <button class="order_btn" type="submit">Показать</button>
+            <div class="compact-filters__submit">
+              <button class="apply-btn" type="submit">Применить</button>
+            </div>
           </div>
         </div>
 
-        {% if categories %}
-          <div class="t-filters__pills">
-            <a href="{% url 'tours:list' %}" class="pill {% if not active_category %}is-active{% endif %}">Все</a>
-            {% for c in categories %}
-              <a href="{% url 'tours:by_category' slug=c.slug %}"
-                 class="pill {% if active_category and active_category.id == c.id %}is-active{% endif %}">
-                {{ c.name }}{% if c.items %}<span class="pill__count">{{ c.items }}</span>{% endif %}
-              </a>
-            {% endfor %}
-          </div>
-        {% endif %}
       </form>
     </div>
   </section>
@@ -251,5 +291,380 @@
 {% endblock %}
 
 {% block extra_js %}
-  {# специфичный JS при необходимости #}
+  <script>
+    // Управление компактными фильтрами
+    (function() {
+      console.log('Инициализация компактных фильтров...');
+      
+      var filtersToggle = document.getElementById('filtersToggle');
+      var filtersPanel = document.getElementById('filtersPanel');
+      var searchToggle = document.getElementById('searchToggle');
+      var searchInput = document.getElementById('searchInput');
+      var toggleText = document.getElementById('toggleText');
+      var toggleIcon = document.getElementById('toggleIcon');
+      var submitSearchBtn = document.getElementById('submitSearchBtn');
+      
+      console.log('Элементы найдены:', {
+        filtersToggle: !!filtersToggle,
+        filtersPanel: !!filtersPanel,
+        searchToggle: !!searchToggle,
+        searchInput: !!searchInput,
+        toggleText: !!toggleText,
+        submitSearchBtn: !!submitSearchBtn
+      });
+      
+      var isSearchMode = false;
+      var isFiltersOpen = false;
+      
+      // Переключение между фильтрами и поиском
+      if (searchToggle && searchInput && toggleText) {
+        searchToggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Клик по поиску, текущий режим:', isSearchMode);
+          
+          if (!isSearchMode) {
+            // Включаем режим поиска
+            isSearchMode = true;
+            
+            // Скрываем кнопку фильтров, показываем поле поиска
+            filtersToggle.style.display = 'none';
+            searchInput.style.display = 'block';
+            if (submitSearchBtn) submitSearchBtn.style.display = 'flex';
+            
+            // Меняем иконку на крестик
+            searchToggle.classList.add('active');
+            searchToggle.innerHTML = '<i class="fa fa-times"></i>';
+            
+            setTimeout(function() {
+              searchInput.focus();
+            }, 100);
+            
+            // Закрываем панель фильтров если открыта
+            if (isFiltersOpen && filtersPanel && filtersToggle) {
+              filtersPanel.classList.remove('open');
+              filtersToggle.classList.remove('active');
+              isFiltersOpen = false;
+            }
+            
+            console.log('Режим поиска включен');
+          } else {
+            // Выключаем режим поиска
+            isSearchMode = false;
+            
+            // Показываем кнопку фильтров, скрываем поле поиска
+            filtersToggle.style.display = 'flex';
+            searchInput.style.display = 'none';
+            if (submitSearchBtn) submitSearchBtn.style.display = 'none';
+            
+            // Возвращаем иконку поиска
+            searchToggle.classList.remove('active');
+            searchToggle.innerHTML = '<i class="fa fa-search"></i>';
+            
+            console.log('Режим поиска выключен');
+          }
+        });
+      } else {
+        console.log('Не все элементы поиска найдены');
+      }
+      
+      // Переключение панели фильтров
+      if (filtersToggle && filtersPanel) {
+        filtersToggle.addEventListener('click', function() {
+          console.log('Клик по фильтрам, режим поиска:', isSearchMode, 'панель открыта:', isFiltersOpen);
+          
+          if (isSearchMode) return; // Не работает в режиме поиска
+          
+          isFiltersOpen = !isFiltersOpen;
+          
+          if (isFiltersOpen) {
+            filtersPanel.classList.add('open');
+            filtersToggle.classList.add('active');
+            console.log('Панель фильтров открыта');
+          } else {
+            filtersPanel.classList.remove('open');
+            filtersToggle.classList.remove('active');
+            console.log('Панель фильтров закрыта');
+          }
+        });
+      } else {
+        console.log('Элементы фильтров не найдены');
+      }
+      
+      // Обработчик кнопки выполнения поиска
+      if (submitSearchBtn) {
+        submitSearchBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Клик по кнопке поиска');
+          if (searchInput && searchInput.form) {
+            searchInput.form.submit();
+          }
+        });
+      }
+      
+      // Отправка формы при Enter в поиске
+      if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            console.log('Отправка формы поиска через Enter');
+            this.form.submit();
+          }
+        });
+      }
+      
+      console.log('Компактные фильтры инициализированы');
+    })();
+    
+    // Управление бесконечным слайдером категорий
+    (function() {
+      var slider = document.getElementById('categoriesSlider');
+      if (!slider) return;
+      
+      var isUserInteracting = false;
+      var isDragging = false;
+      var startX = 0;
+      var currentTransform = 0;
+      var startTransform = 0;
+      var sliderWidth = 0;
+      var sectionWidth = 0;
+      var dragThreshold = 5; // Минимальное расстояние для считания драга
+      var hasDragged = false;
+      
+      // Рассчитываем размеры для бесконечной прокрутки
+      function calculateDimensions() {
+        var allItems = slider.children;
+        var itemsPerSection = allItems.length / 3; // У нас 3 копии
+        sliderWidth = slider.scrollWidth;
+        sectionWidth = sliderWidth / 3;
+      }
+      
+      // Получаем текущее значение transform из CSS анимации
+      function getCurrentTransform() {
+        var style = window.getComputedStyle(slider);
+        var matrix = style.transform;
+        if (matrix === 'none') return 0;
+        var values = matrix.match(/-?\d+\.?\d*/g);
+        return values ? parseFloat(values[4]) || 0 : 0;
+      }
+      
+      // Нормализуем позицию для бесконечной прокрутки (стартуем с -33.333%)
+      function normalizePosition(x) {
+        var startOffset = -sectionWidth / 3; // -33.333%
+        
+        // Если ушли слишком далеко влево от стартовой позиции
+        if (x > startOffset) {
+          x = x - sectionWidth;
+        }
+        // Если ушли слишком далеко вправо от стартовой позиции
+        else if (x < startOffset - sectionWidth) {
+          x = x + sectionWidth;
+        }
+        return x;
+      }
+      
+      // Устанавливаем transform с нормализацией
+      function setTransform(x, skipNormalization) {
+        if (!skipNormalization) {
+          x = normalizePosition(x);
+        }
+        slider.style.animation = 'none';
+        slider.style.transform = 'translateX(' + x + 'px)';
+        currentTransform = x;
+      }
+      
+      // Возобновляем анимацию плавно
+      function resumeAnimation() {
+        // Нормализуем позицию без резких прыжков
+        var normalizedPosition = normalizePosition(currentTransform);
+        
+        // Если позиция изменилась после нормализации, делаем плавный переход
+        if (Math.abs(normalizedPosition - currentTransform) > 10) {
+          slider.style.transition = 'transform 0.3s ease-out';
+          slider.style.transform = 'translateX(' + normalizedPosition + 'px)';
+          currentTransform = normalizedPosition;
+          
+          setTimeout(function() {
+            slider.style.transition = '';
+            slider.style.animation = '';
+            slider.style.transform = '';
+          }, 300);
+        } else {
+          // Просто возобновляем стандартную анимацию
+          slider.style.animation = '';
+          slider.style.transform = '';
+        }
+      }
+      
+      // Пауза анимации при наведении
+      slider.addEventListener('mouseenter', function() {
+        if (!isUserInteracting) {
+          slider.style.animationPlayState = 'paused';
+        }
+      });
+      
+      slider.addEventListener('mouseleave', function() {
+        if (!isUserInteracting) {
+          slider.style.animationPlayState = 'running';
+        }
+      });
+      
+      // Ручное перетаскивание для десктопа
+      slider.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        isUserInteracting = true;
+        hasDragged = false;
+        slider.style.cursor = 'grabbing';
+        currentTransform = getCurrentTransform();
+        startTransform = currentTransform;
+        startX = e.pageX;
+        setTransform(currentTransform);
+        
+        // Предотвращаем клик только если это не категория
+        if (!e.target.closest('.category-item')) {
+          e.preventDefault();
+        }
+      });
+      
+      document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        
+        var deltaX = e.pageX - startX;
+        
+        // Проверяем, превышен ли порог для драга
+        if (Math.abs(deltaX) > dragThreshold) {
+          hasDragged = true;
+          var newTransform = startTransform + deltaX;
+          setTransform(newTransform, true); // Пропускаем нормализацию во время драга
+        }
+      });
+      
+      document.addEventListener('mouseup', function(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        slider.style.cursor = 'grab';
+        
+        // Если был драг, блокируем клик по ссылке
+        if (hasDragged) {
+          // Блокируем переход по ссылке если был драг
+          var categoryItem = e.target.closest('.category-item');
+          if (categoryItem) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          
+          setTimeout(function() {
+            isUserInteracting = false;
+            resumeAnimation();
+            slider.style.animationPlayState = 'running';
+          }, 2000);
+        } else {
+          // Если не было драга, сразу возобновляем (клик работает)
+          isUserInteracting = false;
+          slider.style.animationPlayState = 'running';
+        }
+      });
+      
+      // Поддержка тач-событий для мобильных
+      slider.addEventListener('touchstart', function(e) {
+        isUserInteracting = true;
+        hasDragged = false;
+        currentTransform = getCurrentTransform();
+        startTransform = currentTransform;
+        startX = e.touches[0].pageX;
+        setTransform(currentTransform);
+        
+        // Предотвращаем скролл только если это не категория
+        if (!e.target.closest('.category-item')) {
+          e.preventDefault();
+        }
+      });
+      
+      slider.addEventListener('touchmove', function(e) {
+        if (!isUserInteracting) return;
+        e.preventDefault();
+        
+        var deltaX = e.touches[0].pageX - startX;
+        
+        // Проверяем, превышен ли порог для свайпа
+        if (Math.abs(deltaX) > dragThreshold) {
+          hasDragged = true;
+          var newTransform = startTransform + deltaX;
+          setTransform(newTransform, true); // Пропускаем нормализацию во время свайпа
+        }
+      });
+      
+      slider.addEventListener('touchend', function(e) {
+        if (!isUserInteracting) return;
+        
+        // Если был свайп, блокируем клик по ссылке
+        if (hasDragged) {
+          // Блокируем переход по ссылке если был свайп
+          var categoryItem = e.target.closest('.category-item');
+          if (categoryItem) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          
+          setTimeout(function() {
+            isUserInteracting = false;
+            resumeAnimation();
+            slider.style.animationPlayState = 'running';
+          }, 2000);
+        } else {
+          // Если не было свайпа, сразу возобновляем (тап работает)
+          isUserInteracting = false;
+          slider.style.animationPlayState = 'running';
+        }
+      });
+      
+      // Дополнительная обработка кликов по категориям
+      slider.addEventListener('click', function(e) {
+        var categoryItem = e.target.closest('.category-item');
+        if (categoryItem && !hasDragged) {
+          // Если это клик по категории и не было драга, позволяем переход
+          return true;
+        } else if (hasDragged) {
+          // Если был драг, блокируем клик
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+      
+      // Инициализация
+      setTimeout(function() {
+        calculateDimensions();
+        
+        // Рандомизация порядка категорий при загрузке
+        var allItems = Array.from(slider.children);
+        var itemsPerSection = allItems.length / 3;
+        
+        if (itemsPerSection > 0) {
+          // Перемешиваем только первую секцию, остальные копируем
+          var firstSection = allItems.slice(0, itemsPerSection);
+          var shuffled = firstSection.slice();
+          
+          // Перемешиваем массив
+          for (var i = shuffled.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
+          }
+          
+          // Применяем перемешанный порядок ко всем трем секциям
+          for (var section = 0; section < 3; section++) {
+            for (var i = 0; i < itemsPerSection; i++) {
+              var originalIndex = section * itemsPerSection + i;
+              var newItem = shuffled[i].cloneNode(true);
+              slider.replaceChild(newItem, allItems[originalIndex]);
+            }
+          }
+          
+          // Пересчитываем размеры после перестановки
+          setTimeout(calculateDimensions, 100);
+        }
+      }, 100);
+    })();
+  </script>
 {% endblock %}
