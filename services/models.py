@@ -3,6 +3,12 @@ from django.urls import reverse
 
 class Service(models.Model):
     title        = models.CharField(max_length=200)
+    supplier     = models.CharField(
+        "Поставщик услуги", 
+        max_length=200, 
+        blank=True,
+        help_text="Внутренняя информация для админов и менеджеров"
+    )
     slug         = models.SlugField(unique=True)
 
     # общие таксономии из core

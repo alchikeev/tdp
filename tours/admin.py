@@ -8,13 +8,13 @@ class TourImageInline(admin.TabularInline):
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'get_categories', 'price_adult', 'price_child', 'price_extra', 'is_active', 'is_popular', 'rating', 'reviews_count', 'created_at'
+        'title', 'supplier', 'get_categories', 'price_adult', 'price_child', 'price_extra', 'is_active', 'is_popular', 'rating', 'reviews_count', 'created_at'
     )
     list_filter  = ('is_active', 'is_popular', 'categories', 'tags')
     prepopulated_fields = {'slug': ('title',)}
     inlines = (TourImageInline,)
     fieldsets = (
-        (None, {'fields': ('title','slug','categories','tags','short_desc','description','duration','location','youtube_url','cover')}),
+        (None, {'fields': ('title','supplier','slug','categories','tags','short_desc','description','duration','location','youtube_url','cover')}),
         ('Цены', {'fields': ('price_adult','price_child','price_extra','price_old_adult','price_old_child','note_price')}),
         ('Дополнительная информация', {'fields': ('included','excluded','info')}),
         ('SEO', {'fields': ('meta_title','meta_desc')}),

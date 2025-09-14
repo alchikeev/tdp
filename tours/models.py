@@ -71,12 +71,11 @@ class TourImage(models.Model):
         help_text="Порядок отображения (меньше = выше)"
     )
     is_active = models.BooleanField("Активно", default=True)
-    created_at = models.DateTimeField("Создано", auto_now_add=True)
 
     class Meta:
         verbose_name = "Изображение тура"
         verbose_name_plural = "Изображения туров"
-        ordering = ["order", "created_at"]
+        ordering = ["order", "id"]
         indexes = [
             models.Index(fields=["tour", "order"], name="tour_image_order_idx"),
         ]
@@ -102,6 +101,12 @@ class Tour(models.Model):
 
     # Базовые
     title = models.CharField("Название", max_length=200)
+    supplier = models.CharField(
+        "Поставщик тура", 
+        max_length=200, 
+        blank=True,
+        help_text="Внутренняя информация для админов и менеджеров"
+    )
     slug = models.SlugField("Слаг", unique=True, db_index=True)
 
     # Контент
