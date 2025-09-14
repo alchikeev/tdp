@@ -1,1 +1,4 @@
-# Пустой модуль: настройки импортируются напрямую через DJANGO_SETTINGS_MODULE
+# Это обеспечит загрузку приложения Celery при запуске Django
+from .celery import app as celery_app
+
+__all__ = ('celery_app',)

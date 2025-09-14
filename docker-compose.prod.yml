@@ -1,0 +1,66 @@
+services:
+  tdp-web:
+    container_name: tdp-web
+    build:
+      context: .
+      args:
+        DJANGO_ENV: prod
+    env_file:
+      - .env.prod
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.prod
+    expose:
+      - "8000"
+    volumes:
+      - /srv/data_tdp:/data
+      - /srv/media_tdp:/app/media
+      - /srv/static_tdp:/app/staticfiles
+    networks:
+      - web
+    restart: unless-stopped
+
+  tdp-celery:
+    container_name: tdp-celery
+    build:
+      context: .
+      args:
+        DJANGO_ENV: prod
+    env_file:
+      - .env.prod
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.prod
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - /srv/data_tdp:/data
+      - /srv/media_tdp:/app/media
+      - /srv/static_tdp:/app/staticfiles
+    networks:
+      - web
+    restart: unless-stopped
+    depends_on:
+      - tdp-web
+
+  tdp-celery-beat:
+    container_name: tdp-celery-beat
+    build:
+      context: .
+      args:
+        DJANGO_ENV: prod
+    env_file:
+      - .env.prod
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.prod
+    command: celery -A config beat --loglevel=info
+    volumes:
+      - /srv/data_tdp:/data
+      - /srv/media_tdp:/app/media
+      - /srv/static_tdp:/app/staticfiles
+    networks:
+      - web
+    restart: unless-stopped
+    depends_on:
+      - tdp-web
+
+networks:
+  web:
+    external: true

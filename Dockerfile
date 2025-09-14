@@ -1,44 +1,33 @@
-# Используем официальный Python образ
 FROM python:3.12-slim
 
-# Устанавливаем системные зависимости
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        wget \
-        && rm -rf /var/lib/apt/lists/*
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Создаем непривилегированного пользователя
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем requirements.txt и устанавливаем зависимости
-COPY requirements.txt .
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем код приложения
-COPY . .
+# Копируем код
+COPY . /app
 
-# Создаем необходимые директории
-RUN mkdir -p /app/static /app/data
+# Аргумент окружения: dev|prod
+ARG DJANGO_ENV=dev
+ENV DJANGO_ENV=${DJANGO_ENV}
 
-# Устанавливаем права доступа
-RUN chown -R appuser:appuser /app
+# Создаем папки для данных
+RUN mkdir -p /data /app/media /app/staticfiles
 
-# Переключаемся на непривилегированного пользователя
-USER appuser
+# Создаем .env файлы для разных окружений
+RUN echo "DJANGO_ENV=dev" > .env.dev && \
+    echo "DJANGO_SECRET_KEY=dev-secret-key" >> .env.dev && \
+    echo "DJANGO_DEBUG=True" >> .env.dev && \
+    echo "DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1" >> .env.dev
 
-# Экспонируем порт
+# Сбор статики (OK, если в dev её ещё нет)
+RUN python manage.py collectstatic --noinput || true
+
 EXPOSE 8000
 
-# Добавляем healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost:8000/health/ || exit 1
-
-# Копируем и делаем исполняемым entrypoint скрипт
-COPY --chown=appuser:appuser docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Запускаем через entrypoint скрипт
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# Запуск приложения
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
